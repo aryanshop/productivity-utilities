@@ -1,0 +1,254 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroGrid: Workspace Desk Cable & Power Load Optimizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h1>AeroGrid</h1>
+      </div>
+      <p class="subtitle">Precision Power Load & Cable Route Planner for Professional Workstations</p>
+    </div>
+    <div class="global-stats">
+      <div class="stat-card">
+        <span class="stat-label">Total Load</span>
+        <span class="stat-value" id="total-watts">0 W</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Circuit Draw</span>
+        <span class="stat-value" id="total-amps">0.0 A</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Est. Monthly Cost</span>
+        <span class="stat-value" id="monthly-cost">$0.00</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Load Status</span>
+        <span class="stat-badge optimal" id="load-status">Optimal</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- Left Sidebar: Controls & Quick Add -->
+    <section class="sidebar">
+      <div class="panel settings-panel">
+        <h2>Environment Settings</h2>
+        <div class="form-group">
+          <label for="circuit-voltage">Circuit Voltage (V)</label>
+          <select id="circuit-voltage">
+            <option value="120" selected>120V (Standard US/Canada)</option>
+            <option value="230">230V (EU/UK/International)</option>
+            <option value="100">100V (Japan)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="kwh-rate">Electricity Rate ($/kWh)</label>
+          <input type="number" id="kwh-rate" value="0.14" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label for="avg-hours">Daily Usage Hours</label>
+          <input type="number" id="avg-hours" value="8" min="1" max="24">
+        </div>
+      </div>
+
+      <div class="panel add-panel">
+        <h2>Add Device</h2>
+        <form id="device-form">
+          <div class="form-group">
+            <label for="device-name">Device Name</label>
+            <input type="text" id="device-name" placeholder="e.g., Studio Monitor" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="device-watts">Power (Watts)</label>
+              <input type="number" id="device-watts" placeholder="45" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="device-plugs">Plug Type</label>
+              <select id="device-plugs">
+                <option value="Standard Adapter">Standard Brick</option>
+                <option value="Direct AC">Direct AC 3-prong</option>
+                <option value="USB-C PD">USB-C PD</option>
+                <option value="USB-A">USB-A</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="device-cable">Cable Length (ft)</label>
+              <input type="number" id="device-cable" value="6" min="1" max="30">
+            </div>
+            <div class="form-group">
+              <label for="device-category">Category</label>
+              <select id="device-category">
+                <option value="Computing">Computing</option>
+                <option value="Display">Display</option>
+                <option value="Audio">Audio</option>
+                <option value="Peripherals">Peripherals</option>
+                <option value="Lighting">Lighting</option>
+                <option value="Charging">Charging</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add to Inventory
+          </button>
+        </form>
+      </div>
+
+      <div class="panel presets-panel">
+        <h2>Quick Load Presets</h2>
+        <div class="preset-buttons">
+          <button class="btn btn-secondary" data-preset="minimalist">Minimalist Laptop</button>
+          <button class="btn btn-secondary" data-preset="powerdev">Power Dev Rig</button>
+          <button class="btn btn-secondary" data-preset="creator">Content Creator</button>
+          <button class="btn btn-secondary" data-preset="clear">Clear All</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <section class="content-area">
+      <!-- Tabs Navigation -->
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="inventory">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+          Hardware Inventory
+        </button>
+        <button class="tab-btn" data-tab="layout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20"/></svg>
+          Desk Layout & Cable Routing
+        </button>
+        <button class="tab-btn" data-tab="report">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Audit & Shopping Blueprint
+        </button>
+      </div>
+
+      <!-- Tab 1: Inventory List -->
+      <div class="tab-pane active" id="tab-inventory">
+        <div class="panel inventory-panel">
+          <div class="panel-header">
+            <h3>Connected Hardware Setup</h3>
+            <div class="inventory-actions">
+              <span class="device-count" id="device-count">0 devices connected</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="inventory-table">
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>Category</th>
+                  <th>Plug Type</th>
+                  <th>Power (W)</th>
+                  <th>Cable (ft)</th>
+                  <th>Est. Monthly</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="inventory-empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <p>Your workspace inventory is empty. Add devices manually or load a preset.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Desk Layout & Cable Routing Visualizer -->
+      <div class="tab-pane" id="tab-layout">
+        <div class="panel layout-panel">
+          <div class="panel-header">
+            <h3>Top-Down Desk & Power Strip Matrix</h3>
+            <p class="panel-desc">Visualizing cable lengths, power brick congestion, and peripheral layout.</p>
+          </div>
+          <div class="desk-canvas-container">
+            <div class="desk-boundary">
+              <div class="desk-label">Desk Surface (60" x 30")</div>
+              <div class="surge-protector-box" id="surge-box">
+                <div class="surge-title">Power Strip / Surge Protector (8 Outlets)</div>
+                <div class="outlet-slots" id="outlet-slots">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+              <div class="desk-devices-grid" id="desk-devices-grid">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+          <div class="layout-legend">
+            <div class="legend-item"><span class="dot computing"></span> Computing</div>
+            <div class="legend-item"><span class="dot display"></span> Display</div>
+            <div class="legend-item"><span class="dot audio"></span> Audio</div>
+            <div class="legend-item"><span class="dot peripherals"></span> Peripherals</div>
+            <div class="legend-item"><span class="dot lighting"></span> Lighting</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Report & Shopping Blueprint -->
+      <div class="tab-pane" id="tab-report">
+        <div class="panel report-panel">
+          <div class="panel-header">
+            <h3>Workspace Safety & Optimization Report</h3>
+            <button class="btn btn-secondary" id="print-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+              Print Summary
+            </button>
+          </div>
+          
+          <div class="report-sections">
+            <div class="report-card">
+              <h4>Electrical Safety Audit</h4>
+              <ul class="audit-list" id="audit-list">
+                <!-- Dynamically populated -->
+              </ul>
+            </div>
+
+            <div class="report-card">
+              <h4>Cable Length & Management Summary</h4>
+              <div class="summary-grid">
+                <div class="metric-box">
+                  <span class="m-label">Total Cable Reach</span>
+                  <span class="m-val" id="total-cable">0 ft</span>
+                </div>
+                <div class="metric-box">
+                  <span class="m-label">Power Bricks</span>
+                  <span class="m-val" id="total-bricks">0</span>
+                </div>
+                <div class="metric-box">
+                  <span class="m-label">Recommended Surge Rating</span>
+                  <span class="m-val" id="surge-rec">1500W / 15A</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <h4>Shopping & Organization Checklist</h4>
+              <div class="checklist-container" id="checklist-container">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
