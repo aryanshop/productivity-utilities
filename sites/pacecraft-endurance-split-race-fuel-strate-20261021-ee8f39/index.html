@@ -1,0 +1,193 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaceCraft: Endurance Split & Race Fuel Strategist</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <div>
+          <h1>PaceCraft</h1>
+          <p>Endurance Split & Race Fuel Strategist</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnPrint" class="btn btn-secondary" aria-label="Print Race Plan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print Cheat Sheet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Configuration Panel -->
+    <section class="config-panel">
+      <div class="panel-card">
+        <h2>1. Race Parameters</h2>
+        
+        <div class="form-group">
+          <label for="raceDistance">Race Distance</label>
+          <select id="raceDistance" class="form-control">
+            <option value="5">5K (3.1 mi)</option>
+            <option value="10">10K (6.2 mi)</option>
+            <option value="21.1">Half Marathon (13.1 mi)</option>
+            <option value="42.2" selected>Marathon (26.2 mi)</option>
+            <option value="custom">Custom Distance</option>
+          </select>
+        </div>
+
+        <div id="customDistanceGroup" class="form-group hidden">
+          <label for="customKm">Custom Distance (Kilometers)</label>
+          <input type="number" id="customKm" class="form-control" value="30" min="1" max="200" step="0.1">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="targetHours">Target Time (Hours)</label>
+            <input type="number" id="targetHours" class="form-control" value="3" min="0" max="24">
+          </div>
+          <div class="form-group">
+            <label for="targetMinutes">Minutes</label>
+            <input type="number" id="targetMinutes" class="form-control" value="45" min="0" max="59">
+          </div>
+          <div class="form-group">
+            <label for="targetSeconds">Seconds</label>
+            <input type="number" id="targetSeconds" class="form-control" value="0" min="0" max="59">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="unitSystem">Unit System</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="units" value="km" checked> Kilometers
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="units" value="mi"> Miles
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pacingStrategy">Pacing Strategy</label>
+          <select id="pacingStrategy" class="form-control">
+            <option value="even">Even Split (Steady Pace)</option>
+            <option value="negative">Negative Split (Faster Finish, +2% start)</option>
+            <option value="positive">Positive Split (Conservative, -2% start)</option>
+            <option value="hills">Hilly Profile (Adjusted for climbs)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>2. Fuel & Hydration Strategy</h2>
+        
+        <div class="form-group">
+          <label for="runnerWeight">Runner Body Weight (kg)</label>
+          <input type="number" id="runnerWeight" class="form-control" value="70" min="35" max="150">
+        </div>
+
+        <div class="form-group">
+          <label for="carbTarget">Carb Intake Target (g / hour)</label>
+          <select id="carbTarget" class="form-control">
+            <option value="30">30g / hr (Light / Minimal)</option>
+            <option value="60" selected>60g / hr (Standard Endurance)</option>
+            <option value="90">90g / hr (Advanced / High Carb)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="gelCarbs">Carbs per Energy Gel (g)</label>
+          <input type="number" id="gelCarbs" class="form-control" value="25" min="10" max="60">
+        </div>
+
+        <div class="form-group">
+          <label for="fluidTarget">Fluid Intake (ml / hour)</label>
+          <select id="fluidTarget" class="form-control">
+            <option value="400">400 ml / hr (Cool / Light Sweater)</option>
+            <option value="600" selected>600 ml / hr (Moderate Conditions)</option>
+            <option value="800">800 ml / hr (Hot / Heavy Sweater)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Dashboard -->
+    <section class="dashboard-section">
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-label">Average Pace</span>
+          <span id="avgPaceDisplay" class="metric-value">--:--</span>
+          <span id="avgPaceUnit" class="metric-sub">min/km</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Distance</span>
+          <span id="totalDistDisplay" class="metric-value">42.2 km</span>
+          <span class="metric-sub">Race Length</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Estimated Energy</span>
+          <span id="totalCaloriesDisplay" class="metric-value">2,850</span>
+          <span class="metric-sub">kcal burned</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Gels Needed</span>
+          <span id="totalGelsDisplay" class="metric-value">8</span>
+          <span class="metric-sub">Gels / Chews</span>
+        </div>
+      </div>
+
+      <!-- Visual Elevation / Split Chart -->
+      <div class="chart-card">
+        <h3>Pacing & Elevation Profile Preview</h3>
+        <div class="chart-container">
+          <canvas id="pacingCanvas" width="800" height="160"></canvas>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="dot pace-dot"></span> Split Pace</span>
+          <span class="legend-item"><span class="dot fuel-dot"></span> Fuel Station</span>
+          <span class="legend-item"><span class="dot elev-dot"></span> Elevation Profile</span>
+        </div>
+      </div>
+
+      <!-- Detailed Split & Fuel Table -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Split-by-Split Race & Nutrition Plan</h3>
+          <span id="tableSummaryCount" class="badge">0 Splits</span>
+        </div>
+        <div class="table-responsive">
+          <table id="splitTable">
+            <thead>
+              <tr>
+                <th>Split</th>
+                <th>Distance</th>
+                <th>Segment Pace</th>
+                <th>Elapsed Time</th>
+                <th>Split Time</th>
+                <th>Fuel Action</th>
+                <th>Fluid Action</th>
+              </tr>
+            </thead>
+            <tbody id="splitTableBody">
+              <!-- Populated by script -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>PaceCraft &mdash; Privacy-First Endurance Planner. Runs entirely in your browser.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
