@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenithGoal: Habit Loop & Micro-Milestone Architect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <h1>ZenithGoal</h1>
+        <p class="subtitle">Habit Loop & Micro-Milestone Architect</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export" class="btn btn-secondary" title="Export Goals as JSON">Export Data</button>
+      <button id="btn-import" class="btn btn-secondary" title="Import Goals from JSON">Import Data</button>
+      <input type="file" id="import-file" accept=".json" style="display: none;">
+      <button id="btn-reset" class="btn btn-danger" title="Reset All Data">Reset</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Sidebar / Master Goal Form -->
+    <section class="panel goal-setup-panel">
+      <h2>Define Your Master Ambition</h2>
+      <form id="goal-form">
+        <div class="form-group">
+          <label for="goal-title">Ambition Title</label>
+          <input type="text" id="goal-title" placeholder="e.g., Run a Half-Marathon in 6 Months" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="goal-category">Domain</label>
+            <select id="goal-category">
+              <option value="Health & Vitality">Health & Vitality</option>
+              <option value="Career & Skill">Career & Skill</option>
+              <option value="Finance & Wealth">Finance & Wealth</option>
+              <option value="Mind & Creativity">Mind & Creativity</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="goal-deadline">Target Date</label>
+            <input type="date" id="goal-deadline" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="goal-why">Core Motivation (The 'Why')</label>
+          <textarea id="goal-why" rows="2" placeholder="Why does achieving this matter to you?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Generate Micro-Milestone Tree</button>
+      </form>
+
+      <div class="stats-card">
+        <h3>Blueprint Analytics</h3>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Milestones</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-completed">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-streak">0d</span>
+            <span class="stat-label">Active Streak</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="global-progress-bar" class="progress-bar" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace -->
+    <section class="panel workspace-panel">
+      <div class="workspace-header">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="tree">Milestone Tree</button>
+          <button class="tab-btn" data-tab="habits">Daily Habit Loop</button>
+          <button class="tab-btn" data-tab="matrix">Cognitive Matrix</button>
+        </div>
+        <div class="workspace-actions">
+          <button id="btn-add-milestone" class="btn btn-primary">+ Add Micro-Task</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: Milestone Tree -->
+      <div id="tab-tree" class="tab-content active">
+        <div class="filter-bar">
+          <button class="filter-chip active" data-filter="all">All Phases</button>
+          <button class="filter-chip" data-filter="Phase 1: Foundation">Phase 1: Foundation</button>
+          <button class="filter-chip" data-filter="Phase 2: Momentum">Phase 2: Momentum</button>
+          <button class="filter-chip" data-filter="Phase 3: Mastery">Phase 3: Mastery</button>
+        </div>
+        <div id="milestones-container" class="milestones-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- TAB 2: Habits -->
+      <div id="tab-habits" class="tab-content">
+        <h3>Daily Micro-Habit Loop Builder</h3>
+        <p class="section-desc">Attach anchor habits to trigger automatic daily consistency.</p>
+        <form id="habit-form" class="inline-form">
+          <input type="text" id="habit-name" placeholder="e.g., 15 mins deliberate practice" required>
+          <input type="text" id="habit-cue" placeholder="e.g., Right after morning coffee" required>
+          <button type="submit" class="btn btn-primary">Add Habit</button>
+        </form>
+        <div id="habits-container" class="habits-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- TAB 3: Matrix -->
+      <div id="tab-matrix" class="tab-content">
+        <h3>Energy & Impact Matrix</h3>
+        <p class="section-desc">Evaluate your micro-milestones by Effort vs. Impact to prioritize focus.</p>
+        <div class="matrix-container">
+          <div class="matrix-quadrant" data-quadrant="quick-wins">
+            <h4>Quick Wins</h4>
+            <p class="quadrant-desc">High Impact / Low Effort</p>
+            <div class="quadrant-items" id="quad-quick-wins"></div>
+          </div>
+          <div class="matrix-quadrant" data-quadrant="major-projects">
+            <h4>Major Projects</h4>
+            <p class="quadrant-desc">High Impact / High Effort</p>
+            <div class="quadrant-items" id="quad-major-projects"></div>
+          </div>
+          <div class="matrix-quadrant" data-quadrant="fill-ins">
+            <h4>Fill-Ins</h4>
+            <p class="quadrant-desc">Low Impact / Low Effort</p>
+            <div class="quadrant-items" id="quad-fill-ins"></div>
+          </div>
+          <div class="matrix-quadrant" data-quadrant="time-wasters">
+            <h4>Reconsider</h4>
+            <p class="quadrant-desc">Low Impact / High Effort</p>
+            <div class="quadrant-items" id="quad-time-wasters"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for Adding/Editing Milestone -->
+  <div id="milestone-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Micro-Milestone</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="milestone-item-form">
+        <input type="hidden" id="item-id">
+        <div class="form-group">
+          <label for="item-title">Task Title</label>
+          <input type="text" id="item-title" placeholder="e.g., Research training schedules & gear" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="item-phase">Execution Phase</label>
+            <select id="item-phase">
+              <option value="Phase 1: Foundation">Phase 1: Foundation</option>
+              <option value="Phase 2: Momentum">Phase 2: Momentum</option>
+              <option value="Phase 3: Mastery">Phase 3: Mastery</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="item-impact">Impact Level</label>
+            <select id="item-impact">
+              <option value="High">High Impact</option>
+              <option value="Medium">Medium Impact</option>
+              <option value="Low">Low Impact</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="item-effort">Effort Level</label>
+            <select id="item-effort">
+              <option value="Low">Low Effort</option>
+              <option value="Medium">Medium Effort</option>
+              <option value="High">High Effort</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="item-notes">Actionable Steps / Notes</label>
+          <textarea id="item-notes" rows="2" placeholder="Specific details or checklist items..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
