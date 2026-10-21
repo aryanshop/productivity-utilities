@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenFlow: Mindful Breathing & Somatic Coherence Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo-area">
+      <div class="logo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 3v18M3 12h18" opacity="0.2" />
+        </svg>
+      </div>
+      <h1>ZenFlow</h1>
+    </div>
+    <p class="tagline">Somatic Coherence & Breathwork Studio</p>
+  </header>
+
+  <main class="app-container">
+    <!-- Control Panel / Preset Selector -->
+    <section class="panel config-panel" aria-labelledby="config-heading">
+      <h2 id="config-heading" class="sr-only">Session Configuration</h2>
+      
+      <div class="preset-group">
+        <label for="preset-select">Breathing Technique:</label>
+        <select id="preset-select" aria-label="Select breathing technique">
+          <option value="box">Box Breathing (4-4-4-4) - Focus & Calm</option>
+          <option value="relax478">4-7-8 Relaxation - Deep Sleep & Anxiety</option>
+          <option value="coherent" selected>Coherent Breathing (5-5) - Balance & HRV</option>
+          <option value="energize">Energizing Breath (6-2) - Alertness</option>
+        </select>
+      </div>
+
+      <div class="timing-settings">
+        <div class="setting-item">
+          <span class="label">Inhale</span>
+          <span id="val-inhale" class="value">5s</span>
+        </div>
+        <div class="setting-item" id="group-hold-in">
+          <span class="label">Hold</span>
+          <span id="val-hold-in" class="value">0s</span>
+        </div>
+        <div class="setting-item">
+          <span class="label">Exhale</span>
+          <span id="val-exhale" class="value">5s</span>
+        </div>
+        <div class="setting-item" id="group-hold-out">
+          <span class="label">Hold</span>
+          <span id="val-hold-out" class="value">0s</span>
+        </div>
+      </div>
+
+      <div class="duration-group">
+        <label for="duration-select">Session Length:</label>
+        <select id="duration-select">
+          <option value="1">1 Minute</option><option value="3" selected>3 Minutes</option><option value="5">5 Minutes</option><option value="10">10 Minutes</option><option value="0">Unbounded</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Main Visualizer Area -->
+    <section class="panel visualizer-panel" aria-label="Breathing Visualizer">
+      <div class="visualizer-stage">
+        <div class="orb-glow" id="orb-glow" aria-hidden="true"></div>
+        <div class="breathing-orb" id="breathing-orb" aria-hidden="true">
+          <div class="orb-inner"></div>
+        </div>
+        <div class="phase-display">
+          <div id="phase-title" class="phase-title">Ready</div>
+          <div id="phase-countdown" class="phase-countdown">--</div>
+        </div>
+      </div>
+
+      <div class="session-progress-bar" aria-hidden="true">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+
+      <div class="controls-bar">
+        <button id="btn-toggle" class="btn btn-primary" aria-label="Start Session">Start Session</button>
+        <button id="btn-sound" class="btn btn-secondary" aria-pressed="false" title="Toggle Sound Cues">Sound: Off</button>
+        <button id="btn-reset" class="btn btn-secondary" title="Reset Session">Reset</button>
+      </div>
+    </section>
+
+    <!-- Journal & Stats Sidebar -->
+    <section class="panel stats-panel" aria-labelledby="stats-heading">
+      <h2 id="stats-heading">Session Ledger & Reflections</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-num" id="stat-sessions">0</span>
+          <span class="stat-label">Completed Sessions</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-minutes">0</span>
+          <span class="stat-label">Minutes Breathe</span>
+        </div>
+      </div>
+
+      <div class="journal-area">
+        <label for="journal-input">Post-Session Note / Intention:</label>
+        <textarea id="journal-input" placeholder="Record a brief thought or note on how you feel..." rows="3"></textarea>
+        <button id="btn-save-note" class="btn btn-small">Save Note</button>
+      </div>
+
+      <div class="history-list-wrapper">
+        <h3>Recent Notes</h3>
+        <ul id="history-list" class="history-list">
+          <li class="empty-history">No notes recorded yet today.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>ZenFlow • Client-side somatic timer & ambient acoustic studio.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
