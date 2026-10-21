@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoPulse: Timezone Matrix & Meeting Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <h1>ChronoPulse</h1>
+            </div>
+            <p class="tagline">Coordinate global teams without timezone math anxiety</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Control & Action Bar -->
+            <section class="control-bar">
+                <div class="search-group">
+                    <label for="timezone-select" class="sr-only">Add Timezone</label>
+                    <select id="timezone-select">
+                        <option value="">+ Add City / Timezone...</option>
+                    </select>
+                </div>
+                <div class="quick-actions">
+                    <button id="btn-reset-now" class="btn btn-secondary" title="Jump to current time">Jump to Now</button>
+                    <button id="btn-clear-all" class="btn btn-danger-subtle">Clear All</button>
+                </div>
+            </section>
+
+            <!-- Master Interactive Timeline Scrubber -->
+            <section class="scrubber-card card">
+                <div class="scrubber-header">
+                    <div class="current-target-time">
+                        <span class="label">Evaluating Slot:</span>
+                        <strong id="target-time-display">--:--</strong>
+                        <span id="target-date-display" class="sub-date">--</span>
+                    </div>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot work"></span> Working Hours (9 AM - 6 PM)</span>
+                        <span class="legend-item"><span class="dot off"></span> Off Hours</span>
+                    </div>
+                </div>
+                <div class="slider-wrapper">
+                    <span class="time-marker">00:00</span>
+                    <input type="range" id="global-time-slider" min="0" max="1440" step="15" value="540" aria-label="Global Time Scrubber">
+                    <span class="time-marker">24:00</span>
+                </div>
+            </section>
+
+            <!-- City Cards Matrix -->
+            <section id="timezone-matrix" class="timezone-matrix">
+                <!-- Dynamically populated timezone cards -->
+            </section>
+
+            <!-- Meeting Overlap Intelligence -->
+            <section class="intelligence-card card">
+                <h2>Optimal Overlap Finder</h2>
+                <p class="section-desc">Best windows where all listed locations fall within working hours (09:00 - 18:00):</p>
+                <div id="overlap-results" class="overlap-results">
+                    <p class="placeholder-text">Add at least two timezones to calculate overlapping meeting windows.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>ChronoPulse &bull; Pure Client-Side Timezone Utility &bull; No data sent externally</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
