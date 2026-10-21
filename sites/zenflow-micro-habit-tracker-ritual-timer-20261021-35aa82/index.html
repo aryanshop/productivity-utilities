@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenFlow Micro-Habit Tracker & Ritual Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">&#9673;</span>
+                <h1>ZenFlow</h1>
+            </div>
+            <p class="subtitle">Design your daily rituals, pace your breath, and track micro-habits.</p>
+            <div class="nav-tabs" role="tablist">
+                <button class="tab-btn active" data-tab="rituals" role="tab" aria-selected="true">Ritual Timer</button>
+<button class="tab-btn" data-tab="habits" role="tab" aria-selected="false">Micro-Habits</button>
+<button class="tab-btn" data-tab="journal" role="tab" aria-selected="false">Reflection</button>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- RITUAL TIMER TAB -->
+            <section id="rituals" class="tab-content active" role="tabpanel">
+                <div class="ritual-layout">
+                    <div class="ritual-controls-panel">
+                        <h2>Active Ritual Sequence</h2>
+                        <p class="section-desc">Chain small mindful actions together into an effortless morning or evening flow.</p>
+                        <div class="sequence-list" id="sequenceList">
+                            <!-- Populated via JS -->
+                        </div>
+                        <div class="sequence-builder">
+                            <h3>Add Step</h3>
+                            <div class="form-group">
+                                <input type="text" id="stepNameInput" placeholder="Step Name (e.g., Hydrate & Stretch)" maxlength="40">
+                                <input type="number" id="stepDurationInput" placeholder="Secs" min="5" max="3600" value="60">
+                                <button id="addStepBtn" class="btn btn-primary">Add Step</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ritual-timer-display">
+                        <div class="timer-card">
+                            <div class="breath-halo" id="breathHalo">
+                                <div class="halo-ring"></div>
+                            </div>
+                            <div class="timer-info">
+                                <span id="currentStepTitle" class="current-step-label">Ready to Begin</span>
+                                <div id="timerClock" class="timer-clock">00:00</div>
+                                <span id="nextStepLabel" class="next-step-hint">Next: None</span>
+                            </div>
+                            <div class="timer-actions">
+                                <button id="startRitualBtn" class="btn btn-success btn-lg">Start Ritual</button>
+                                <button id="pauseRitualBtn" class="btn btn-warning" disabled>Pause</button>
+                                <button id="skipRitualBtn" class="btn btn-secondary" disabled>Skip</button>
+                                <button id="resetRitualBtn" class="btn btn-danger">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MICRO-HABITS TAB -->
+            <section id="habits" class="tab-content" role="tabpanel">
+                <div class="habits-container">
+                    <div class="habits-header">
+                        <h2>Daily Micro-Habits</h2>
+                        <p class="section-desc">Keep habits tiny so consistency beats intensity. Check off today's wins.</p>
+                        <div class="habit-input-group">
+                            <input type="text" id="habitTitleInput" placeholder="New tiny habit (e.g., Read 1 page, 10 pushups)" maxlength="50">
+                            <button id="addHabitBtn" class="btn btn-primary">Create Habit</button>
+                        </div>
+                    </div>
+                    <div class="habits-grid" id="habitsGrid">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- REFLECTION TAB -->
+            <section id="journal" class="tab-content" role="tabpanel">
+                <div class="journal-container">
+                    <h2>Daily Reflection Prompt</h2>
+                    <p class="section-desc">Pause for 2 minutes to capture your mindset and reduce mental clutter.</p>
+                    <div class="prompt-card">
+                        <blockquote id="promptText" class="prompt-quote">Loading prompt...</blockquote>
+                        <button id="newPromptBtn" class="btn btn-secondary btn-sm">Shuffle Prompt</button>
+                    </div>
+                    <div class="journal-editor">
+                        <textarea id="journalTextarea" placeholder="Write your thoughts freely here... (Saved locally on your device)" rows="6"></textarea>
+                        <div class="journal-footer">
+                            <span id="journalStatus" class="save-status">All changes saved locally</span>
+                            <button id="saveJournalBtn" class="btn btn-primary">Save Entry</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>ZenFlow &bull; Built with pure vanilla HTML, CSS, &amp; JavaScript. No external tracking.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
