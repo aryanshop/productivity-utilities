@@ -1,0 +1,119 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StellarShift: Interplanetary Time & Gravity Offset Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>StellarShift</h1>
+      <p class="subtitle">Interplanetary Time Dilation & Gravity Offset Calculator</p>
+    </div>
+    <div class="clock-badge">
+      <span id="utc-clock">00:00:00 UTC</span>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Control Panel -->
+    <section class="panel controls-panel">
+      <h2>Mission Parameters</h2>
+      
+      <div class="input-group">
+        <label for="earth-date">Earth Reference Date & Time</label>
+        <input type="datetime-local" id="earth-date">
+      </div>
+
+      <div class="input-group">
+        <label for="destination-select">Destination Habitat</label>
+        <select id="destination-select">
+          <option value="moon">Lunar Base (Alpha Station)</option>
+          <option value="mars" selected>Mars Colony (Olympus Mons Hub)</option>
+          <option value="europa">Europa Subsurface Outpost</option>
+          <option value="titan">Titan Atmospheric Haven</option>
+          <option value="ship">Relativistic Starship (0.5c)</option>
+        </select>
+      </div>
+
+      <div class="input-group" id="velocity-group" style="display: none;">
+        <label for="ship-speed">Cruising Velocity (% Speed of Light)</label>
+        <div class="range-wrapper">
+          <input type="range" id="ship-speed" min="1" max="99" value="50">
+          <span id="speed-val">50% c</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="mission-duration">Mission Duration (Earth Days)</label>
+        <input type="number" id="mission-duration" min="1" max="36500" value="365">
+      </div>
+
+      <button id="calculate-btn" class="primary-btn">Compute Relativistic Shift</button>
+    </section>
+
+    <!-- Results Dashboard -->
+    <section class="panel results-panel">
+      <div class="results-header">
+        <h2>Chronological Telemetry</h2>
+        <button id="reset-btn" class="secondary-btn">Reset Defaults</button>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Destination Local Time</span>
+          <span class="metric-value" id="res-dest-time">--</span>
+          <span class="metric-sub" id="res-dest-day">Sol 0</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Proper Time Experienced</span>
+          <span class="metric-value" id="res-proper-time">--</span>
+          <span class="metric-sub" id="res-time-diff">Difference: --</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Gravitational Shift (GR)</span>
+          <span class="metric-value" id="res-grav-shift">--</span>
+          <span class="metric-sub">Seconds / Earth Year</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Kinematic Dilatation (SR)</span>
+          <span class="metric-value" id="res-gamma">1.0000</span>
+          <span class="metric-sub" id="res-velocity-desc">Lorentz Factor (&gamma;)</span>
+        </div>
+      </div>
+
+      <!-- Visual Orbital Alignment Timeline -->
+      <div class="timeline-section">
+        <h3>24-Hour Synchronization Matrix</h3>
+        <p class="section-desc">Comparing Earth standard working hours with destination solar alignment.</p>
+        <div class="timeline-container" id="timeline-matrix">
+          <!-- Dynamically generated via JS -->
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="dot earth-dot"></span> Earth Working Hours</span>
+          <span class="legend-item"><span class="dot dest-dot"></span> Destination Local Day</span>
+          <span class="legend-item"><span class="dot sleep-dot"></span> Rest / Night Window</span>
+        </div>
+      </div>
+
+      <!-- Summary Report -->
+      <div class="report-box">
+        <h3>Mission Briefing & Notes</h3>
+        <p id="report-text">Configure your parameters and calculate to generate a comprehensive relativistic mission briefing.</p>
+        <button id="export-btn" class="secondary-btn">Export Briefing (TXT)</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>StellarShift &bull; Client-side Relativistic & Astronomical Utility &bull; No telemetry or external data used.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
