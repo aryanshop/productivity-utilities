@@ -1,0 +1,149 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StellarBudget: Interplanetary Living Cost & Expense Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="planet-icon">🪐</div>
+                <div>
+                    <h1>StellarBudget</h1>
+                    <p class="subtitle">Interplanetary Living Cost & Financial Optimizer</p>
+                </div>
+            </div>
+            <div class="destination-selector">
+                <label for="destSelect">Colony Destination:</label>
+                <select id="destSelect">
+                    <option value="earth">Earth Standard (1.0G)</option>
+                    <option value="lunar">Artemis Lunar Base (0.16G)</option>
+                    <option value="mars">Olympus Mons Colony, Mars (0.38G)</option>
+                    <option value="titan">Titan Hydrocarbon Outpost (0.14G)</option>
+                    <option value="orbital">Lagrange Habitat Station (0.0G)</option>
+                </select>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Column: Income & Expenses Input -->
+            <section class="panel input-panel">
+                <h2>Financial Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="incomeInput">Monthly Income (<span class="curr-symbol">₢</span> Credits)</label>
+                    <input type="number" id="incomeInput" value="6500" min="0" step="100">
+                </div>
+
+                <div class="expense-categories">
+                    <h3>Expense Matrix</h3>
+                    
+                    <div class="form-group">
+                        <label for="housingExp">Habitat / Dome Rent</label>
+                        <input type="number" id="housingExp" class="exp-input" value="1800" min="0" step="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="utilityExp">Life Support & Oxygen</label>
+                        <input type="number" id="utilityExp" class="exp-input" value="450" min="0" step="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foodExp">Synthetic Ration Synthesizer</label>
+                        <input type="number" id="foodExp" class="exp-input" value="600" min="0" step="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transportExp">Rover Maintenance & Transit</label>
+                        <input type="number" id="transportExp" class="exp-input" value="350" min="0" step="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxExp">Colony Defense & Tax</label>
+                        <input type="number" id="taxExp" class="exp-input" value="800" min="0" step="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="miscExp">Recreation & Holo-Net</label>
+                        <input type="number" id="miscExp" class="exp-input" value="400" min="0" step="10">
+                    </div>
+                </div>
+
+                <div class="savings-slider-group">
+                    <label for="savingsRate">Target Savings Allocation: <span id="savingsRateVal">25</span>%</label>
+                    <input type="range" id="savingsRate" min="0" max="80" value="25">
+                </div>
+            </section>
+
+            <!-- Center Column: Overview & Breakdown -->
+            <section class="panel overview-panel">
+                <h2>Colony Economic Summary</h2>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Total Expenses</span>
+                        <span class="metric-value" id="totalExpVal">₢4,400</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Net Monthly Savings</span>
+                        <span class="metric-value positive" id="netSavingsVal">₢2,100</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Gravity Living Multiplier</span>
+                        <span class="metric-value highlight" id="gravMultVal">1.0x</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Retirement Horizon</span>
+                        <span class="metric-value" id="horizonVal">8.4 Years</span>
+                    </div>
+                </div>
+
+                <div class="visual-breakdown-container">
+                    <h3>Expense & Allocation Breakdown</h3>
+                    <div class="bar-chart-container" id="breakdownBars">
+                        <!-- Dynamically generated via script -->
+                    </div>
+                </div>
+
+                <div class="colony-notes">
+                    <h3>Colony Financial Advisor AI</h3>
+                    <p id="advisorTip">Analyzing your ledger... Your habitat rent consumes a large portion of your income. Consider relocating to a lower-gravity sector to optimize living costs.</p>
+                </div>
+            </section>
+
+            <!-- Right Column: Projections & Stress Test -->
+            <section class="panel projection-panel">
+                <h2>Long-Term Trajectory</h2>
+                
+                <div class="projection-controls">
+                    <label for="yearsHorizon">Investment Timeline: <span id="yearsVal">10</span> Years</label>
+                    <input type="range" id="yearsHorizon" min="1" max="30" value="10">
+                </div>
+
+                <div class="chart-canvas-wrapper">
+                    <canvas id="projectionCanvas" width="320" height="180"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="dot savings-dot"></span> Total Savings</span>
+                    <span class="legend-item"><span class="dot interest-dot"></span> Compound Yield (6% APR)</span>
+                </div>
+
+                <div class="stress-test-box">
+                    <h3>Emergency Contingency Test</h3>
+                    <p>Simulate a sudden economic shock (e.g., Solar Flare storm damage or meteorite strike).</p>
+                    <button id="stressBtn" class="btn-danger">Trigger Solar Flare Shock (-₢2,500)</button>
+                    <div id="stressResult" class="stress-result hidden"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>StellarBudget &copy; 3042 Interplanetary Financial Systems &bull; All calculations processed locally in quantum memory.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
