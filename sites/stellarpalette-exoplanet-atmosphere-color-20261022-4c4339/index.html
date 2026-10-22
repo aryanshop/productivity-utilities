@@ -1,0 +1,167 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StellarPalette: Exoplanet Atmosphere & Color Spectrum Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>Stellar<span>Palette</span></h1>
+      <p class="subtitle">Exoplanet Atmosphere & Sky Color Spectrum Analyzer</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-preset-earth" class="btn btn-outline">Earth Prime</button>
+      <button id="btn-preset-mars" class="btn btn-outline">Rusty Mars</button>
+      <button id="btn-preset-titan" class="btn btn-outline">Titan Haze</button>
+      <button id="btn-reset" class="btn btn-secondary">Reset</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Column: Controls -->
+    <section class="control-panel" aria-label="Atmosphere and Star Controls">
+      <div class="panel-card">
+        <h2>1. Host Star Classification</h2>
+        <div class="form-group">
+          <label for="star-type">Spectral Type:</label>
+          <select id="star-type">
+            <option value="M">M-Type Red Dwarf (~3,200K)</option>
+            <option value="K">K-Type Orange Dwarf (~4,500K)</option>
+            <option value="G" selected>G-Type Yellow Star (~5,800K - Sol)</option>
+            <option value="F">F-Type Yellow-White (~6,800K)</option>
+            <option value="A">A-Type White Star (~9,000K)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="star-temp">Stellar Temperature (<span id="val-temp">5800</span> K):</label>
+          <input type="range" id="star-temp" min="2500" max="10000" step="100" value="5800">
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>2. Atmospheric Composition</h2>
+        <p class="hint">Percentages must total 100% or normalize automatically.</p>
+        
+        <div class="gas-slider-group">
+          <div class="gas-label">
+            <span>Nitrogen (N₂) / Inert</span>
+            <span id="val-n2">78%</span>
+          </div>
+          <input type="range" id="slider-n2" class="gas-slider" min="0" max="100" value="78">
+        </div>
+
+        <div class="gas-slider-group">
+          <div class="gas-label">
+            <span>Carbon Dioxide (CO₂)</span>
+            <span id="val-co2">1%</span>
+          </div>
+          <input type="range" id="slider-co2" class="gas-slider" min="0" max="100" value="1">
+        </div>
+
+        <div class="gas-slider-group">
+          <div class="gas-label">
+            <span>Methane (CH₄) / Hydrocarbons</span>
+            <span id="val-ch4">1%</span>
+          </div>
+          <input type="range" id="slider-ch4" class="gas-slider" min="0" max="100" value="1">
+        </div>
+
+        <div class="gas-slider-group">
+          <div class="gas-label">
+            <span>Water Vapor (H₂O)</span>
+            <span id="val-h2o">1%</span>
+          </div>
+          <input type="range" id="slider-h2o" class="gas-slider" min="0" max="100" value="1">
+        </div>
+
+        <div class="gas-slider-group">
+          <div class="gas-label">
+            <span>Sulfur Dioxide (SO₂) / Aerosols</span>
+            <span id="val-so2">19%</span>
+          </div>
+          <input type="range" id="slider-so2" class="gas-slider" min="0" max="100" value="19">
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>3. Planetary Parameters</h2>
+        <div class="form-group">
+          <label for="surface-pressure">Surface Pressure (<span id="val-pressure">1.0</span> atm):</label>
+          <input type="range" id="surface-pressure" min="0.1" max="10.0" step="0.1" value="1.0">
+        </div>
+        <div class="form-group">
+          <label for="sun-elevation">Sun Elevation Angle (<span id="val-elevation">45</span>°):</label>
+          <input type="range" id="sun-elevation" min="0" max="90" step="1" value="45">
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Visualizer & Output -->
+    <section class="display-panel" aria-label="Visualizer and Color Palette">
+      <div class="panel-card sky-preview-card">
+        <h2>Sky Dome Simulation</h2>
+        <div class="sky-dome-container">
+          <canvas id="skyCanvas" width="600" height="350"></canvas>
+          <div id="sunDisk" class="sun-disk"></div>
+        </div>
+        <div class="sky-meta">
+          <div class="meta-item">
+            <span class="meta-label">Zenith Color</span>
+            <span id="txt-zenith-hex" class="meta-val">#1a8cff</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Horizon Color</span>
+            <span id="txt-horizon-hex" class="meta-val">#cce6ff</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Sunset/Sunrise Glow</span>
+            <span id="txt-sunset-hex" class="meta-val">#ff7b00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card swatch-card">
+        <h2>Generated Atmosphere Swatches</h2>
+        <div class="swatches-grid" id="swatchesGrid">
+          <!-- Dynamic swatches generated here -->
+        </div>
+        <div class="export-actions">
+          <button id="btn-copy-css" class="btn btn-primary">Copy CSS Variables</button>
+          <button id="btn-export-json" class="btn btn-outline">Export JSON Blueprint</button>
+          <span id="copy-toast" class="toast hidden">Copied to clipboard!</span>
+        </div>
+      </div>
+
+      <div class="panel-card physics-card">
+        <h2>Atmospheric Physics Breakdown</h2>
+        <div class="physics-stats">
+          <div class="stat-box">
+            <span class="stat-title">Dominant Scattering</span>
+            <span id="stat-scattering" class="stat-val">Rayleigh Scattering</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Optical Thickness</span>
+            <span id="stat-opacity" class="stat-val">1.00 (Standard)</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Insolation Index</span>
+            <span id="stat-insolation" class="stat-val">1.00 Sol</span>
+          </div>
+        </div>
+        <p id="stat-description" class="physics-desc">
+          Calculated atmospheric properties indicate standard molecular scattering resulting in characteristic blue skies during midday.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>StellarPalette &bull; Designed for stellar worldbuilders & astrophotography enthusiasts. Runs completely client-side.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
