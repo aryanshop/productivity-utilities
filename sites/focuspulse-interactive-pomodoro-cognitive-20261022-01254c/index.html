@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusPulse: Pomodoro & Flow Logger</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo">
+      <span class="logo-icon">◉</span>
+      <h1>FocusPulse</h1>
+    </div>
+    <p class="tagline">Master deep work & cognitive flow</p>
+  </header>
+
+  <main class="app-container">
+    <section class="timer-section" aria-label="Pomodoro Timer">
+      <div class="mode-selector" role="tablist">
+        <button class="mode-btn active" data-mode="work" role="tab">Deep Work</button>
+        <button class="mode-btn" data-mode="shortBreak" role="tab">Short Break</button>
+        <button class="mode-btn" data-mode="longBreak" role="tab">Long Break</button>
+      </div>
+
+      <div class="timer-display-wrapper">
+        <svg class="progress-ring" width="260" height="260">
+          <circle class="progress-ring__bg" cx="130" cy="130" r="115"></circle>
+          <circle class="progress-ring__circle" cx="130" cy="130" r="115"></circle>
+        </svg>
+        <div class="timer-content">
+          <span id="timeDisplay" class="time-digits">25:00</span>
+          <span id="timerStatusLabel" class="timer-status">Ready to focus</span>
+        </div>
+      </div>
+
+      <div class="timer-controls">
+        <button id="startBtn" class="btn btn-primary">Start Session</button>
+        <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
+        <button id="resetBtn" class="btn btn-outline">Reset</button>
+      </div>
+    </section>
+
+    <section class="logger-section" aria-label="Session Logger">
+      <div class="card">
+        <h2>Session Notes & Flow Log</h2>
+        <form id="sessionForm">
+          <div class="form-group">
+            <label for="taskInput">Current Task Focus</label>
+            <input type="text" id="taskInput" placeholder="e.g., Refactor API module, Write documentation" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="energySelect">Energy Level (1-5)</label>
+              <select id="energySelect">
+                <option value="5">5 - Peak Focus</option>
+                <option value="4">4 - High Energy</option>
+                <option value="3" selected>3 - Moderate</option>
+                <option value="2">2 - Low Energy</option>
+                <option value="1">1 - Exhausted</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="distractionInput">Distractions Logged</label>
+              <input type="number" id="distractionInput" min="0" value="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="notesInput">Session Reflection / Takeaways</label>
+            <textarea id="notesInput" rows="2" placeholder="What went well? Any blocks encountered?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-accent">Log Completed Session</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Recent Logs</h2>
+          <div class="stats-summary">
+            <span>Total Focus: <strong id="totalMinutes">0</strong> mins</span>
+            <button id="clearDataBtn" class="btn-text">Clear History</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table id="logTable">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Duration</th>
+                <th>Energy</th>
+                <th>Distractions</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="logTableBody">
+              <tr class="empty-row">
+                <td colspan="5">No sessions recorded yet today. Start your first focus block!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>FocusPulse &bull; Built with vanilla HTML, CSS & JavaScript &bull; Privacy First (Local Storage)</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
