@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StellarBake: Precision Baker's Lab & Formula Scaler</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🍞</span>
+                <h1>StellarBake</h1>
+            </div>
+            <p class="tagline">Precision Baker's Percentage Lab, Formula Scaler & Dough Temperature Calculator</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left Column: Formula Control & Ingredients -->
+            <section class="panel formula-panel">
+                <div class="panel-header">
+                    <h2>Recipe Formula</h2>
+                    <div class="recipe-actions">
+                        <button id="load-preset-btn" class="btn secondary-btn">Load Preset</button>
+                        <button id="new-recipe-btn" class="btn outline-btn">New Formula</button>
+                    </div>
+                </div>
+
+                <div class="formula-meta">
+                    <div class="input-group">
+                        <label for="recipe-name">Formula Title</label>
+                        <input type="text" id="recipe-name" value="Artisan Sourdough Boule" placeholder="e.g., Country Sourdough">
+                    </div>
+                    <div class="meta-row">
+                        <div class="input-group">
+                            <label for="target-flour">Total Flour Weight (g)</label>
+                            <input type="number" id="target-flour" value="500" min="10" max="10000" step="10">
+                        </div>
+                        <div class="input-group">
+                            <label for="unit-selector">Unit Preference</label>
+                            <select id="unit-selector">
+                                <p><option value="g">Grams (g)</option></p>
+                                <option value="oz">Ounces (oz)</option>
+                                <option value="lb">Pounds & Ounces</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredients Table / List -->
+                <div class="ingredients-section">
+                    <div class="table-header">
+                        <span>Ingredient</span>
+                        <span>Type</span>
+                        <span>Baker's %</span>
+                        <span>Weight</span>
+                        <span>Actions</span>
+                    </div>
+                    <div id="ingredients-list" class="ingredients-list">
+                        <!-- Dynamically populated ingredients -->
+                    </div>
+                    <button id="add-ingredient-btn" class="btn secondary-btn full-width-btn">+ Add Ingredient</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Analytics, Scaling & Water Temp Calculator -->
+            <section class="sidebar-panel">
+                <!-- Formula Summary Card -->
+                <div class="panel summary-card">
+                    <h3>Dough Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-label">Total Dough Weight</span>
+                            <span id="metric-total-weight" class="metric-value">0 g</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Total Hydration</span>
+                            <span id="metric-hydration" class="metric-value accent-text">0%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Total Inoculation (Levain)</span>
+                            <span id="metric-levain" class="metric-value">0%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Estimated Salt Ratio</span>
+                            <span id="metric-salt" class="metric-value">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water Temperature Calculator -->
+                <div class="panel temp-calc-card">
+                    <h3>Water Temp Wizard (Desired Dough Temp)</h3>
+                    <p class="panel-desc">Calculate exact friction & water temperature for consistent fermentation.</p>
+                    <div class="temp-inputs">
+                        <div class="input-group">
+                            <label for="target-dt">Target Dough Temp (°C)</label>
+                            <input type="number" id="target-dt" value="24" min="15" max="32" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="room-temp">Room Temp (°C)</label>
+                            <input type="number" id="room-temp" value="22" min="0" max="45" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="flour-temp">Flour Temp (°C)</label>
+                            <input type="number" id="flour-temp" value="21" min="0" max="45" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="friction-factor">Friction Factor (°C)</label>
+                            <input type="number" id="friction-factor" value="3" min="0" max="10" step="0.5">
+                        </div>
+                    </div>
+                    <div class="temp-result-box">
+                        <span>Recommended Water Temp:</span>
+                        <strong id="result-water-temp">-- °C</strong>
+                    </div>
+                </div>
+
+                <!-- Storage & Actions -->
+                <div class="panel actions-panel">
+                    <h3>Formula Library & Export</h3>
+                    <div class="action-buttons">
+                        <button id="save-formula-btn" class="btn primary-btn">Save Formula</button>
+                        <button id="export-json-btn" class="btn secondary-btn">Export JSON</button>
+                        <button id="print-btn" class="btn secondary-btn">Printable Recipe</button>
+                    </div>
+                    <div class="saved-list-container">
+                        <label for="saved-recipes-select">Saved Formulas in Local Storage</label>
+                        <select id="saved-recipes-select">
+                            <option value="">-- Select a saved recipe --</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Preset Modal -->
+        <div id="preset-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Choose a Classic Baking Preset</h3>
+                    <button id="close-modal-btn" class="close-btn">&times;</button>
+                </div>
+                <div class="preset-grid">
+                    <div class="preset-card" data-preset="sourdough">
+                        <h4>Artisan Sourdough Boule</h4>
+                        <p>High hydration classic open crumb sourdough with levain.</p>
+                        <span>Hydration: 75% | Salt: 2%</span>
+                    </div>
+                    <div class="preset-card" data-preset="baguette">
+                        <h4>Traditional Baguette</h4>
+                        <p>Crispy crust, lean dough with commercial yeast or poolish.</p>
+                        <span>Hydration: 68% | Salt: 2%</span>
+                    </div>
+                    <div class="preset-card" data-preset="brioche">
+                        <h4>Rich Brioche</h4>
+                        <p>Enriched pastry dough loaded with eggs, butter, and sugar.</p>
+                        <span>Hydration: 50% liquid + Eggs/Butter</span>
+                    </div>
+                    <div class="preset-card" data-preset="pizza">
+                        <h4>Neapolitan Pizza Dough</h4>
+                        <p>Supple, stretchable high-heat pizza dough.</p>
+                        <span>Hydration: 62% | Salt: 2.8%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>StellarBake Studio &bull; Designed for bakers who love precision. All data saved securely in local browser storage.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
