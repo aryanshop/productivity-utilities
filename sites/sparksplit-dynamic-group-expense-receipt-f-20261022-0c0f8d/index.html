@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SparkSplit: Dynamic Group Expense & Receipt Fairness Engine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h1>SparkSplit</h1>
+      </div>
+      <p class="subtitle">Fair expense splitting, instant receipt itemization, and minimal debt settlements.</p>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="participants" role="tab" aria-selected="true">1. Participants</button>
+      <button class="tab-btn" data-tab="expenses" role="tab" aria-selected="false">2. Expenses & Receipts</button>
+      <button class="tab-btn" data-tab="balances" role="tab" aria-selected="false">3. Balances & Settlements</button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- TAB 1: PARTICIPANTS -->
+      <section id="participants-tab" class="tab-content active" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Group Members</h2>
+            <p>Add everyone participating in this expense group.</p>
+          </div>
+          <form id="add-participant-form" class="inline-form">
+            <input type="text" id="participant-name" placeholder="Enter name (e.g., Alex)" required autocomplete="off">
+            <button type="submit" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Member
+            </button>
+          </form>
+          <div class="participant-list-container">
+            <ul id="participant-list" class="item-list">
+              <!-- Dynamically populated -->
+            </ul>
+            <div id="participant-empty" class="empty-state">
+              <p>No participants added yet. Add at least 2 members to begin.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-footer">
+          <button type="button" class="btn btn-secondary" id="goto-expenses">Next: Add Expenses &rarr;</button>
+        </div>
+      </section>
+
+      <!-- TAB 2: EXPENSES & RECEIPTS -->
+      <section id="expenses-tab" class="tab-content" role="tabpanel">
+        <div class="grid-two-col">
+          <!-- Add Expense Form -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Record Expense</h2>
+              <p>Log a shared bill, dinner, or itemized receipt.</p>
+            </div>
+            <form id="expense-form">
+              <div class="form-group">
+                <label for="expense-title">Description</label>
+                <input type="text" id="expense-title" placeholder="e.g., Saturday Dinner, Groceries" required autocomplete="off">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="expense-amount">Total Amount ($)</label>
+                  <input type="number" id="expense-amount" step="0.01" min="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                  <label for="expense-payer">Paid By</label>
+                  <select id="expense-payer" required>
+                    <option value="" disabled selected>Select member</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Split Method</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="split-method" value="equal" checked> Equal Split</label>
+                  <label><input type="radio" name="split-method" value="exact"> Exact Amounts ($)</label>
+                  <label><input type="radio" name="split-method" value="shares"> By Shares</label>
+                </div>
+              </div>
+
+              <!-- Dynamic Split Detail Container -->
+              <div id="split-details-container" class="split-details-box">
+                <p class="hint-text">Split equally among all current participants.</p>
+              </div>
+
+              <button type="submit" class="btn btn-primary full-width">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Expense
+              </button>
+            </form>
+          </div>
+
+          <!-- Expense Ledger -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Expense Ledger</h2>
+              <p>History of recorded group spending.</p>
+            </div>
+            <div class="ledger-container">
+              <ul id="expense-list" class="ledger-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <div id="expense-empty" class="empty-state">
+                <p>No expenses recorded yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-footer">
+          <button type="button" class="btn btn-secondary" id="goto-balances">View Balances & Settlements &rarr;</button>
+        </div>
+      </section>
+
+      <!-- TAB 3: BALANCES & SETTLEMENTS -->
+      <section id="balances-tab" class="tab-content" role="tabpanel">
+        <div class="grid-two-col">
+          <!-- Net Balances -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Net Balances</h2>
+              <p>Positive means owed money, negative means they owe.</p>
+            </div>
+            <ul id="balance-list" class="balance-list">
+              <!-- Dynamically populated -->
+            </ul>
+            <div id="balance-empty" class="empty-state">
+              <p>Add participants and expenses to compute balances.</p>
+            </div>
+          </div>
+
+          <!-- Optimized Settlements -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Optimized Settlements</h2>
+              <p>Minimum transactions to settle all debts.</p>
+            </div>
+            <ul id="settlement-list" class="settlement-list">
+              <!-- Dynamically populated -->
+            </ul>
+            <div id="settlement-empty" class="empty-state">
+              <p>All accounts are settled or pending data.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Debt Network Card -->
+        <div class="card full-card">
+          <div class="card-header">
+            <h2>Debt Network Visualization</h2>
+            <p>Interactive overview of who owes whom in the group.</p>
+          </div>
+          <div class="network-canvas-wrapper">
+            <svg id="debt-network-svg" viewBox="0 0 600 300" width="100%" height="100%">
+              <g id="network-edges"></g>
+              <g id="network-nodes"></g>
+            </svg>
+            <div id="network-empty" class="empty-state absolute-empty">
+              <p>No debt connections to display.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-footer between">
+          <button type="button" class="btn btn-outline" id="reset-data-btn">Reset All Data</button>
+          <button type="button" class="btn btn-primary" id="export-json-btn">Export Session Summary</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Info -->
+    <footer class="app-footer">
+      <p>SparkSplit &bull; Privacy-first static utility. All computations run locally in your browser.</p>
+    </footer>
+  </div>
+
+  <!-- Modal for viewing/editing receipt details -->
+  <div id="receipt-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Expense Details</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Dynamically filled -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="modal-delete-btn">Delete Expense</button>
+        <button type="button" class="btn btn-secondary" id="modal-close-action">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
