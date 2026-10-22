@@ -1,0 +1,186 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StellarPack: Ultra-Lightweight Backpacking & Gear Rigidity Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">⛰</span>
+        <h1>Stellar<span>Pack</span></h1>
+      </div>
+      <p class="subtitle">Ultra-Lightweight Backpacking & Gear Rigidity Analyzer</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-preset-ultralight" class="btn btn-secondary">Load Ultralight Preset</button>
+      <button id="btn-preset-weekend" class="btn btn-secondary">Load Weekend Preset</button>
+      <button id="btn-reset" class="btn btn-danger">Clear All</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Top Metrics Overview Bar -->
+    <section class="metrics-bar">
+      <div class="metric-card">
+        <span class="metric-label">Total Pack Weight</span>
+        <span id="metric-total-weight" class="metric-value">0.00 kg</span>
+        <span id="metric-total-oz" class="metric-sub">0.0 oz</span>
+      </div>
+      <div class="metric-card highlight">
+        <span class="metric-label">Base Weight</span>
+        <span id="metric-base-weight" class="metric-value">0.00 kg</span>
+        <span id="metric-base-rating" class="metric-sub">Rating: --</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Total Volume</span>
+        <span id="metric-volume" class="metric-value">0.0 L</span>
+        <span id="metric-pack-fit" class="metric-sub">Recommended Pack: --</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Estimated Center of Gravity</span>
+        <span id="metric-cog" class="metric-value">--</span>
+        <span id="metric-cog-desc" class="metric-sub">Load stability</span>
+      </div>
+    </section>
+
+    <!-- Main Split Layout -->
+    <div class="workspace">
+      <!-- Left Column: Gear Inventory Management -->
+      <div class="panel inventory-panel">
+        <div class="panel-header">
+          <h2>Gear Inventory</h2>
+          <div unit-toggle-group class="unit-toggle">
+            <button class="unit-btn active" data-unit="metric">Metric (g/kg)</button>
+            <button class="unit-btn" data-unit="imperial">Imperial (oz/lbs)</button>
+          </div>
+        </div>
+
+        <!-- Add Gear Form -->
+        <form id="gear-form" class="gear-form">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="gear-name">Item Name</label>
+              <input type="text" id="gear-name" placeholder="e.g., Down Sleeping Bag" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="gear-category">Category</label>
+              <select id="gear-category">
+                <option value="Shelter">Shelter</option>
+                <option value="Sleep">Sleep System</option>
+                <option value="Kitchen">Kitchen</option>
+                <option value="Wear">Worn / Clothing</option>
+                <option value="Cook">Cookware / Water</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Misc">Misc / First Aid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gear-weight">Weight (<span id="label-unit-weight">grams</span>)</label>
+              <input type="number" id="gear-weight" min="0" step="0.1" placeholder="500" required>
+            </div>
+            <div class="form-group">
+              <label for="gear-volume">Volume (Liters)</label>
+              <input type="number" id="gear-volume" min="0" step="0.1" placeholder="4.5">
+            </div>
+            <div class="form-group">
+              <label for="gear-type">Type</label>
+              <select id="gear-type">
+                <option value="base">Base Weight (in pack)</option>
+                <option value="worn">Worn (on body)</option>
+                <option value="consumable">Consumable (food/fuel)</option>
+              </select>
+            </div>
+            <div class="form-group btn-group-align">
+              <button type="submit" class="btn btn-primary" id="btn-add-item">+ Add Item</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Filter & Search Bar -->
+        <div class="filter-bar">
+          <input type="text" id="search-input" placeholder="Search gear items...">
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="Shelter">Shelter</button>
+            <button class="chip" data-filter="Sleep">Sleep</button>
+            <button class="chip" data-filter="Kitchen">Kitchen</button>
+            <button class="chip" data-filter="Wear">Wear</button>
+            <button class="chip" data-filter="Cook">Cook</button>
+            <button class="chip" data-filter="Electronics">Electronics</button>
+            <button class="chip" data-filter="Misc">Misc</button>
+          </div>
+        </div>
+
+        <!-- Gear Item Table -->
+        <div class="table-container">
+          <table id="gear-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Weight</th>
+                <th>Volume</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="gear-tbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column: Analytics & Visualizations -->
+      <div class="sidebar-analytics">
+        <!-- Category Weight Breakdown -->
+        <div class="panel">
+          <h3>Weight Breakdown by Category</h3>
+          <div id="category-breakdown" class="breakdown-list">
+            <!-- Dynamic category progress bars -->
+          </div>
+        </div>
+
+        <!-- Ergonomic & Center of Gravity Visualizer -->
+        <div class="panel">
+          <h3>Ergonomic Pack Profile</h3>
+          <div class="cog-visualizer-container">
+            <div class="backpack-canvas-wrap">
+              <canvas id="cog-canvas" width="220" height="320"></canvas>
+            </div>
+            <div class="cog-details">
+              <div class="cog-stat">
+                <span class="stat-title">Load Distribution Index</span>
+                <span id="stat-balance-score" class="stat-num">--</span>
+              </div>
+              <p id="cog-advice" class="cog-advice-text">Add items to calculate backpack ergonomic center of gravity and postural stress.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export & Report Tools -->
+        <div class="panel">
+          <h3>Export & Reports</h3>
+          <div class="export-actions">
+            <button id="btn-export-json" class="btn btn-secondary">Export JSON</button>
+            <button id="btn-print" class="btn btn-secondary">Print / Summary Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>StellarPack &bull; Ultra-Lightweight Backpacking & Gear Rigidity Analyzer &bull; 100% Client-Side Static Utility</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
