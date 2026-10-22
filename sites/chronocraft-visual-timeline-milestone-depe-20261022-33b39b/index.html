@@ -1,0 +1,238 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoCraft: Visual Timeline & Milestone Dependency Architect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <h1>ChronoCraft</h1>
+      </div>
+      <p class="subtitle">Visual Timeline & Milestone Dependency Architect</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-new-project" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        New Project
+      </button>
+      <button id="btn-export" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export JSON
+      </button>
+      <label class="btn btn-secondary file-upload-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        Import JSON
+        <input type="file" id="import-file" accept=".json" hidden>
+      </label>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Overview Dashboard Bar -->
+    <section class="dashboard-card">
+      <div class="project-meta-form">
+        <div class="input-group flex-grow">
+          <label for="project-title">Project Name</label>
+          <input type="text" id="project-title" value="Q3 Product Launch & Ecosystem Redesign" placeholder="Enter project name...">
+        </div>
+        <div class="input-group">
+          <label for="project-start">Start Date</label>
+          <input type="date" id="project-start">
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-label">Total Tasks</span>
+          <span class="metric-value" id="stat-total">0</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-label">Completed</span>
+          <span class="metric-value" id="stat-completed">0</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-label">Estimated Span</span>
+          <span class="metric-value" id="stat-days">0 days</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-label">Progress</span>
+          <div class="progress-bar-container">
+            <div class="progress-fill" id="stat-progress-fill" style="width: 0%"></div>
+            <span class="progress-text" id="stat-progress-text">0%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Tabs -->
+    <nav class="tabs-nav" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="tasks" class="tab-btn active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        Task Breakdown
+      </button>
+      <button role="tab" aria-selected="false" data-tab="timeline" class="tab-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        Visual Gantt Chart
+      </button>
+      <button role="tab" aria-selected="false" data-tab="summary" class="tab-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Executive Summary
+      </button>
+    </nav>
+
+    <!-- Tab 1: Task Breakdown Table & Editor -->
+    <section id="panel-tasks" class="tab-panel active">
+      <div class="toolbar">
+        <h2>Task Inventory & Dependencies</h2>
+        <button id="btn-add-task" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add New Task
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="tasks-table" id="tasks-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Status</th>
+              <th>Task Title & Phase</th>
+              <th style="width: 100px;">Duration</th>
+              <th style="width: 120px;">Start Offset</th>
+              <th style="width: 160px;">Dependency</th>
+              <th style="width: 90px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-tbody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab 2: Visual Gantt Chart / Timeline -->
+    <section id="panel-timeline" class="tab-panel">
+      <div class="toolbar">
+        <h2>Interactive Timeline & Gantt View</h2>
+        <div class="timeline-controls">
+          <button id="zoom-in" class="btn btn-secondary" title="Expand scale">Zoom +</button>
+          <button id="zoom-out" class="btn btn-secondary" title="Contract scale">Zoom -</button>
+        </div>
+      </div>
+      <div class="gantt-wrapper">
+        <div class="gantt-sidebar" id="gantt-sidebar">
+          <div class="gantt-header-cell">Task Name</div>
+          <!-- Task labels rendered here -->
+        </div>
+        <div class="gantt-chart-area" id="gantt-chart-area">
+          <div class="gantt-timeline-header" id="gantt-timeline-header">
+            <!-- Days/Weeks rendered here -->
+          </div>
+          <div class="gantt-bars-container" id="gantt-bars-container">
+            <!-- Gantt bars rendered here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Executive Summary & Printable Report -->
+    <section id="panel-summary" class="tab-panel">
+      <div class="toolbar">
+        <h2>Executive Project Report</h2>
+        <button id="btn-print" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print / PDF Report
+        </button>
+      </div>
+      <div class="report-card" id="report-card">
+        <div class="report-header">
+          <h3 id="report-project-name">Project Title</h3>
+          <p class="report-date" id="report-date-range">Start: Today</p>
+        </div>
+        <div class="report-section">
+          <h4>Executive Summary</h4>
+          <p id="report-summary-text">This project consists of 0 total tasks organized across multiple dependency phases. Estimated project timeline spans 0 days.</p>
+        </div>
+        <div class="report-section">
+          <h4>Phase Breakdown</h4>
+          <div id="report-phases-list" class="report-phases-list">
+            <!-- Phase summary items -->
+          </div>
+        </div>
+        <div class="report-section">
+          <h4>Milestone Checklist</h4>
+          <ul id="report-checklist" class="report-checklist">
+            <!-- Checklist items -->
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Task Modal Editor -->
+  <div class="modal-backdrop" id="task-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-text">Add Task</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="task-form">
+          <input type="hidden" id="task-id">
+          <div class="input-group">
+            <label for="modal-task-name">Task Title</label>
+            <input type="text" id="modal-task-name" required placeholder="e.g., Wireframe user onboarding flow">
+          </div>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="modal-task-phase">Phase / Category</label>
+              <select id="modal-task-phase">
+                <option value="Research & Discovery">Research & Discovery</option>
+                <option value="Design & Prototyping">Design & Prototyping</option>
+                <option value="Development & Build">Development & Build</option>
+                <option value="Testing & QA">Testing & QA</option>
+                <option value="Launch & Marketing">Launch & Marketing</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="modal-task-duration">Duration (Days)</label>
+              <input type="number" id="modal-task-duration" min="1" max="365" value="5" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="modal-task-dep">Dependency (Predecessor)</label>
+              <select id="modal-task-dep">
+                <option value="">None (Starts at Project Beginning)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="modal-task-status">Status</label>
+              <select id="modal-task-status">
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="modal-save">Save Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>ChronoCraft &bull; Privacy-first local timeline architect. No data is sent to external servers.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
