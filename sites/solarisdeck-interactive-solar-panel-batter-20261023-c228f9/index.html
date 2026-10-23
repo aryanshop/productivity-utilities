@@ -1,0 +1,162 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolarisDeck: Solar & Battery ROI Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+                <h1>Solaris<span>Deck</span></h1>
+            </div>
+            <p class="subtitle">Interactive Solar Panel & Battery Storage ROI & Financial Payback Planner</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panel / Inputs -->
+        <section class="control-panel card">
+            <h2>System Configuration</h2>
+            
+            <div class="input-group">
+                <label for="monthly-bill">Average Monthly Electricity Bill ($)</label>
+                <input type="range" id="monthly-bill" min="50" max="600" step="10" value="180">
+                <span class="range-value" id="monthly-bill-val">$180</span>
+            </div>
+
+            <div class="input-group">
+                <label for="electricity-rate">Grid Electricity Rate ($/kWh)</label>
+                <input type="range" id="electricity-rate" min="0.08" max="0.40" step="0.01" value="0.18">
+                <span class="range-value" id="electricity-rate-val">$0.18</span>
+            </div>
+
+            <div class="input-group">
+                <label for="solar-size">Solar Array Size (kW)</label>
+                <input type="range" id="solar-size" min="2" max="20" step="0.5" value="6.5">
+                <span class="range-value" id="solar-size-val">6.5 kW</span>
+            </div>
+
+            <div class="input-group">
+                <label for="battery-capacity">Battery Storage Capacity (kWh)</label>
+                <input type="range" id="battery-capacity" min="0" max="30" step="2.5" value="10">
+                <span class="range-value" id="battery-capacity-val">10.0 kWh</span>
+            </div>
+
+            <div class="input-group">
+                <label for="sun-hours">Average Peak Sun Hours / Day</label>
+                <input type="range" id="sun-hours" min="2.5" max="7.0" step="0.25" value="4.5">
+                <span class="range-value" id="sun-hours-val">4.5 hrs</span>
+            </div>
+
+            <div class="input-group">
+                <label for="system-cost">Total System Cost (Before Incentive)</label>
+                <input type="number" id="system-cost" min="2000" max="60000" step="500" value="18500">
+            </div>
+
+            <div class="input-group">
+                <label for="incentive-pct">Tax Credit / Rebate (%)</label>
+                <input type="range" id="incentive-pct" min="0" max="60" step="5" value="30">
+                <span class="range-value" id="incentive-pct-val">30%</span>
+            </div>
+
+            <div class="action-row">
+                <button id="save-scenario-btn" class="btn btn-primary">Save Scenario</button>
+                <button id="reset-btn" class="btn btn-secondary">Reset Defaults</button>
+            </div>
+        </section>
+
+        <!-- Analytics & Results Dashboard -->
+        <section class="results-dashboard">
+            <!-- Top KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card card">
+                    <span class="kpi-label">Est. Annual Savings</span>
+                    <span class="kpi-value" id="kpi-savings">$0</span>
+                    <span class="kpi-sub" id="kpi-savings-sub">Based on usage profile</span>
+                </div>
+                <div class="kpi-card card">
+                    <span class="kpi-label">Simple Payback Period</span>
+                    <span class="kpi-value" id="kpi-payback">0.0 yrs</span>
+                    <span class="kpi-sub" id="kpi-payback-sub">Net system cost recovery</span>
+                </div>
+                <div class="kpi-card card">
+                    <span class="kpi-label">25-Year Net Profit</span>
+                    <span class="kpi-value" id="kpi-profit">$0</span>
+                    <span class="kpi-sub">After electricity inflation</span>
+                </div>
+                <div class="kpi-card card">
+                    <span class="kpi-label">Carbon Offset (25 Yr)</span>
+                    <span class="kpi-value" id="kpi-carbon">0 tons</span>
+                    <span class="kpi-sub">Equivalent trees planted</span>
+                </div>
+            </div>
+
+            <!-- Visualization Canvas / Chart -->
+            <div class="chart-container card">
+                <div class="chart-header">
+                    <h3>25-Year Cumulative Cash Flow & Savings Projection</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item"><span class="dot cumulative"></span> Cumulative Net Cash Flow</span>
+                        <span class="legend-item"><span class="dot baseline"></span> Without Solar</span>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="roi-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Energy Balance & Scenarios -->
+            <div class="bottom-grid">
+                <div class="energy-breakdown card">
+                    <h3>Daily Energy Flow Balance</h3>
+                    <div class="balance-bars">
+                        <div class="bar-row">
+                            <span class="bar-label">Solar Production</span>
+                            <div class="bar-track"><div id="bar-solar" class="bar-fill solar"></div></div>
+                            <span class="bar-val" id="val-solar">0 kWh</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Household Consumption</span>
+                            <div class="bar-track"><div id="bar-load" class="bar-fill load"></div></div>
+                            <span class="bar-val" id="val-load">0 kWh</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Battery Self-Consumption</span>
+                            <div class="bar-track"><div id="bar-battery" class="bar-fill battery"></div></div>
+                            <span class="bar-val" id="val-battery">0 kWh</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Grid Export (Feed-in)</span>
+                            <div class="bar-track"><div id="bar-export" class="bar-fill export"></div></div>
+                            <span class="bar-val" id="val-export">0 kWh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-ledger card">
+                    <div class="ledger-header">
+                        <h3>Saved Scenarios</h3>
+                        <button id="clear-scenarios" class="btn btn-text">Clear All</button>
+                    </div>
+                    <div class="ledger-list" id="ledger-list">
+                        <p class="empty-state">No saved scenarios yet. Configure your system and click 'Save Scenario'.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>SolarisDeck &bull; Privacy-First Local Solar & Battery Financial Modeling Tool &bull; No Data Transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
