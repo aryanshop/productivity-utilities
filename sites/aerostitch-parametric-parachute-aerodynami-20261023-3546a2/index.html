@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroStitch: Parametric Parachute & Aerodynamic Decelerator Designer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+          <path d="M2 12l10 5 10-5"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>AeroStitch</h1>
+        <p class="subtitle">Parametric Parachute & Decelerator Design Workbench</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn btn-secondary" aria-label="Reset to defaults">Reset Defaults</button>
+      <button id="btn-export" class="btn btn-primary" aria-label="Export blueprint summary">Export Blueprint</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Left Sidebar: Parameters & Inputs -->
+    <section class="control-panel" aria-label="Design Parameters">
+      <div class="panel-section">
+        <h2>1. Flight & Payload</h2>
+        <div class="input-group">
+          <label for="payload-mass">Payload Mass (g)</label>
+          <input type="number" id="payload-mass" value="500" min="10" max="50000" step="10">
+        </div>
+        <div class="input-group">
+          <label for="descent-vel">Target Descent Rate (m/s)</label>
+          <input type="number" id="descent-vel" value="5.0" min="1.0" max="20.0" step="0.1">
+        </div>
+        <div class="input-group">
+          <label for="altitude">Deployment Altitude (m)</label>
+          <input type="number" id="altitude" value="300" min="0" max="10000" step="50">
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2>2. Canopy Geometry</h2>
+        <div class="input-group">
+          <label for="canopy-type">Canopy Shape</label>
+          <select id="canopy-type">
+            <option value="hemisphere">Hemispherical (Standard)</option>
+            <option value="cruciform">Cruciform (Box/Cross)</option>
+            <option value="annular">Annular (Ring Slot)</option>
+            <option value="flat-circular">Flat Circular</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="num-gores">Number of Gores / Panels</label>
+          <input type="number" id="num-gores" value="8" min="4" max="32" step="1">
+        </div>
+        <div class="input-group">
+          <label for="spill-ratio">Spill Hole Diameter Ratio (%)</label>
+          <input type="range" id="spill-ratio" value="10" min="0" max="30" step="1">
+          <span class="range-val" id="spill-ratio-val">10%</span>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2>3. Material & Rigging</h2>
+        <div class="input-group">
+          <label for="fabric-weight">Fabric Weight (g/m²)</label>
+          <input type="number" id="fabric-weight" value="45" min="10" max="200" step="5">
+        </div>
+        <div class="input-group">
+          <label for="safety-factor">Structural Safety Factor</label>
+          <input type="number" id="safety-factor" value="3.5" min="1.5" max="10.0" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="shroud-multiplier">Shroud Line Length Multiplier</label>
+          <input type="number" id="shroud-multiplier" value="1.1" min="0.8" max="2.0" step="0.05">
+        </div>
+      </div>
+    </section>
+
+    <!-- Center/Right Dashboard: Calculated Results & Visualizer -->
+    <section class="display-section">
+      <!-- Top Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Nominal Diameter</span>
+          <span class="metric-value" id="res-diameter">--</span>
+          <span class="metric-unit">meters</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Surface Area</span>
+          <span class="metric-value" id="res-area">--</span>
+          <span class="metric-unit">m²</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Estimated Canopy Weight</span>
+          <span class="metric-value" id="res-weight">--</span>
+          <span class="metric-unit">grams</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Kinetic Energy at Landing</span>
+          <span class="metric-value" id="res-energy">--</span>
+          <span class="metric-unit">Joules</span>
+        </div>
+      </div>
+
+      <!-- Interactive Visualizer Tabs -->
+      <div class="workbench-card">
+        <div class="tab-header">
+          <button class="tab-btn active" data-tab="tab-blueprint">Canopy & Gore Blueprint</button>
+          <button class="tab-btn" data-tab="tab-cutlist">Fabric Cut List & Material</button>
+          <button class="tab-btn" data-tab="tab-stress">Rigging & Load Specs</button>
+        </div>
+
+        <!-- Tab 1: SVG Blueprint -->
+        <div id="tab-blueprint" class="tab-content active">
+          <div class="blueprint-container">
+            <div class="canvas-wrapper">
+              <svg id="canopy-svg" viewBox="0 0 400 400" width="100%" height="100%">
+                <!-- Dynamic SVG elements rendered via script.js -->
+              </svg>
+            </div>
+            <div class="blueprint-sidebar">
+              <h3>Gore Panel Dimensions</h3>
+              <ul class="spec-list" id="gore-specs">
+                <!-- Populated dynamically -->
+              </ul>
+              <div class="blueprint-legend">
+                <span class="legend-item"><span class="dot primary"></span> Gore Template</span>
+                <span class="legend-item"><span class="dot secondary"></span> Seam Allowance (10mm)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Cut List -->
+        <div id="tab-cutlist" class="tab-content">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Quantity</th>
+                  <th>Dimensions / Specs</th>
+                  <th>Material Required</th>
+                </tr>
+              </thead>
+              <tbody id="cutlist-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Stress & Rigging -->
+        <div id="tab-stress" class="tab-content">
+          <div class="stress-grid">
+            <div class="stress-box">
+              <h4>Shock Load Force</h4>
+              <p class="stress-num" id="res-shock-load">--</p>
+              <p class="stress-desc">Calculated peak deployment shock force considering dynamic deceleration.</p>
+            </div>
+            <div class="stress-box">
+              <h4>Minimum Shroud Line Strength</h4>
+              <p class="stress-num" id="res-line-strength">--</p>
+              <p class="stress-desc">Required breaking strength per line incorporating safety factor.</p>
+            </div>
+            <div class="stress-box">
+              <h4>Total Shroud Line Length</h4>
+              <p class="stress-num" id="res-total-lines">--</p>
+              <p class="stress-desc">Total linear cordage required for all bridle and suspension lines.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for Export -->
+  <div id="export-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Parachute Design Blueprint Summary</h3>
+        <button id="modal-close" class="btn-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="export-text"></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-copy" class="btn btn-primary">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
