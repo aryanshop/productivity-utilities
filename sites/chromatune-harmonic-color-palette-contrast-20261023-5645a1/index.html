@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaTune: Harmonic Color Palette & Contrast Matrix Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    <path d="M2 12h20"></path>
+                </svg>
+                <h1>ChromaTune</h1>
+            </div>
+            <p class="tagline">Harmonic Color Suite & WCAG Contrast Matrix</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Controls Panel -->
+            <section class="panel controls-panel" aria-labelledby="controls-heading">
+                <h2 id="controls-heading" class="visually-hidden">Palette Controls</h2>
+                
+                <div class="control-group">
+                    <label for="base-color-input">Base Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="base-color-input" value="#4f46e5">
+                        <input type="text" id="base-color-text" value="#4f46e5" maxlength="7">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="harmony-select">Harmony Rule</label>
+                    <select id="harmony-select">
+                        <option value="complementary">Complementary</option>
+                        <option value="analogous" selected>Analogous</option>
+                        <option value="triadic">Triadic</option>
+                        <option value="split">Split-Complementary</option>
+                        <option value="monochromatic">Monochromatic</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="shade-count-range">Palette Steps: <span id="shade-count-val">5</span></label>
+                    <input type="range" id="shade-count-range" min="3" max="9" step="2" value="5">
+                </div>
+
+                <div class="control-actions">
+                    <button id="btn-randomize" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        Randomize
+                    </button>
+                    <button id="btn-export" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export CSS / JSON
+                    </button>
+                </div>
+            </section>
+
+            <!-- Palette & Harmony Swatches -->
+            <section class="panel palette-panel" aria-labelledby="palette-heading">
+                <div class="panel-header">
+                    <h2 id="palette-heading">Active Palette & Harmonious Swatches</h2>
+                    <span class="badge" id="palette-count-badge">5 swatches</span>
+                </div>
+                <div class="swatch-container" id="swatch-container">
+                    <!-- Dynamically injected swatches -->
+                </div>
+            </section>
+
+            <!-- WCAG Contrast Matrix & Accessibility Auditor -->
+            <section class="panel contrast-panel" aria-labelledby="contrast-heading">
+                <div class="panel-header">
+                    <h2 id="contrast-heading">WCAG Accessibility Matrix</h2>
+                    <div class="accessibility-filters">
+                        <label for="vision-filter">Vision Simulation:</label>
+                        <select id="vision-filter">
+                            <option value="normal">Normal Vision</option>
+                            <option value="protanopia">Protanopia (Red-Blind)</option>
+                            <option value="deuteranopia">Deuteranopia (Green-Blind)</option>
+                            <option value="tritanopia">Tritanopia (Blue-Blind)</option>
+                            <option value="achromatopsia">Achromatopsia (Monochrome)</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="panel-desc">Matrix of foreground text vs. background swatches tested against WCAG 2.1 contrast guidelines.</p>
+                <div class="matrix-wrapper">
+                    <table class="contrast-table" id="contrast-table">
+                        <!-- Dynamically populated table -->
+                    </table>
+                </div>
+            </section>
+
+            <!-- Live UI Component Preview Sandbox -->
+            <section class="panel preview-panel" aria-labelledby="preview-heading">
+                <div class="panel-header">
+                    <h2 id="preview-heading">UI Component Preview Sandbox</h2>
+                    <span class="sub-note">Test live UI elements styled with your palette</span>
+                </div>
+                <div class="ui-sandbox" id="ui-sandbox">
+                    <div class="preview-card">
+                        <div class="preview-card-header">
+                            <span class="preview-badge" id="prev-badge-el">Active Plan</span>
+                            <h3>Project Dashboard</h3>
+                        </div>
+                        <p>This live card demonstrates how your primary, secondary, and accent colors harmonize across functional interface elements.</p>
+                        <div class="preview-actions">
+                            <button class="preview-btn primary" id="prev-btn-primary">Primary Action</button>
+                            <button class="preview-btn secondary" id="prev-btn-secondary">Secondary</button>
+                        </div>
+                    </div>
+                    <div class="preview-banner" id="prev-banner-el">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <span>System notification: Palette successfully synchronized across components.</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Export Modal -->
+        <div class="modal-backdrop" id="export-modal" aria-hidden="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Export Palette Code</h3>
+                    <button class="modal-close" id="modal-close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="tab-bar">
+                        <button class="tab-btn active" data-tab="css">CSS Variables</button>
+                        <button class="tab-btn" data-tab="json">JSON Format</button>
+                    </div>
+                    <pre class="code-output" id="code-output"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btn-copy-code">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast" aria-live="polite">Copied to clipboard!</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
