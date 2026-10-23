@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroStitch: Parametric Parachute & Aerodynamic Decelerator Designer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+                <h1>AeroStitch</h1>
+            </div>
+            <p class="tagline">Parametric Parachute & Aerodynamic Decelerator Design Suite</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left Sidebar: Controls & Parameters -->
+            <section class="control-panel">
+                <div class="panel-section">
+                    <h2>Flight Parameters</h2>
+                    <div class="input-group">
+                        <label for="payloadMass">Payload Mass (g)</label>
+                        <div class="range-wrap">
+                            <input type="range" id="payloadMassRange" min="20" max="5000" step="10" value="350">
+                            <input type="number" id="payloadMass" min="20" max="5000" value="350">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="targetSpeed">Target Descent Speed (m/s)</label>
+                        <div class="range-wrap">
+                            <input type="range" id="targetSpeedRange" min="1.0" max="15.0" step="0.5" value="4.5">
+                            <input type="number" id="targetSpeed" min="1.0" max="15.0" step="0.1" value="4.5">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="airDensity">Air Density (kg/m³)</label>
+                        <select id="airDensity">
+                            <option value="1.225" selected>Sea Level Standard (1.225)</option>
+                            <option value="1.112">1,000m Altitude (1.112)</option>
+                            <option value="1.007">2,000m Altitude (1.007)</option>
+                            <option value="0.909">3,000m Altitude (0.909)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>Canopy Geometry</h2>
+                    <div class="input-group">
+                        <label for="canopyType">Canopy Architecture</label>
+                        <select id="canopyType">
+                            <option value="hemispherical" selected>Hemispherical (Cd ~ 0.75)</option>
+                            <option value="flatCircular">Flat Circular (Cd ~ 1.50)</option>
+                            <option value="annular">Annular / Ring (Cd ~ 0.85)</option>
+                            <option value="cruciform">Cruciform (Cd ~ 0.80)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="goreCount">Gore Count (Panels)</label>
+                        <select id="goreCount">
+                            <option value="4">4 Gores</option>
+                            <option value="6">6 Gores</option>
+                            <option value="8" selected>8 Gores</option>
+                            <option value="12">12 Gores</option>
+                            <option value="16">16 Gores</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="spillHole">Spill Hole Diameter Ratio (%)</label>
+                        <div class="range-wrap">
+                            <input type="range" id="spillHoleRange" min="0" max="25" step="1" value="5">
+                            <input type="number" id="spillHole" min="0" max="25" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>Fabric & Shrouds</h2>
+                    <div class="input-group">
+                        <label for="fabricWeight">Fabric GSM (g/m²)</label>
+                        <input type="number" id="fabricWeight" min="10" max="200" value="45">
+                    </div>
+                    <div class="input-group">
+                        <label for="shroudLines">Shroud Line Count</label>
+                        <select id="shroudLines">
+                            <option value="4">4 Lines</option>
+                            <option value="8" selected>8 Lines</option>
+                            <option value="12">12 Lines</option>
+                            <option value="16">16 Lines</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="safetyFactor">Shock Cord Safety Factor</label>
+                        <input type="number" id="safetyFactor" min="1.5" max="10.0" step="0.5" value="4.0">
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="btnReset" class="btn secondary">Reset Defaults</button>
+                    <button id="btnPrint" class="btn primary">Export Blueprint & Cut List</button>
+                </div>
+            </section>
+
+            <!-- Right Workspace: Visuals & Metrics -->
+            <section class="display-panel">
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Nominal Diameter</span>
+                        <span class="metric-val" id="resDiameter">--</span>
+                        <span class="metric-unit">cm</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Surface Area</span>
+                        <span class="metric-val" id="resArea">--</span>
+                        <span class="metric-unit">m²</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Total Canopy Weight</span>
+                        <span class="metric-val" id="resWeight">--</span>
+                        <span class="metric-unit">grams</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Kinetic Energy @ Impact</span>
+                        <span class="metric-val" id="resEnergy">--</span>
+                        <span class="metric-unit">Joules</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Blueprint Viewport -->
+                <div class="viewport-card">
+                    <div class="viewport-header">
+                        <h3>Interactive Gore & Assembly Blueprint</h3>
+                        <div class="view-tabs">
+                            <button class="tab-btn active" data-view="gore">Single Gore Template</button>
+                            <button class="tab-btn" data-view="top">Top Assembly View</button>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <svg id="blueprintSvg" viewBox="0 0 600 400" width="100%" height="100%">
+                            <!-- Dynamically injected SVG content -->
+                        </svg>
+                    </div>
+                    <div class="viewport-footer" id="blueprintSpecs">
+                        <!-- Specs summary -->
+                    </div>
+                </div>
+
+                <!-- Detailed Cut List & Material Breakdown -->
+                <div class="specs-card">
+                    <h3>Fabric Cut List & Material Requirements</h3>
+                    <div class="table-wrap">
+                        <table id="cutListTable">
+                            <thead>
+                               <tr>
+                                   <th>Component</th>
+                                   <th>Quantity</th>
+                                   <th>Dimensions</th>
+                                   <th>Material Spec</th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Export Modal Overlay -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Parachute Blueprint Specification Sheet</h2>
+                <button id="btnCloseModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalPrintArea">
+                <!-- Printable text summary -->
+            </div>
+            <div class="modal-footer">
+                <button id="btnConfirmPrint" class="btn primary">Print / Save PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
