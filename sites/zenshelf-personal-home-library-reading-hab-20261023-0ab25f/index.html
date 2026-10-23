@@ -1,0 +1,267 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenShelf: Personal Home Library & Reading Vault</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo-icon">📚</div>
+      <h1>ZenShelf</h1>
+    </div>
+    <p class="tagline">Your private sanctuary for books, reading streaks, and memorable quotes.</p>
+    <nav class="app-nav">
+      <button class="nav-btn active" data-tab="library">Library</button>
+      <button class="nav-btn" data-tab="tracker">Reading Session</button>
+      <button class="nav-btn" data-tab="quotes">Quote Vault</button>
+      <button class="nav-btn" data-tab="stats">Analytics</button>
+    </nav>
+  </header>
+
+  <main class="main-container">
+    <!-- TAB 1: LIBRARY -->
+    <section id="library-tab" class="tab-content active">
+      <div class="toolbar">
+        <div class="search-group">
+          <input type="text" id="search-input" placeholder="Search by title, author, or genre...">
+          <select id="filter-status">
+            <option value="all">All Statuses</option>
+            <option value="Want to Read">Want to Read</option>
+            <option value="Currently Reading">Currently Reading</option>
+            <option value="Finished">Finished</option>
+            <option value="DNF">DNF</option>
+          </select>
+        </div>
+        <button id="open-add-modal-btn" class="primary-btn">+ Add New Book</button>
+      </div>
+
+      <div class="stats-banner">
+        <div class="stat-card">
+          <span class="stat-num" id="stat-total">0</span>
+          <span class="stat-label">Total Books</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-reading">0</span>
+          <span class="stat-label">Currently Reading</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-finished">0</span>
+          <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-pages">0</span>
+          <span class="stat-label">Pages Read</span>
+        </div>
+      </div>
+
+      <div id="book-grid" class="book-grid">
+        <!-- Dynamic Book Cards -->
+      </div>
+      <div id="empty-library" class="empty-state hidden">
+        <p>Your library is currently empty. Add your first book to begin!</p>
+      </div>
+    </section>
+
+    <!-- TAB 2: READING SESSION -->
+    <section id="tracker-tab" class="tab-content">
+      <div class="tracker-layout">
+        <div class="timer-card">
+          <h2>Active Reading Session</h2>
+          <p class="timer-subtitle">Track your time and page progress in real-time.</p>
+          
+          <div class="form-group">
+            <label for="active-book-select">Select Book:</label>
+            <select id="active-book-select">
+              <option value="">-- Choose a book you're reading --</option>
+            </select>
+          </div>
+
+          <div class="timer-display" id="timer-display">00:00:00</div>
+
+          <div class="timer-controls">
+            <button id="timer-start-btn" class="primary-btn">Start Timer</button>
+            <button id="timer-pause-btn" class="secondary-btn" disabled>Pause</button>
+            <button id="timer-stop-btn" class="danger-btn" disabled>Finish & Log</button>
+          </div>
+
+          <div class="session-log-form hidden" id="session-log-form">
+            <h3>Log Session Progress</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pages-read-input">Pages Read (This Session):</label>
+                <input type="number" id="pages-read-input" min="0" value="0">
+              </div>
+            </div>
+            <button id="save-session-btn" class="primary-btn">Save to Book Record</button>
+          </div>
+        </div>
+
+        <div class="recent-sessions-card">
+          <h3>Recent Reading Logs</h3>
+          <ul id="session-list" class="session-list">
+            <!-- Dynamic session logs -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: QUOTE VAULT -->
+    <section id="quotes-tab" class="tab-content">
+      <div class="toolbar">
+        <h3>Memorable Passages & Quotes</h3>
+        <button id="open-quote-modal-btn" class="primary-btn">+ Add Quote</button>
+      </div>
+      <div id="quote-grid" class="quote-grid">
+        <!-- Dynamic Quotes -->
+      </div>
+      <div id="empty-quotes" class="empty-state hidden">
+        <p>No quotes saved yet. Capture your favorite lines while reading!</p>
+      </div>
+    </section>
+
+    <!-- TAB 4: ANALYTICS & BACKUP -->
+    <section id="stats-tab" class="tab-content">
+      <div class="stats-container">
+        <div class="card">
+          <h3>Annual Reading Goal</h3>
+          <div class="goal-widget">
+            <div class="goal-info">
+              <span id="goal-text">0 / 12 books read</span>
+              <button id="edit-goal-btn" class="text-btn">Edit Goal</button>
+            </div>
+            <div class="progress-bar-bg">
+              <div id="goal-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Data Management & Backup</h3>
+          <p class="card-desc">Export your library, reading sessions, and quotes as a JSON backup file or restore from a previous backup.</p>
+          <div class="backup-actions">
+            <button id="export-btn" class="primary-btn">Export Data (JSON)</button>
+            <label for="import-file" class="secondary-btn file-upload-label">
+              Import Data
+              <input type="file" id="import-file" accept=".json">
+            </label>
+            <button id="reset-btn" class="danger-btn">Clear All Data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ADD/EDIT BOOK MODAL -->
+  <div id="book-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="book-modal-title">Add New Book</h2>
+        <button class="close-btn" id="close-book-modal">&times;</button>
+      </div>
+      <form id="book-form">
+        <input type="hidden" id="book-id">
+        <div class="form-group">
+          <label for="book-title">Book Title *</label>
+          <input type="text" id="book-title" required placeholder="e.g., Dune">
+        </div>
+        <div class="form-group">
+          <label for="book-author">Author *</label>
+          <input type="text" id="book-author" required placeholder="e.g., Frank Herbert">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="book-genre">Genre</label>
+            <input type="text" id="book-genre" placeholder="e.g., Sci-Fi">
+          </div>
+          <div class="form-group">
+            <label for="book-pages">Total Pages</label>
+            <input type="number" id="book-pages" min="1" placeholder="412">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="book-status">Reading Status</label>
+            <select id="book-status">
+              <option value="Want to Read">Want to Read</option>
+              <option value="Currently Reading">Currently Reading</option>
+              <option value="Finished">Finished</option>
+              <option value="DNF">DNF</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="book-current-page">Current Page</label>
+            <input type="number" id="book-current-page" min="0" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="book-notes">Personal Notes / Review</label>
+          <textarea id="book-notes" rows="3" placeholder="What did you think of this book?"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancel-book-modal" class="secondary-btn">Cancel</button>
+          <button type="submit" class="primary-btn">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD QUOTE MODAL -->
+  <div id="quote-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Memorable Quote</h2>
+        <button class="close-btn" id="close-quote-modal">&times;</button>
+      </div>
+      <form id="quote-form">
+        <div class="form-group">
+          <label for="quote-text">Quote / Passage *</label>
+          <textarea id="quote-text" rows="4" required placeholder="&quot;I must not fear. Fear is the mind-killer...&quot;"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="quote-book-select">Book Source</label>
+          <select id="quote-book-select">
+            <option value="">-- Select Book --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="quote-page">Page Number (Optional)</label>
+          <input type="number" id="quote-page" placeholder="e.g., 42">
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancel-quote-modal" class="secondary-btn">Cancel</button>
+          <button type="submit" class="primary-btn">Save Quote</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GOAL EDIT MODAL -->
+  <div id="goal-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Set Annual Reading Goal</h2>
+        <button class="close-btn" id="close-goal-modal">&times;</button>
+      </div>
+      <form id="goal-form">
+        <div class="form-group">
+          <label for="goal-input">Target Books for the Year:</label>
+          <input type="number" id="goal-input" min="1" value="12" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancel-goal-modal" class="secondary-btn">Cancel</button>
+          <button type="submit" class="primary-btn">Update Goal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>ZenShelf &bull; Privacy-first personal reading vault stored in your browser.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
