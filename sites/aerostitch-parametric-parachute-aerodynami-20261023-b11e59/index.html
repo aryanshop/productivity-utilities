@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroStitch: Parametric Parachute & Aerodynamic Decelerator Designer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28">
+                    <path fill="currentColor" d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,4C16.42,4 20,7.58 20,12C20,13.38 19.65,14.68 19.03,15.81L12,9L4.97,15.81C4.35,14.68 4,13.38 4,12C4,7.58 7.58,4 12,4M12,6C8.69,6 6,8.69 6,12C6,15.31 8.69,18 12,18C15.31,18 18,15.31 18,12C18,8.69 15.31,6 12,6Z" />
+                </svg>
+                <h1>AeroStitch</h1>
+            </div>
+            <p class="tagline">Parametric Parachute &amp; Decelerator Design Workbench</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panel / Inputs -->
+        <section class="control-panel">
+            <div class="card">
+                <h2>Payload &amp; Descent Specs</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="payloadMass">Payload Mass (kg)</label>
+                        <input type="number" id="payloadMass" value="2.5" min="0.1" max="500" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="targetSpeed">Target Landing Speed (m/s)</label>
+                        <input type="number" id="targetSpeed" value="4.5" min="0.5" max="30" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="canopyType">Canopy Geometry</label>
+                        <select id="canopyType">
+                            <option value="hemispherical">Hemispherical (Dome)</option>
+                            <option value="flatCircular">Flat Circular</option>
+                            <option value="cruciform">Cruciform (Square)</option>
+                            <option value="annular">Annular (Slot Vent)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="dragCoeff">Drag Coefficient ($C_d$)</label>
+                        <input type="number" id="dragCoeff" value="0.75" min="0.3" max="2.0" step="0.05">
+                    </div>
+                    <div class="input-group">
+                        <label for="goreCount">Number of Gores / Panels</label>
+                        <input type="number" id="goreCount" value="8" min="4" max="32" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="fabricDensity">Fabric Weight ($g/m^2$)</label>
+                        <input type="number" id="fabricDensity" value="45" min="10" max="300" step="5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Environmental &amp; Safety Factors</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="airDensity">Air Density ($kg/m^3$)</label>
+                        <input type="number" id="airDensity" value="1.225" min="0.5" max="1.5" step="0.005">
+                    </div>
+                    <div class="input-group">
+                        <label for="safetyFactor">Shock Load Safety Factor</label>
+                        <input type="number" id="safetyFactor" value="3.5" min="1.5" max="10" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="ventRatio">Apex Vent Ratio (%)</label>
+                        <input type="number" id="ventRatio" value="5" min="0" max="20" step="1">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Output & Visualizations -->
+        <section class="output-section">
+            <!-- Calculated Results Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Nominal Diameter</span>
+                    <span class="metric-value" id="resDiameter">--</span>
+                    <span class="metric-unit">meters</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Surface Area ($S$)</span>
+                    <span class="metric-value" id="resArea">--</span>
+                    <span class="metric-unit">$m^2$</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Peak Opening Shock</span>
+                    <span class="metric-value" id="resForce">--</span>
+                    <span class="metric-label-sub" id="resForceKg">--</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Material Yardage Est.</span>
+                    <span class="metric-value" id="resYardage">--</span>
+                    <span class="metric-unit">linear meters (1.5m wide)</span>
+                </div>
+            </div>
+
+            <!-- Visualization Workspace -->
+            <div class="visual-workspace">
+                <div class="card blueprint-card">
+                    <div class="card-header">
+                        <h2>Interactive Blueprint &amp; Gore Template</h2>
+                        <div class="view-toggles">
+                            <button class="btn-toggle active" data-view="canopy">Canopy Profile</button>
+                            <button class="btn-toggle" data-view="gore">Single Gore Layout</button>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <svg id="blueprintSvg" viewBox="0 0 600 400" width="100%" height="100%">
+                            <!-- Dynamic SVG generated via script.js -->
+                        </svg>
+                    </div>
+                    <div class="blueprint-meta" id="blueprintMeta">
+                        <span>Scale: 1:10</span>
+                        <span>Units: Millimeters</span>
+                    </div>
+                </div>
+
+                <div class="card specs-breakdown">
+                    <h2>Cut List &amp; Fabrication Specs</h2>
+                    <div class="table-wrapper">
+                        <table id="cutListTable">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Dimensions</th>
+                                    <th>Qty</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="actions-row">
+                        <button id="btnExportJson" class="btn btn-primary">Export Blueprint JSON</button>
+                        <button id="btnPrint" class="btn btn-secondary">Print Specs</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AeroStitch &mdash; Parametric Parachute &amp; Aerodynamic Decelerator Designer &bull; Pure Client-Side Engineering Tool</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
