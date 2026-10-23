@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StellarShift: Interplanetary Habitats & Gravity Offset Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="stellar-icon">🪐</div>
+                <div>
+                    <h1>StellarShift</h1>
+                    <p class="subtitle">Interplanetary Habitats & Gravity Offset Calculator</p>
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="pulse-dot"></span> Universal Standard Time (UST)
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Control Panel / Inputs -->
+            <section class="panel input-panel">
+                <h2>Mission Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="earth-datetime">Earth Reference Epoch</label>
+                    <input type="datetime-local" id="earth-datetime">
+                    <button id="btn-now" class="btn-secondary">Set to Now</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="habitat-select">Destination Habitat</label>
+                    <select id="habitat-select">
+                        <option value="moon">Moon Base (Alpha)</option>
+                        <option value="mars" selected>Mars Colony (Olympus)</option>
+                        <option value="europa">Europa Sub-Surface Outpost</option>
+                        <option value="titan">Titan Hydrocarbon Station</option>
+                        <option value="starship">Relativistic Starship (0.8c)</option>
+                    </select>
+                </div>
+
+                <div class="input-group starship-controls hidden" id="starship-group">
+                    <label for="velocity-range">Velocity (% of Light Speed): <span id="velocity-val">80</span>%</label>
+                    <input type="range" id="velocity-range" min="10" max="99" value="80">
+                </div>
+
+                <div class="action-row">
+                    <button id="btn-calculate" class="btn-primary">Run Relativistic Computation</button>
+                </div>
+            </section>
+
+            <!-- Results & Dashboard -->
+            <section class="panel results-panel">
+                <div class="results-header">
+                    <h2>Temporal & Gravitational Telemetry</h2>
+                    <span id="active-habitat-badge" class="habitat-badge">Mars Colony</span>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Local Solar Day (Sol)</span>
+                        <span class="metric-value" id="res-sol">--</span>
+                        <span class="metric-sub" id="res-sol-desc">Solar day length</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Surface Gravity</span>
+                        <span class="metric-value" id="res-gravity">--</span>
+                        <span class="metric-sub" id="res-gravity-desc">Relative to Earth (1g)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Time Dilation Offset</span>
+                        <span class="metric-value" id="res-dilation">--</span>
+                        <span class="metric-sub" id="res-dilation-desc">Micro-seconds / Earth day</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Proper Elapsed Time</span>
+                        <span class="metric-value" id="res-proper">--</span>
+                        <span class="metric-sub" id="res-proper-desc">Traveler vs Earth observer</span>
+                    </div>
+                </div>
+
+                <!-- Day-Night Cycle Visualizer -->
+                <div class="visualizer-box">
+                    <h3>Day / Night Phase Synchronizer</h3>
+                    <div class="orbit-canvas-container">
+                        <canvas id="orbit-canvas" width="600" height="160"></canvas>
+                    </div>
+                    <div class="timeline-slider-wrap">
+                        <label for="time-scrubber">Simulate 24-Hour Earth Shift</label>
+                        <input type="range" id="time-scrubber" min="0" max="1440" value="720">
+                        <div class="time-labels">
+                            <span>00:00 Earth</span>
+                            <span>12:00 Earth</span>
+                            <span>24:00 Earth</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interplanetary Meeting Planner -->
+                <div class="meeting-planner">
+                    <h3>Multi-Planetary Meeting Overlap Window</h3>
+                    <p class="desc">Find overlapping waking hours between Earth Command and the selected habitat.</p>
+                    <div class="meeting-results" id="meeting-window-box">
+                        Calculating optimal communication sync window...
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; StellarShift Utilities &bull; Privacy First &bull; Zero Network Requests</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
