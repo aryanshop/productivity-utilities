@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenithType: Micro-Typography Rhythm & Vertical Rhythm Grid Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>ZenithType</h1>
+            <p class="tagline">Micro-Typography Rhythm & Vertical Grid Calculator</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-reset" class="btn secondary">Reset Defaults</button>
+            <button id="btn-export" class="btn primary">Export CSS Variables</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Control Panel Sidebar -->
+        <aside class="control-panel">
+            <section class="panel-section">
+                <h2>Typography Scale</h2>
+                
+                <div class="input-group">
+                    <label for="base-size">Base Font Size (px)</label>
+                    <div class="range-with-value">
+                        <input type="range" id="base-size" min="12" max="24" value="16" step="1">
+                        <span id="base-size-val">16px</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="scale-ratio">Modular Scale</label>
+                    <select id="scale-ratio">
+                        <option value="1.067">Minor Second (1.067)</option>
+                        <option value="1.125">Major Second (1.125)</option>
+                        <option value="1.200" selected>Minor Third (1.200)</option>
+                        <option value="1.250">Major Third (1.250)</option>
+                        <option value="1.333">Perfect Fourth (1.333)</option>
+                        <option value="1.414">Augmented Fourth (1.414)</option>
+                        <option value="1.500">Perfect Fifth (1.500)</option>
+                        <option value="1.618">Golden Ratio (1.618)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="base-line-height">Base Line Height (Unitless)</label>
+                    <div class="range-with-value">
+                        <input type="range" id="base-line-height" min="1.2" max="2.0" value="1.5" step="0.05">
+                        <span id="base-line-height-val">1.5</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h2>Grid & Rhythm</h2>
+                
+                <div class="input-group">
+                    <label for="grid-unit">Baseline Grid Unit (px)</label>
+                    <div class="range-with-value">
+                        <input type="range" id="grid-unit" min="2" max="12" value="4" step="1">
+                        <span id="grid-unit-val">4px</span>
+                    </div>
+                </div>
+
+                <div class="input-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="toggle-grid" checked>
+                        Show Baseline Grid Overlay
+                    </label>
+                </div>
+
+                <div class="input-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="toggle-snapping" checked>
+                        Align Elements to Grid
+                    </label>
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h2>Computed Font Scale</h2>
+                <div id="scale-readout" class="scale-readout-list">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </section>
+        </aside>
+
+        <!-- Live Preview Area -->
+        <section class="preview-workspace">
+            <div class="workspace-toolbar">
+                <div class="view-mode-buttons">
+                    <button class="mode-btn active" data-mode="desktop">Desktop (1200px)</button>
+                    <button class="mode-btn" data-mode="tablet">Tablet (768px)</button>
+                    <button class="mode-btn" data-mode="mobile">Mobile (375px)</button>
+                </div>
+                <div class="preview-info">
+                    <span id="rhythm-score">Vertical Rhythm: Perfect</span>
+                </div>
+            </div>
+
+            <div class="preview-viewport-wrapper">
+                <div id="preview-canvas" class="preview-canvas desktop">
+                    <div id="baseline-grid-overlay" class="grid-overlay active"></div>
+                    
+                    <article class="preview-article">
+                        <header class="preview-header">
+                            <span class="preview-meta">Typography Guidelines &bull; 4 min read</span>
+                            <h1 class="type-h1">Designing with Mathematical & Vertical Rhythm</h1>
+                            <p class="type-lead">Crafting legible, calm, and mathematically sound user interfaces requires careful synchronization between typographic scales and structural spacing grids.</p>
+                        </header>
+
+                        <div class="preview-body">
+                            <h2 class="type-h2">The Foundation of Modular Scales</h2>
+                            <p>Modular scales are analogous to musical scales; a foundational frequency multiplied by consistent ratios produces harmonious chords. In digital design, establishing a dependable progression ensures visual hierarchy feels natural and consistent across breakpoints.</p>
+                            
+                            <div class="preview-callout">
+                                <p><strong>Pro Tip:</strong> When line-heights are exact integer multiples of your baseline grid, text baselines snap effortlessly into place, eliminating optical jitter across multi-column layouts.</p>
+                            </div>
+
+                            <h3 class="type-h3">Establishing Consistent Spacing</h3>
+                            <p>By defining margins, paddings, and header offsets as multiples of your base grid unit (e.g., 4px, 8px, 16px, 24px), vertical alignment remains immaculate even when content wraps dynamically.</p>
+
+                            <ul>
+                                <li>Consistent rhythm reduces cognitive fatigue.</li>
+                                <li>Modular scales eliminate arbitrary sizing guesses.</li>
+                                <li>CSS custom properties make responsive adjustments seamless.</li>
+                            </ul>
+
+                            <h4 class="type-h4">Code Implementation Example</h4>
+                            <p>Exporting your calculated CSS variables allows you to drop precise tokens straight into your stylesheet without manual calculation overhead.</p>
+                        </div>
+
+                        <footer class="preview-footer">
+                            <p class="type-small">Published locally via ZenithType Sandbox. No external requests made.</p>
+                        </footer>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>Generated CSS Tokens</h2>
+                <button id="close-modal" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-body">
+                <p>Copy these production-ready CSS custom properties for your project:</p>
+                <pre><code id="css-code-output">/* Loading CSS tokens... */</code></pre>
+            </div>
+            <footer class="modal-footer">
+                <button id="btn-copy-code" class="btn primary">Copy to Clipboard</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
