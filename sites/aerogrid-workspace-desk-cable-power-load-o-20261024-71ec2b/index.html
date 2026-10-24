@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroGrid: Workspace Desk Cable & Power Load Optimizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        <h1>AeroGrid</h1>
+      </div>
+      <p class="tagline">Workspace Desk Power & Cable Management Optimizer</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Controls & Settings Panel -->
+    <section class="settings-card card">
+      <h2>Circuit & Electricity Settings</h2>
+      <div class="settings-grid">
+        <div class="input-group">
+          <label for="circuitVoltage">Circuit Voltage (V)</label>
+          <select id="circuitVoltage">
+            <option value="120" selected>120V (North America)</option>
+            <option value="230">230V (Europe / UK)</option>
+            <option value="100">100V (Japan)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="circuitAmps">Circuit Breaker Limit (A)</label>
+          <input type="number" id="circuitAmps" value="15" min="5" max="30">
+        </div>
+        <div class="input-group">
+          <label for="electricityRate">Electricity Rate ($/kWh)</label>
+          <input type="number" id="electricityRate" value="0.15" step="0.01" min="0">
+        </div>
+        <div class="input-group">
+          <label for="dailyUsageHours">Avg. Daily Usage (Hours)</label>
+          <input type="number" id="dailyUsageHours" value="8" min="1" max="24">
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics Summary Dashboard -->
+    <section class="metrics-dashboard">
+      <div class="metric-card card">
+        <span class="metric-label">Total Power Load</span>
+        <div class="metric-value" id="totalWatts">0 W</div>
+        <span class="metric-sub" id="totalAmps">0.00 A</span>
+      </div>
+      <div class="metric-card card">
+        <span class="metric-label">Circuit Capacity Used</span>
+        <div class="metric-value" id="capacityPercent">0%</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="capacityBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="metric-card card">
+        <span class="metric-label">Estimated Monthly Cost</span>
+        <div class="metric-value" id="monthlyCost">$0.00</div>
+        <span class="metric-sub" id="kwhMonth">0 kWh / mo</span>
+      </div>
+      <div class="metric-card card">
+        <span class="metric-label">Surge Protector Status</span>
+        <div class="metric-value status-safe" id="surgeStatus">Optimal</div>
+        <span class="metric-sub" id="outletCount">0 Plugs Required</span>
+      </div>
+    </section>
+
+    <!-- Main Workspace Area: Hardware Inventory & Cable Matrix -->
+    <div class="workspace-split">
+      <!-- Hardware Inventory Section -->
+      <section class="inventory-section card">
+        <div class="section-header">
+          <h2>Hardware Inventory</h2>
+          <button id="addDeviceBtn" class="btn btn-primary">+ Add Device</button>
+        </div>
+
+        <div class="device-table-wrapper">
+          <table id="deviceTable">
+            <thead>
+              <tr>
+                <th>Device Name</th>
+                <th>Category</th>
+                <th>Power (W)</th>
+                <th>Plugs</th>
+                <th>Cable (ft)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="deviceTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="preset-buttons">
+          <span class="preset-label">Quick Load Presets:</span>
+          <button class="btn btn-subtle" data-preset="minimalist">Minimalist Laptop</button>
+          <button class="btn btn-subtle" data-preset="gaming">High-End Gaming & Dual Monitor</button>
+          <button class="btn btn-subtle" data-preset="creator">Video Editing / Dev Studio</button>
+          <button class="btn btn-subtle" data-preset="clear">Clear All</button>
+        </div>
+      </section>
+
+      <!-- Cable Routing & Visualizer Section -->
+      <section class="routing-section card">
+        <h2>Cable Length & Routing Estimator</h2>
+        <p class="section-desc">Estimated total cable run needed from desk surface to power strip / hub.</p>
+        
+        <div class="cable-stats-grid">
+          <div class="cable-stat">
+            <span class="stat-label">Total Cable Length</span>
+            <span class="stat-val" id="totalCableLength">0 ft</span>
+          </div>
+          <div class="cable-stat">
+            <span class="stat-label">Longest Cable Run</span>
+            <span class="stat-val" id="maxCableLength">0 ft</span>
+          </div>
+        </div>
+
+        <div class="cable-routing-canvas-wrapper">
+          <canvas id="routingCanvas" width="400" height="220"></canvas>
+        </div>
+
+        <div class="action-row">
+          <button id="exportJsonBtn" class="btn btn-secondary">Export Setup JSON</button>
+          <button id="importJsonBtn" class="btn btn-secondary">Import Setup</button>
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Add/Edit Modal -->
+  <div id="deviceModal" class="modal">
+    <div class="modal-content card">
+      <h3 id="modalTitle">Add Hardware Device</h3>
+      <form id="deviceForm">
+        <input type="hidden" id="editIndex" value="-1">
+        <div class="input-group">
+          <label for="deviceName">Device Name</label>
+          <input type="text" id="deviceName" required placeholder="e.g. 27" 4K Monitor">
+        </div>
+        <div class="input-group">
+          <label for="deviceCategory">Category</label>
+          <select id="deviceCategory">
+            <option value="Display">Display / Monitor</option>
+            <option value="Computer">Computer / Laptop</option>
+            <option value="Audio">Audio / Speakers</option>
+            <option value="Lighting">Lighting / Lamp</option>
+            <option value="Peripheral">Peripheral / Accessory</option>
+            <option value="Charger">USB / Phone Charger</option>
+          </select>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="deviceWatts">Power Consumption (Watts)</label>
+            <input type="number" id="deviceWatts" required min="0" max="2000" value="45">
+          </div>
+          <div class="input-group">
+            <label for="devicePlugs">AC Plugs Required</label>
+            <input type="number" id="devicePlugs" required min="0" max="4" value="1">
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="deviceCable">Cable Length to Power Strip (Feet)</label>
+          <input type="number" id="deviceCable" required min="1" max="25" value="5">
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancelModal" class="btn btn-subtle">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Device</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>AeroGrid &bull; Local-first Workspace Optimizer. No data leaves your browser.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
