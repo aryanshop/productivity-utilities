@@ -1,0 +1,162 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroVent: HVAC Room Airflow & Ventilation Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19 12H2"/>
+                </svg>
+                <h1>AeroVent</h1>
+            </div>
+            <p class="tagline">Precision Room Ventilation, ACH & Airflow Optimizer</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Inputs -->
+            <section class="panel input-panel">
+                <h2>Room Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="roomName">Room Name / Identifier</label>
+                    <input type="text" id="roomName" value="Home Office Studio" placeholder="e.g. Master Bedroom">
+                </div>
+
+                <div class="form-group">
+                    <label for="roomType">Room Activity / Type (ASHRAE Guidance)</label>
+                    <select id="roomType">
+                        <option value="office" data-ach="6">General Office / Workspace (6 ACH)</option>
+                        <option value="bedroom" data-ach="4">Living Room / Bedroom (4 ACH)</option>
+                        <option value="kitchen" data-ach="15">Kitchen / Cooking Area (15 ACH)</option>
+                        <option value="bathroom" data-ach="10">Bathroom / Restroom (10 ACH)</option>
+                        <option value="workshop" data-ach="12">Workshop / Hobby Garage (12 ACH)</option>
+                        <option value="basement" data-ach="5">Basement / Crawlspace (5 ACH)</option>
+                    </select>
+                </div>
+
+                <div class="dimension-grid">
+                    <div class="form-group">
+                        <label for="roomLength">Length (ft)</label>
+                        <input type="number" id="roomLength" value="15" min="1" max="200" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="roomWidth">Width (ft)</label>
+                        <input type="number" id="roomWidth" value="12" min="1" max="200" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="roomHeight">Height (ft)</label>
+                        <input type="number" id="roomHeight" value="9" min="5" max="50" step="0.5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="occupantCount">Number of Regular Occupants</label>
+                    <input type="number" id="occupantCount" value="2" min="0" max="50">
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="hasSmoker"> Indoor Smoking / High Odor Source
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="hasAllergies" checked> High-Efficiency HEPA Filtration Target (CADR)
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button id="calcBtn" class="btn primary">Calculate Airflow</button>
+                    <button id="saveRoomBtn" class="btn secondary">Save Room to Ledger</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Visualizer -->
+            <section class="output-column">
+                <!-- Summary Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Required Airflow</span>
+                        <span class="metric-value" id="resCfm">0</span>
+                        <span class="metric-unit">CFM (cu. ft / min)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Air Changes</span>
+                        <span class="metric-value" id="resAch">0</span>
+                        <span class="metric-unit">ACH (per hour)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Total Volume</span>
+                        <span class="metric-value" id="resVolume">0</span>
+                        <span class="metric-unit">Cubic Feet (cu. ft)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Purifier CADR</span>
+                        <span class="metric-value" id="resCadr">0</span>
+                        <span class="metric-unit">Recommended CADR</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Visualizer Panel -->
+                <div class="panel visualizer-panel">
+                    <h3>Room Air Dynamics & Circulation Visualizer</h3>
+                    <div class="canvas-container">
+                        <canvas id="roomCanvas" width="500" height="280"></canvas>
+                    </div>
+                    <div class="visualizer-legend">
+                        <span class="dot fresh"></span> Fresh Air Supply
+                        <span class="dot stale"></span> Exhaust / Return
+                        <span class="dot particle"></span> Airflow Particles
+                    </div>
+                </div>
+
+                <!-- Recommendations & Filter Schedule -->
+                <div class="panel recs-panel">
+                    <h3>Ventilation & Maintenance Recommendations</h3>
+                    <ul id="recsList" class="recs-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Saved Rooms Ledger -->
+        <section class="panel ledger-panel">
+            <div class="ledger-header">
+                <h2>Saved Room Configurations</h2>
+                <button id="clearLedgerBtn" class="btn text-btn">Clear All</button>
+            </div>
+            <div class="table-responsive">
+                <table id="ledgerTable">
+                    <thead>
+                        <tr>
+                            <th>Room Name</th>
+                            <th>Dimensions (ft)</th>
+                            <th>Volume (cu. ft)</th>
+                            <th>Target ACH</th>
+                            <th>Required CFM</th>
+                            <th>Rec. CADR</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>AeroVent HVAC Utilities &bull; Designed for clean indoor air estimation &bull; Client-side local storage</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
