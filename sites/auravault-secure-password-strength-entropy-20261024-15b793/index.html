@@ -1,0 +1,194 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Secure Password Strength & Entropy Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h1>AuraVault</h1>
+            </div>
+            <p class="tagline">Client-side cryptographic entropy analysis, vulnerability auditing & secure passphrase generator.</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Password Inspector -->
+            <section class="panel inspector-panel">
+                <div class="panel-header">
+                    <h2>Password Strength Inspector</h2>
+                    <span class="privacy-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        100% Offline & Private
+                    </span>
+                </div>
+
+                <div class="input-group">
+                    <label for="password-input">Enter password to test</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password-input" placeholder="Type or paste a password..." autocomplete="off" spellcheck="false">
+                        <button type="button" id="toggle-visibility-btn" aria-label="Toggle password visibility" title="Show/Hide password">
+                            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button type="button" class="btn-subtle" id="generate-sample-btn">Test Random Sample</button>
+                    <button type="button" class="btn-subtle" id="clear-input-btn">Clear</button>
+                </div>
+
+                <!-- Overall Rating Card -->
+                <div class="rating-card" id="rating-card">
+                    <div class="rating-header">
+                        <span class="rating-label">Security Level</span>
+                        <span class="rating-value" id="rating-text">Awaiting Input</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="strength-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <span class="metric-title">Entropy</span>
+                        <span class="metric-data" id="metric-entropy">0 bits</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-title">Length</span>
+                        <span class="metric-data" id="metric-length">0 chars</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-title">Char Pool</span>
+                        <span class="metric-data" id="metric-pool">0</span>
+                    </div>
+                </div>
+
+                <!-- Crack Times -->
+                <div class="crack-times-section">
+                    <h3>Estimated Brute-Force Crack Time</h3>
+                    <div class="crack-list">
+                        <div class="crack-item">
+                            <span class="crack-hardware">Online Attack (100 req/sec)</span>
+                            <span class="crack-time" id="crack-online">-</span>
+                        </div>
+                        <div class="crack-item">
+                            <span class="crack-hardware">Desktop GPU (10B/sec)</span>
+                            <span class="crack-time" id="crack-gpu">-</span>
+                        </div>
+                        <div class="crack-item">
+                            <span class="crack-hardware">Enterprise Cluster (1T/sec)</span>
+                            <span class="crack-time" id="crack-cluster">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vulnerabilities & Checks -->
+                <div class="checks-section">
+                    <h3>Security & Composition Audit</h3>
+                    <ul class="check-list" id="audit-check-list">
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Minimum length of 12+ characters
+                        </li>
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Uppercase & lowercase letters
+                        </li>
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Numbers & special symbols included
+                        </li>
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Free of common dictionary words
+                        </li>
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Free of keyboard walks (e.g. 'qwerty')
+                        </li>
+                        <li class="check-item pending">
+                            <span class="check-icon">•</span> Free of repeating patterns (e.g. 'abcabc')
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Right Column: Passphrase Generator & Tools -->
+            <div class="right-column">
+                <!-- Passphrase Generator Panel -->
+                <section class="panel generator-panel">
+                    <div class="panel-header">
+                        <h2>Secure Passphrase Generator</h2>
+                        <span class="badge">Diceware Style</span>
+                    </div>
+
+                    <div class="generator-output-box">
+                        <input type="text" id="passphrase-output" readonly placeholder="Click generate below...">
+                        <button type="button" id="copy-passphrase-btn" class="btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy
+                        </button>
+                    </div>
+
+                    <div class="generator-controls">
+                        <div class="control-row">
+                            <label for="word-count-slider">Word Count: <span id="word-count-val">4</span></label>
+                            <input type="range" id="word-count-slider" min="3" max="8" value="4">
+                        </div>
+
+                        <div class="checkbox-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="gen-capitalize" checked>
+                                Capitalize Words
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="gen-number" checked>
+                                Append Random Number
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="gen-symbol" checked>
+                                Append Special Symbol
+                            </label>
+                        </div>
+
+                        <div class="control-row">
+                            <label for="separator-select">Separator</label>
+                            <select id="separator-select">
+                                <option value="-">Hyphen (-)</option>
+                                <option value="_">Underscore (_)</option>
+                                <option value=".">Period (.)</option>
+                                <option value=" ">Space ( )</option>
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <button type="button" id="generate-passphrase-btn" class="btn-accent w-full">
+                            Generate New Passphrase
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Recent Test History -->
+                <section class="panel history-panel">
+                    <div class="panel-header">
+                        <h2>Local Audit Ledger</h2>
+                        <button type="button" id="clear-history-btn" class="btn-text">Clear History</button>
+                    </div>
+                    <p class="history-subtitle">Tracks entropy of passwords tested during this session (stored locally in memory).</p>
+                    <div class="history-list" id="history-list">
+                        <div class="history-empty">No passwords tested in this session yet.</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVault Security Utility &bull; Client-Side Only &bull; Zero Network Transmission</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
