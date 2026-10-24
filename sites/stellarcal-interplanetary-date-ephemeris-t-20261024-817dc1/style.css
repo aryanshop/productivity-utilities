@@ -1,0 +1,362 @@
+:root {
+    --bg-color: #0b0f19;
+    --card-bg: #131c31;
+    --card-border: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.2);
+    --accent-hover: #0ea5e9;
+    --danger: #f43f5e;
+    --success: #10b981;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Header */
+.app-header {
+    text-align: center;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+}
+
+.app-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.app-header h1 span {
+    color: var(--accent);
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Layout Grid */
+.main-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+}
+
+.full-width-card {
+    grid-column: 1 / -1;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+input[type="datetime-local"],
+select {
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="datetime-local"]:focus,
+select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--bg-color);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-secondary {
+    background: var(--card-border);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: #334155;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--card-border);
+    margin: 20px 0;
+}
+
+/* Readouts */
+.met-display,
+.signal-box {
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.met-display {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.met-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.met-value {
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Planetary Grid */
+.planet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.planet-card {
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.planet-card:hover {
+    border-color: var(--accent);
+}
+
+.planet-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.planet-icon {
+    font-size: 1.5rem;
+}
+
+.planet-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.planet-title span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.planet-data {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.data-label {
+    color: var(--text-secondary);
+}
+
+.data-val {
+    font-family: monospace;
+    font-weight: 500;
+}
+
+/* Ephemeris Section */
+.ephemeris-layout {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-color);
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+}
+
+canvas {
+    background: #020617;
+    border-radius: 50%;
+}
+
+.canvas-caption {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.ephemeris-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ephemeris-details h3 {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.constants-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.constants-list li {
+    display: flex;
+    justify-content: space-between;
+    background: var(--bg-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+}
+
+.constants-list span {
+    font-family: monospace;
+    color: var(--accent);
+}
+
+.notes-box {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: var(--bg-color);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 10px;
+}
