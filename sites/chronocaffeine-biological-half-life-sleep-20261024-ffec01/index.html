@@ -1,0 +1,170 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoCaffeine: Biological Half-Life & Sleep Quality Optimizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+          <line x1="6" y1="1" x2="6" y2="4"/>
+          <line x1="10" y1="1" x2="10" y2="4"/>
+          <line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
+        <h1>ChronoCaffeine</h1>
+      </div>
+      <p class="subtitle">Optimize your alertness kinetics, protect your deep sleep, and master daily energy curves.</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Control Panel / User Settings -->
+    <section class="card settings-card">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.6 0 1.14.39 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Biological Profile & Sleep Window
+      </h2>
+      <div class="grid-settings">
+        <div class="input-group">
+          <label for="wake-time">Wake-Up Time</label>
+          <input type="time" id="wake-time" value="07:00">
+        </div>
+        <div class="input-group">
+          <label for="sleep-time">Target Bedtime</label>
+          <input type="time" id="sleep-time" value="23:00">
+        </div>
+        <div class="input-group">
+          <label for="half-life-slider">Metabolic Half-Life (<span id="half-life-val">5.0</span> hrs)</label>
+          <input type="range" id="half-life-slider" min="3" max="9" step="0.5" value="5">
+          <span class="input-hint">Fast metabolizer (3-4h) vs Slow (7-9h)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Add & Logged Beverages -->
+    <div class="dashboard-grid">
+      <section class="card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11h1a3 3 0 0 1 0 6h-1"/><path d="M9 11v6"/><path d="M13 11v6"/><path d="M5 3h14l-1.5 14.5a2 2 0 0 1-2 1.5h-7a2 2 0 0 1-2-1.5L5 3z"/></svg>
+          Caffeine Intake Log
+        </h2>
+        <div class="preset-buttons">
+          <button class="preset-btn" data-mg="95" data-name="Espresso (Single)">☕ Espresso (95mg)</button>
+          <button class="preset-btn" data-mg="150" data-name="Drip Coffee (12oz)">🥤 Drip Coffee (150mg)</button>
+          <button class="preset-btn" data-mg="70" data-name="Matcha Latte">🍵 Matcha (70mg)</button>
+          <button class="preset-btn" data-mg="80" data-name="Energy Drink">⚡ Energy Drink (80mg)</button>
+          <button class="preset-btn" data-mg="35" data-name="Black Tea">🫖 Black Tea (35mg)</button>
+        </div>
+
+        <form id="custom-intake-form" class="custom-intake-form">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="intake-time">Time</label>
+              <input type="time" id="intake-time" value="08:30" required>
+            </div>
+            <div class="input-group">
+              <label for="intake-mg">Amount (mg)</label>
+              <input type="number" id="intake-mg" min="5" max="1000" value="120" required>
+            </div>
+            <div class="input-group">
+              <label for="intake-label">Beverage / Note</label>
+              <input type="text" id="intake-label" value="Cold Brew" placeholder="e.g., Latte" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Log Caffeine Intake
+          </button>
+        </form>
+
+        <div class="log-list-container">
+          <h3>Today's Scheduled Doses</h3>
+          <ul id="intake-list" class="intake-list">
+            <!-- Dynamically populated -->
+          </ul>
+          <div class="log-actions">
+            <button id="clear-log" class="btn btn-secondary btn-sm">Clear All Doses</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary & Sleep Insights Card -->
+      <section class="card insights-card">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Sleep & Pharmacokinetics Insights
+        </h2>
+
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Total Daily Caffeine</span>
+            <span id="metric-total" class="metric-value">0 <small>mg</small></span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Bedtime Residual</span>
+            <span id="metric-residual" class="metric-value">0 <small>mg</small></span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Recommended Curfew</span>
+            <span id="metric-curfew" class="metric-value">--:--</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Sleep Quality Score</span>
+            <span id="metric-score" class="metric-value">100<small>%</small></span>
+          </div>
+        </div>
+
+        <div id="advisory-banner" class="advisory-banner good">
+          <div class="advisory-icon">✨</div>
+          <div class="advisory-text">
+            <strong id="advisory-title">Optimal Sleep Hygiene</strong>
+            <p id="advisory-desc">Your bloodstream will be clear of disruptive caffeine levels before bedtime.</p>
+          </div>
+        </div>
+
+        <div class="curfew-guide">
+          <h4>Curfew Guideline Reference</h4>
+          <ul>
+            <li><strong>&lt; 25 mg:</strong> Negligible impact on deep sleep architecture.</li>
+            <li><strong>25 - 50 mg:</strong> Minor REM latency delay for sensitive sleepers.</li>
+            <li><strong>&gt; 50 mg:</strong> Noticeable reduction in slow-wave sleep & REM cycles.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- Pharmacokinetics Simulation Graph -->
+    <section class="card graph-card">
+      <div class="graph-header">
+        <h2>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          24-Hour Blood Plasma Concentration Curve
+        </h2>
+        <div class="graph-legend">
+          <span class="legend-item"><span class="dot active-dot"></span> Plasma Level (mg)</span>
+          <span class="legend-item"><span class="dot sleep-dot"></span> Sleep Window</span>
+          <span class="legend-item"><span class="dot threshold-dot"></span> 50mg Threshold</span>
+        </div>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas id="plasma-canvas"></canvas>
+      </div>
+      <div class="graph-footer-note">
+        <span>Calculated using first-order elimination kinetics ($C(t) = C_0 \cdot e^{-kt}$). Graph spans 24 hours from midnight to midnight.</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>ChronoCaffeine &bull; Built with pure HTML5, CSS3, and JavaScript. Zero external requests, 100% private & local-first.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
