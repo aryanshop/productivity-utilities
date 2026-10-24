@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelDiet: Image Asset Optimization Inspector</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>PixelDiet</h1>
+      <p>Local-first image asset audit, responsive srcset generator, and performance impact estimator.</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="upload-section">
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <h2>Drag & Drop image assets here</h2>
+          <p>or click to browse local files (PNG, JPG, WebP, GIF, SVG)</p>
+          <input type="file" id="file-input" accept="image/*" multiple hidden>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard-section" class="dashboard-section hidden">
+      <div class="dashboard-header">
+        <h2>Asset Inspection Report</h2>
+        <div class="batch-actions">
+          <button id="clear-all-btn" class="btn secondary">Clear All</button>
+          <button id="export-json-btn" class="btn primary">Export Summary JSON</button>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Total Assets</span>
+          <span id="metric-count" class="metric-value">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Combined Original Size</span>
+          <span id="metric-original-size" class="metric-value">0 KB</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Est. Compressed Size</span>
+          <span id="metric-compressed-size" class="metric-value">0 KB</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Potential Savings</span>
+          <span id="metric-savings" class="metric-value">0%</span>
+        </div>
+      </div>
+
+      <div class="workspace-layout">
+        <div class="asset-list-panel">
+          <h3>Uploaded Files</h3>
+          <ul id="asset-list" class="asset-list"></ul>
+        </div>
+
+        <div class="asset-inspector-panel">
+          <div id="empty-inspector" class="empty-inspector">
+            <p>Select an asset from the left list to view detailed dimensions, network performance estimates, and responsive code snippets.</p>
+          </div>
+          <div id="inspector-content" class="inspector-content hidden">
+            <div class="preview-wrapper">
+              <img id="preview-img" src="" alt="Asset Preview">
+            </div>
+            <div class="inspector-details">
+              <h3 id="inspect-filename">filename.jpg</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Dimensions:</span>
+                  <span id="inspect-dims" class="value">0 x 0 px</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Aspect Ratio:</span>
+                  <span id="inspect-ratio" class="value">1:1</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">File Type:</span>
+                  <span id="inspect-type" class="value">image/jpeg</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">File Size:</span>
+                  <span id="inspect-size" class="value">0 KB</span>
+                </div>
+              </div>
+
+              <div class="network-simulation">
+                <h4>Simulated Load Times</h4>
+                <div class="speed-bars">
+                  <div class="speed-row">
+                    <span class="speed-label">4G Mobile (10 Mbps):</span>
+                    <span id="time-4g" class="speed-val">0.0s</span>
+                  </div>
+                  <div class="speed-row">
+                    <span class="speed-label">Broadband (50 Mbps):</span>
+                    <span id="time-broadband" class="speed-val">0.0s</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="code-generators">
+                <div class="code-group">
+                  <div class="code-header">
+                    <span>Responsive HTML &lt;img&gt; with srcset</span>
+                    <button class="copy-btn" data-target="code-srcset">Copy</button>
+                  </div>
+                  <textarea id="code-srcset" readonly></textarea>
+                </div>
+                <div class="code-group">
+                  <div class="code-header">
+                    <span>CSS Background Rule</span>
+                    <button class="copy-btn" data-target="code-css">Copy</button>
+                  </div>
+                  <textarea id="code-css" readonly></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>PixelDiet &bull; 100% Client-Side Asset Inspector. No data uploaded to servers.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
