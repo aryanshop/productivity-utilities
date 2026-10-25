@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoCraft: Pomodoro Task & Time-Block Architect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <h1>ChronoCraft</h1>
+    </div>
+    <nav class="app-nav">
+      <button class="nav-btn active" data-target="timer-view">Focus Timer</button>
+      <button class="nav-btn" data-target="tasks-view">Task Backlog</button>
+      <button class="nav-btn" data-target="schedule-view">Time Blocks</button>
+      <button class="nav-btn" data-target="analytics-view">Analytics</button>
+    </nav>
+  </header>
+
+  <main class="app-main">
+    <!-- FOCUS TIMER VIEW -->
+    <section id="timer-view" class="view active">
+      <div class="timer-container">
+        <div class="mode-selector">
+          <button class="mode-btn active" data-mode="pomodoro">Pomodoro (25m)</button>
+          <button class="mode-btn" data-mode="shortBreak">Short Break (5m)</button>
+          <button class="mode-btn" data-mode="longBreak">Long Break (15m)</button>
+        </div>
+
+        <div class="timer-display-box">
+          <svg class="timer-ring" viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="90"></circle>
+            <circle class="ring-progress" cx="100" cy="100" r="90"></circle>
+          </svg>
+          <div class="timer-text">
+            <span id="time-minutes">25</span>:<span id="time-seconds">00</span>
+            <span id="timer-status-label" class="timer-label">Ready to Focus</span>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button id="start-timer-btn" class="btn btn-primary btn-lg">Start Session</button>
+          <button id="reset-timer-btn" class="btn btn-secondary">Reset</button>
+        </div>
+
+        <div class="active-task-binding">
+          <label for="active-task-select">Currently Working On:</label>
+          <select id="active-task-select">
+            <option value="">-- Select a task from backlog --</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASK BACKLOG VIEW -->
+    <section id="tasks-view" class="view">
+      <div class="section-header">
+        <h2>Task Backlog & Priority Matrix</h2>
+        <button id="open-task-modal" class="btn btn-primary">+ Add New Task</button>
+      </div>
+
+      <div class="task-filters">
+        <button class="filter-chip active" data-filter="all">All Tasks</button>
+        <button class="filter-chip" data-filter="high">High Priority</button>
+        <button class="filter-chip" data-filter="medium">Medium Priority</button>
+        <button class="filter-chip" data-filter="low">Low Priority</button>
+        <button class="filter-chip" data-filter="completed">Completed</button>
+      </div>
+
+      <div class="tasks-grid" id="tasks-grid-container">
+        <!-- Dynamic Tasks inserted here -->
+      </div>
+    </section>
+
+    <!-- TIME-BLOCK SCHEDULE VIEW -->
+    <section id="schedule-view" class="view">
+      <div class="section-header">
+        <h2>Daily Time-Blocking Schedule</h2>
+        <p class="section-sub">Map your hours from 6:00 AM to Midnight for maximum cognitive flow.</p>
+      </div>
+
+      <div class="schedule-timeline" id="schedule-timeline-container">
+        <!-- Generated via JS -->
+      </div>
+    </section>
+
+    <!-- ANALYTICS VIEW -->
+    <section id="analytics-view" class="view">
+      <div class="section-header">
+        <h2>Productivity & Focus Analytics</h2>
+        <button id="clear-data-btn" class="btn btn-danger btn-sm">Reset All Data</button>
+      </div>
+
+      <div class="stats-overview">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-total-pomodoros">0</span>
+          <span class="stat-label">Completed Pomodoros</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-focus-hours">0.0h</span>
+          <span class="stat-label">Total Focus Time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-completed-tasks">0</span>
+          <span class="stat-label">Tasks Finished</span>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>Weekly Focus Distribution</h3>
+        <canvas id="analytics-canvas" width="600" height="250"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <!-- NEW TASK MODAL -->
+  <div class="modal-backdrop" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create New Task</h3>
+        <button class="modal-close" id="close-task-modal">&times;</button>
+      </div>
+      <form id="task-form">
+        <div class="form-group">
+          <label for="task-title-input">Task Title</label>
+          <input type="text" id="task-title-input" required placeholder="e.g., Redesign landing page header">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-priority-input">Priority</label>
+            <select id="task-priority-input">
+              <option value="high">High Priority</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="task-est-input">Estimated Pomodoros (25m each)</label>
+            <input type="number" id="task-est-input" min="1" max="20" value="2">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-task-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
