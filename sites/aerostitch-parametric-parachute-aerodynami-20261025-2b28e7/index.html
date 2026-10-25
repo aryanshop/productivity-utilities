@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroStitch: Parametric Parachute & Aerodynamic Decelerator Designer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">
+                    <path d="M18 2 C8 2 2 10 2 18 C2 26 10 34 18 34 C26 34 34 26 34 18 C34 10 26 2 18 2 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 3"/>
+                    <path d="M18 8 L18 28 M10 18 L26 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="18" cy="18" r="3" fill="currentColor"/>
+                </svg>
+                <div>
+                    <h1>AeroStitch</h1>
+                    <p class="subtitle">Parametric Decelerator & Canopy Design Studio</p>
+                </div>
+            </div>
+            <nav class="tab-nav" aria-label="Design Views">
+                <button class="tab-btn active" data-tab="calculator">Parameters</button>
+                <button class="tab-btn" data-tab="blueprint">Blueprint & Blueprint SVG</button>
+                <button class="tab-btn" data-tab="cutlist">Cut List & Materials</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- TAB 1: PARAMETERS -->
+        <section id="tab-calculator" class="tab-content active">
+            <div class="grid-dashboard">
+                <div class="panel input-panel">
+                    <h2>Flight & Payload Parameters</h2>
+                    <form id="calc-form">
+                        <div class="input-group">
+                            <label for="payload-mass">Payload Mass (kg)</label>
+                            <input type="number" id="payload-mass" value="2.5" min="0.1" max="500" step="0.1" required>
+                            <span class="unit">kg</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="descent-speed">Target Descent Speed (m/s)</label>
+                            <input type="number" id="descent-speed" value="5.0" min="0.5" max="25" step="0.1" required>
+                            <span class="unit">m/s</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="canopy-type">Canopy Geometry</label>
+                            <select id="canopy-type">
+                                <option value="hemispherical" selected>Hemispherical (Standard Dome)</option>
+                                <option value="flat-circular">Flat Circular (Flat Disc)</option>
+                                <option value="cruciform">Cruciform (Cross Canopy)</option>
+                                <option value="annular">Annular (Vented Ring)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="gore-count">Gore / Panel Count</label>
+                            <select id="gore-count">
+                                <option value="4">4 Gores</option>
+                                <option value="6">6 Gores</option>
+                                <option value="8" selected>8 Gores</option>
+                                <option value="12">12 Gores</option>
+                                <option value="16">16 Gores</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="drag-coefficient">Drag Coefficient ($C_d$)</label>
+                            <input type="number" id="drag-coefficient" value="0.75" min="0.2" max="2.0" step="0.05" required>
+                            <span class="hint">Auto-updates per geometry</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="air-density">Air Density ($ho$, kg/m³)</label>
+                            <input type="number" id="air-density" value="1.225" min="0.1" max="2.0" step="0.005" required>
+                            <span class="unit">kg/m³ (Sea level standard)</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="safety-factor">Structural Safety Factor</label>
+                            <input type="number" id="safety-factor" value="2.0" min="1.0" max="5.0" step="0.25" required>
+                        </div>
+                        <button type="button" id="reset-defaults" class="btn secondary-btn">Reset Defaults</button>
+                    </form>
+                </div>
+
+                <div class="panel results-panel">
+                    <h2>Decelerator Performance Metrics</h2>
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <span class="metric-label">Required Surface Area</span>
+                            <span class="metric-value" id="res-area">0.00</span>
+                            <span class="metric-unit">m²</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Nominal Diameter ($D_0$)</span>
+                            <span class="metric-value" id="res-diameter">0.00</span>
+                            <span class="metric-unit">meters</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Dynamic Kinetic Force</span>
+                            <span class="metric-value" id="res-force">0.0</span>
+                            <span class="metric-unit">Newtons (N)</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Estimated Canopy Weight</span>
+                            <span class="metric-value" id="res-weight">0.0</span>
+                            <span class="metric-unit">grams</span>
+                        </div>
+                    </div>
+
+                    <div class="insights-box">
+                        <h3>Engineering Summary</h3>
+                        <p id="res-summary">Adjust parameters on the left to evaluate aerodynamic performance and stress tolerances.</p>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="go-blueprint-btn" class="btn primary-btn">View Blueprint & Gore Templates &rarr;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: BLUEPRINT -->
+        <section id="tab-blueprint" class="tab-content">
+            <div class="blueprint-layout">
+                <div class="blueprint-controls">
+                    <h2>Blueprint & Visualization</h2>
+                    <div class="control-group">
+                        <label for="view-mode">Blueprint View</label>
+                        <select id="view-mode">
+                            <option value="gore" selected>Single Gore Pattern Curve</option>
+                            <option value="assembly">Fully Inflated Top-Down Profile</option>
+                        </select>
+                    </div>
+                    <div class="blueprint-specs">
+                        <div class="spec-row"><span>Max Gore Width ($W_{max}$):</span> <strong id="spec-max-width">0 cm</strong></div>
+                        <div class="spec-row"><span>Gore Height ($H_{gore}$):</span> <strong id="spec-gore-height">0 cm</strong></div>
+                        <div class="spec-row"><span>Apex Vent Diameter:</span> <strong id="spec-vent-dia">0 cm</strong></div>
+                        <div class="spec-row"><span>Shroud Line Length:</span> <strong id="spec-line-len">0 cm</strong></div>
+                    </div>
+                    <div class="blueprint-actions">
+                        <button id="export-svg-btn" class="btn primary-btn">Export Blueprint SVG</button>
+                    </div>
+                </div>
+                <div class="blueprint-canvas-container">
+                    <svg id="canopy-svg" viewBox="0 0 600 500" width="100%" height="100%" aria-label="Parachute Gore Template Blueprint">
+                        <!-- Dynamic SVG rendered via script.js -->
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: CUT LIST -->
+        <section id="tab-cutlist" class="tab-content">
+            <div class="cutlist-container">
+                <div class="cutlist-header">
+                    <h2>Fabric Cut List & Material Yardage Estimator</h2>
+                    <div class="material-selector">
+                        <label for="fabric-type">Fabric Selection:</label>
+                        <select id="fabric-type">
+                            <option value="ripstop-silnylon-30d" selected>30D Silnylon (48 g/m², $1.2$ bursting safety)</option>
+                            <option value="ripstop-nylon-70d">70D Ripstop Nylon (75 g/m², High durability)</option>
+                            <option value="poly-chiffon">1.1 oz Ripstop Polyester (38 g/m², Ultralight)</option>
+                            <option value="tyvek-1443r">Tyvek 1443R (42 g/m², Non-woven)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cutlist-grid">
+                    <div class="panel">
+                        <h3>Panel & Component Bill of Materials</h3>
+                        <table class="bom-table">
+                            <thead>
+                               <tr>
+                                   <th>Item</th>
+                                   <th>Qty</th>
+                                   <th>Dimensions / Spec</th>
+                                   <th>Est. Mass</th>
+                               </tr>
+                            </thead>
+                            <tbody id="bom-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="panel">
+                        <h3>Assembly & Sewing Instructions</h3>
+                        <ul class="instructions-list">
+                            <li><strong>Seam Allowance:</strong> Add 1.5 cm (5/8") to all gore side margins for French seams or flat-felled seams.</li>
+                            <li><strong>Apex Reinforcement:</strong> Cut a circular reinforcement patch (diameter $2 	imes$ vent hole) from 70D nylon at the apex to prevent tearing under tension.</li>
+                            <li><strong>Hemming:</strong> Fold bottom skirt hem by 1 cm and stitch with reinforced zigzag or double needle.</li>
+                            <li><strong>Shroud Lines:</strong> Use Kevlar or Spectra cord rated at least $3 	imes$ calculated max dynamic load. Shroud line length should equal nominal diameter ($D_0$).</li>
+                        </ul>
+                        <button id="print-summary-btn" class="btn secondary-btn">Print / Save Summary</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AeroStitch &mdash; Parametric Decelerator Design Studio. Built with vanilla HTML5, CSS3, and JavaScript.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

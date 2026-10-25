@@ -1,0 +1,439 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #1e293b;
+    --bg-input: #0f172a;
+    --border-color: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --accent-glow: rgba(56, 189, 248, 0.25);
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --radius: 12px;
+    --transition: 0.2s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+}
+
+/* Header & Tabs */
+.app-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    color: var(--accent);
+}
+
+h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 0.825rem;
+    color: var(--text-muted);
+}
+
+.tab-nav {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bg-input);
+    padding: 0.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    background: var(--accent);
+    color: var(--bg-primary);
+    font-weight: 600;
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Main Container */
+.main-container {
+    flex: 1;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid layouts */
+.grid-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .grid-dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.panel h2 {
+    font-size: 1.15rem;
+    margin-bottom: 1.25rem;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+/* Forms & Inputs */
+.input-group {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+input, select {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    transition: var(--transition);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.unit, .hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    display: inline-block;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.primary-btn {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-hover);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.secondary-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.secondary-btn:hover {
+    background-color: var(--border-color);
+}
+
+/* Metric Cards */
+.metric-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-card {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.025em;
+}
+
+.metric-unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.insights-box {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.insights-box h3 {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+}
+
+.insights-box p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.action-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Blueprint Tab */
+.blueprint-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+}
+
+@media (max-width: 900px) {
+    .blueprint-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.blueprint-controls h2 {
+    font-size: 1.15rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.control-group {
+    margin-bottom: 1.25rem;
+}
+
+.blueprint-specs {
+    background-color: var(--bg-input);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.spec-row:last-child {
+    margin-bottom: 0;
+}
+
+.spec-row strong {
+    color: var(--accent);
+}
+
+.blueprint-canvas-container {
+    background-color: #080c14;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 450px;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+/* Cut List Tab */
+.cutlist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.cutlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--radius);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.material-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.material-selector label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.cutlist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .cutlist-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.bom-table th, .bom-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bom-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    background-color: var(--bg-input);
+}
+
+.instructions-list {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.instructions-list strong {
+    color: var(--text-main);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    margin-top: auto;
+}
