@@ -1,0 +1,140 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoKnit: Time-Block & Sleep Circadian Synchronization Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">⏳</span>
+        <h1>Chrono<span>Knit</span></h1>
+      </div>
+      <p class="tagline">Align your daily time blocks with natural circadian energy peaks and 90-minute ultradian cycles.</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat-box">
+        <span id="statTotalHours">0h</span>
+        <label>Scheduled</label>
+      </div>
+      <div class="stat-box">
+        <span id="statSleepCycles">5</span>
+        <label>Sleep Cycles</label>
+      </div>
+      <div class="stat-box">
+        <span id="statBurnoutRisk">Low</span>
+        <label>Burnout Risk</label>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Panel: Configurations & Task Input -->
+    <section class="control-panel">
+      <div class="card">
+        <h2>🌙 Circadian & Sleep Setup</h2>
+        <div class="form-group">
+          <label for="wakeTime">Target Wake Time</label>
+          <input type="time" id="wakeTime" value="07:00">
+        </div>
+        <div class="form-group">
+          <label for="sleepDuration">Desired Sleep Duration</label>
+          <select id="sleepDuration">
+            <option value="450">7.5 Hours (5 Cycles)</option>
+            <option value="540" selected>9.0 Hours (6 Cycles)</option>
+            <option value="360">6.0 Hours (4 Cycles)</option>
+            <option value="495">8.25 Hours (Custom)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="chronotype">Chronotype Peak Window</label>
+          <select id="chronotype">
+            <option value="morning">Early Bird (Peak: 9:00 - 13:00)</option>
+            <option value="balanced" selected>Intermediate (Peak: 10:00 - 14:00)</option>
+            <option value="evening">Night Owl (Peak: 14:00 - 18:00)</option>
+          </select>
+        </div>
+        <button id="btnCalculateSleep" class="btn btn-secondary">Recalculate Sleep Windows</button>
+      </div>
+
+      <div class="card">
+        <h2>✨ Add Time Block</h2>
+        <form id="taskForm">
+          <div class="form-group">
+            <label for="taskTitle">Task / Activity Name</label>
+            <input type="text" id="taskTitle" placeholder="e.g., Deep Coding / Strategy" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="taskStart">Start Time</label>
+              <input type="time" id="taskStart" value="09:00" required>
+            </div>
+            <div class="form-group">
+              <label for="taskEnd">End Time</label>
+              <input type="time" id="taskEnd" value="11:00" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="taskType">Cognitive Intensity</label>
+            <select id="taskType">
+              <option value="deep">Deep Work (High Focus)</option>
+              <option value="shallow" selected>Shallow Work (Admin/Emails)</option>
+              <option value="break">Rest & Renewal (Break)</option>
+              <option value="physical">Physical / Exercise</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Block to Schedule</button>
+        </form>
+      </div>
+
+      <div class="card actions-card">
+        <h2>📁 Data Management</h2>
+        <div class="btn-group">
+          <button id="btnExport" class="btn btn-outline">Export JSON</button>
+          <button id="btnImportTrigger" class="btn btn-outline">Import JSON</button>
+          <input type="file" id="fileImport" accept=".json" style="display:none">
+          <button id="btnClear" class="btn btn-danger">Clear All</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Panel: Visual Timeline & Circadian Energy Graph -->
+    <section class="schedule-panel">
+      <div class="card chart-card">
+        <div class="card-header-flex">
+          <h2>📈 Circadian Energy Wave & Schedule Alignment</h2>
+          <span class="legend-hint">Hover or view peaks against tasks</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="circadianCanvas" width="800" height="200"></canvas>
+        </div>
+        <div id="sleepWindowInfo" class="sleep-window-banner">
+          Optimal Bedtime calculated: <strong id="optimalBedtime">22:30</strong> (Based on 9h sleep & wake at 07:00)
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header-flex">
+          <h2>🕒 Daily Time-Blocking Agenda</h2>
+          <span id="taskCountBadge" class="badge">0 Blocks</span>
+        </div>
+        <div id="scheduleList" class="schedule-list">
+          <!-- Dynamically populated blocks -->
+          <div class="empty-state">
+            <p>No time blocks added yet. Start by scheduling your first activity!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>ChronoKnit &bull; Local-first privacy planner. No data leaves your browser.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
