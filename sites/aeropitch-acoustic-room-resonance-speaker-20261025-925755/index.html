@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroPitch: Acoustic Room Resonance & Speaker Placement Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>AeroPitch</h1>
+            <p class="tagline">Acoustic Room Resonance & Speaker Placement Workbench</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Input Control Panel -->
+        <section class="panel input-panel">
+            <h2>Room Dimensions & Properties</h2>
+            <form id="room-form">
+                <div class="input-group">
+                    <label for="room-length">Room Length (m):</label>
+                    <input type="number" id="room-length" value="5.2" step="0.1" min="1" max="30" required>
+                </div>
+                <div class="input-group">
+                    <label for="room-width">Room Width (m):</label>
+                    <input type="number" id="room-width" value="3.8" step="0.1" min="1" max="30" required>
+                </div>
+                <div class="input-group">
+                    <label for="room-height">Room Height (m):</label>
+                    <input type="number" id="room-height" value="2.6" step="0.1" min="2" max="10" required>
+                </div>
+                <div class="input-group">
+                    <label for="wall-type">Boundary Material:</label>
+                    <select id="wall-type">
+                        <option value="0.05">Concrete / Brick (Very Reflective)</option>
+                        <option value="0.15" selected>Drywall / Stud Walls (Standard)</option>
+                        <option value="0.35">Wood Paneling / Glass (Moderate Absorption)</option>
+                        <option value="0.60">Heavy Acoustic Treatment</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="speaker-dist">Speaker Distance to Front Wall (cm):</label>
+                    <input type="number" id="speaker-dist" value="80" step="5" min="10" max="300" required>
+                </div>
+                <button type="submit" id="calculate-btn" class="primary-btn">Recalculate Acoustics</button>
+            </form>
+
+            <div class="preset-buttons">
+                <h3>Quick Presets</h3>
+                <button type="button" class="preset-btn" data-l="4.5" data-w="3.2" data-h="2.5">Project Studio</button>
+                <button type="button" class="preset-btn" data-l="7.0" data-w="5.0" data-h="3.0">Master Control Room</button>
+                <button type="button" class="preset-btn" data-l="3.8" data-w="2.9" data-h="2.4">Bedroom Studio</button>
+            </div>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="dashboard">
+            <!-- Summary Cards -->
+            <div class="card-grid">
+                <div class="metric-card">
+                    <h3>Schroeder Frequency</h3>
+                    <p id="schroeder-val" class="metric-value">-- Hz</p>
+                    <span id="schroeder-desc" class="metric-sub">Transition from modal to diffuse sound</span>
+                </div>
+                <div class="metric-card">
+                    <h3>Optimal Listening Position</h3>
+                    <p id="sweetspot-val" class="metric-value">-- m</p>
+                    <span class="metric-sub">From front wall (38% rule)</span>
+                </div>
+                <div class="metric-card">
+                    <h3>Primary SBIR Null</h3>
+                    <p id="sbir-val" class="metric-value">-- Hz</p>
+                    <span class="metric-sub">Speaker-Boundary Interference cancellation</span>
+                </div>
+            </div>
+
+            <!-- Interactive Canvas Visualizer -->
+            <div class="visualizer-card">
+                <div class="card-header">
+                    <h3>Top-Down Room & Speaker Placement Map</h3>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot speaker"></span> Speakers</span>
+                        <span class="legend-item"><span class="dot sweetspot"></span> Sweet Spot</span>
+                        <span class="legend-item"><span class="dot bounds"></span> 38% Axis</span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="room-canvas" width="600" height="400"></canvas>
+                </div>
+            </div>
+
+            <!-- Room Modes Table -->
+            <div class="table-card">
+                <h3>Axial Room Modes (Standing Waves < 300Hz)</h3>
+                <div class="table-wrapper">
+                    <table id="modes-table">
+                        <thead>
+                            <tr>
+                                <th>Frequency (Hz)</th>
+                                <th>Axis</th>
+                                <th>Harmonic (L, W, H)</th>
+                                <th>Acoustic Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modes-tbody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AeroPitch Acoustic Analyzer &bull; Designed for pristine audio monitoring workflows.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
