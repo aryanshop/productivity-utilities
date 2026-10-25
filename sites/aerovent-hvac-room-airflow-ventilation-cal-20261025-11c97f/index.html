@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroVent: HVAC Room Airflow & Ventilation Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19 12H2"/>
+        </svg>
+        <h1>AeroVent</h1>
+      </div>
+      <p class="tagline">Precision Room Airflow, CFM & Ventilation Calculator</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="control-panel card">
+      <h2>Room & Ventilation Parameters</h2>
+      
+      <div class="input-group">
+        <label for="room-name">Room Designation</label>
+        <input type="text" id="room-name" value="Master Home Office" placeholder="e.g., Living Room, Workshop">
+      </div>
+
+      <div class="grid-2">
+        <div class="input-group">
+          <label for="room-length">Length (<span class="unit-label">ft</span>)</label>
+          <input type="number" id="room-length" value="15" min="1" max="200" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="room-width">Width (<span class="unit-label">ft</span>)</label>
+          <input type="number" id="room-width" value="12" min="1" max="200" step="0.5">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="input-group">
+          <label for="room-height">Ceiling Height (<span class="unit-label">ft</span>)</label>
+          <input type="number" id="room-height" value="9" min="5" max="50" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="occupant-count">Occupant Count</label>
+          <input type="number" id="occupant-count" value="2" min="0" max="100">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="space-type">Space / Occupancy Profile</label>
+        <select id="space-type">
+          <option value="office">Home Office / Study (6 ACH)</option>
+          <option value="living">Living Room / Bedroom (4 ACH)</option>
+          <option value="kitchen">Kitchen / Cooking Space (15 ACH)</option>
+          <option value="workshop">Workshop / Hobby Garage (10 ACH)</option>
+          <option value="bathroom">Bathroom / Restroom (8 ACH)</option>
+          <option value="gym">Home Gym / Fitness (12 ACH)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="unit-system">Measurement Unit System</label>
+        <select id="unit-system">
+          <option value="imperial">Imperial (Feet, CFM)</option>
+          <option value="metric">Metric (Meters, m³/h)</option>
+        </select>
+      </div>
+
+      <div class="action-row">
+        <button id="calc-btn" class="primary-btn">Calculate Airflow</button>
+        <button id="reset-btn" class="secondary-btn">Reset Defaults</button>
+      </div>
+    </section>
+
+    <section class="results-panel">
+      <div class="metrics-grid">
+        <div class="metric-card card">
+          <h3>Room Volume</h3>
+          <div class="metric-value" id="res-volume">1,620</div>
+          <div class="metric-unit" id="unit-volume">cubic feet (cu ft)</div>
+        </div>
+
+        <div class="metric-card card highlight">
+          <h3>Required Airflow</h3>
+          <div class="metric-value" id="res-cfm">162</div>
+          <div class="metric-unit" id="unit-airflow">CFM (Cubic Feet / Min)</div>
+        </div>
+
+        <div class="metric-card card">
+          <h3>Air Changes / Hour</h3>
+          <div class="metric-value" id="res-ach">6.0</div>
+          <div class="metric-unit">ACH (ASHRAE Standard)</div>
+        </div>
+
+        <div class="metric-card card">
+          <h3>Min. Air Purifier CADR</h3>
+          <div class="metric-value" id="res-cadr">275</div>
+          <div class="metric-unit" id="unit-cadr">Clean Air Delivery Rate</div>
+        </div>
+      </div>
+
+      <div class="insights-card card">
+        <h3>Ventilation Analysis & Recommendations</h3>
+        <ul id="recommendations-list">
+          <li>Calculations based on standard ASHRAE residential ventilation guidelines.</li>
+          <li>Ensure adequate undercut clearance on doors (min. 0.75 inch) for return airflow balance.</li>
+          <li>For continuous operation, select inline fans or purifiers rated slightly above calculated thresholds to maintain quiet acoustics.</li>
+        </ul>
+      </div>
+
+      <div class="visual-card card">
+        <h3>Room Air Exchange Simulation</h3>
+        <div class="canvas-container">
+          <canvas id="airflow-canvas" width="600" height="220"></canvas>
+        </div>
+        <div class="simulation-controls">
+          <button id="toggle-sim-btn" class="secondary-btn small">Pause Simulation</button>
+          <span class="sim-status">Simulating particle velocity & air turnover</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; AeroVent Studio. Built with vanilla HTML5, CSS3, and JavaScript. Zero external dependencies.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
