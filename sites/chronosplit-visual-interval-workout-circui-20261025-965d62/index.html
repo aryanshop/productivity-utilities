@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoSplit: Interval & Circuit Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">⏱</span>
+                <h1>ChronoSplit</h1>
+            </div>
+            <p class="subtitle">Precision Interval Circuit Architect & Timer Studio</p>
+        </header>
+
+        <!-- MAIN WORKSPACE -->
+        <main class="workspace">
+            <!-- LEFT PANEL: CIRCUIT BUILDER -->
+            <section class="panel builder-panel">
+                <h2>Circuit Blueprint</h2>
+                <div class="form-group">
+                    <label for="presetSelect">Preset Templates</label>
+                    <select id="presetSelect">
+                        <option value="tabata">Tabata Standard (20/10 x 8)</option>
+                        <option value="hiit">HIIT Power (40/20 x 4)</option>
+                        <option value="pomodoro">Focus Sprint (25m / 5m)</option>
+                        <option value="stretching">Mobility Flow (60s intervals)</option>
+                        <option value="custom">Custom Circuit</option>
+                    </select>
+                </div>
+
+                <div class="circuit-meta">
+                    <div class="input-row">
+                        <label>Circuit Name</label>
+                        <input type="text" id="circuitNameInput" value="Tabata Blast">
+                    </div>
+                    <div class="input-row">
+                        <label>Rounds / Sets</label>
+                        <input type="number" id="roundsInput" value="4" min="1" max="50">
+                    </div>
+                </div>
+
+                <div class="phases-header">
+                    <h3>Interval Phases</h3>
+                    <button id="addPhaseBtn" class="btn secondary-btn">+ Add Phase</button>
+                </div>
+
+                <div id="phasesList" class="phases-list">
+                    <!-- Dynamically populated phases -->
+                </div>
+
+                <div class="builder-actions">
+                    <button id="savePresetBtn" class="btn outline-btn">Save to Local</button>
+                    <button id="loadPresetBtn" class="btn outline-btn">Load Custom</button>
+                </div>
+            </section>
+
+            <!-- CENTER/RIGHT PANEL: ACTIVE TIMER & ANALYTICS -->
+            <div class="timer-analytics-stack">
+                <section class="panel timer-panel">
+                    <div class="timer-display-box">
+                        <div class="timer-phase-badge" id="currentPhaseBadge">READY</div>
+                        <div class="timer-clock" id="timerClock">00:20</div>
+                        <div class="timer-sub-info">
+                            <span id="currentRoundInfo">Round 1 / 4</span>
+                            <span id="totalTimeInfo">Total: 04:00</span>
+                        </div>
+                    </div>
+
+                    <!-- SVG Progress Ring -->
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="220" height="220">
+                            <circle class="progress-ring__circle-bg" cx="110" cy="110" r="96" />
+                            <circle class="progress-ring__circle" id="progressRing" cx="110" cy="110" r="96" />
+                        </svg>
+                        <div class="ring-center-icon" id="ringStatusIcon">▶</div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button id="startBtn" class="btn primary-btn">Start Timer</button>
+                        <button id="pauseBtn" class="btn secondary-btn" disabled>Pause</button>
+                        <button id="resetBtn" class="btn danger-btn">Reset</button>
+                        <button id="fullscreenBtn" class="btn icon-btn" title="Toggle Fullscreen">⛶</button>
+                    </div>
+
+                    <div class="sound-settings">
+                        <label>
+                            <input type="checkbox" id="soundToggle" checked> Enable Audio Cues (Web Audio API)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="speechToggle"> Voice Countdown (Beeps)
+                        </label>
+                    </div>
+                </section>
+
+                <!-- ANALYTICS & LOGS -->
+                <section class="panel logs-panel">
+                    <h3>Circuit Summary & Breakdown</h3>
+                    <div class="summary-grid">
+                        <div class="stat-card">
+                            <span class="stat-value" id="statTotalDuration">04:00</span>
+                            <span class="stat-label">Total Duration</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="statTotalPhases">8</span>
+                            <span class="stat-label">Total Intervals</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="statWorkRestRatio">2:1</span>
+                            <span class="stat-label">Work / Rest Ratio</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-preview">
+                        <h4>Circuit Sequence Preview</h4>
+                        <div id="timelineBar" class="timeline-bar">
+                            <!-- Rendered blocks -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p>ChronoSplit &bull; Built with pure HTML5, CSS3, and JavaScript. No external dependencies.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
