@@ -1,0 +1,232 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraSplit: Biophilic Bill Splitter & Settlement Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        <h1>AuraSplit</h1>
+      </div>
+      <p class="subtitle">Precision group expense fairness engine &amp; settlement strategist</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export" class="btn secondary" title="Export session JSON">Export Data</button>
+      <label for="import-file" class="btn secondary upload-btn" title="Import session JSON">Import Data</label>
+      <input type="file" id="import-file" accept=".json" style="display: none;">
+      <button id="btn-reset" class="btn danger" title="Clear all data">Reset All</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Left Column: Configuration & Inputs -->
+    <section class="input-sections">
+      
+      <!-- Participants Section -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Participants</h2>
+          <span class="badge" id="participant-count">0 added</span>
+        </div>
+        <div class="add-form">
+          <input type="text" id="participant-input" placeholder="e.g., Alex, Jordan, Sam..." autocomplete="off">
+          <button id="btn-add-participant" class="btn primary">Add Person</button>
+        </div>
+        <div class="chip-container" id="participant-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Expenses Section -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Log Expense</h2>
+        </div>
+        <form id="expense-form" class="stacked-form">
+          <div class="form-group">
+            <label for="expense-title">Expense Title</label>
+            <input type="text" id="expense-title" placeholder="e.g., Dinner & Drinks, Taxi, Groceries" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expense-amount">Amount ($)</label>
+              <input type="number" id="expense-amount" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="expense-payer">Paid By</label>
+              <select id="expense-payer" required>
+                <option value="">Select person...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Split Type</label>
+            <div class="radio-group">
+              <label><input type="radio" name="split-type" value="equal" checked> Equal Split</label>
+              <label><input type="radio" name="split-type" value="custom"> Custom Shares / Items</label>
+            </div>
+          </div>
+
+          <!-- Dynamic Split Details Container -->
+          <div id="custom-split-container" class="hidden">
+            <label>Assign Shares / Weights per Person</label>
+            <div id="custom-shares-list" class="shares-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <button type="submit" class="btn primary full-width">Add Expense</button>
+        </form>
+      </div>
+
+      <!-- Expense Log List -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Logged Expenses</h2>
+          <span class="badge" id="expense-count">0 items</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="expense-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Paid By</th>
+                <th>Amount</th>
+                <th>Split</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="expense-tbody">
+              <tr class="empty-row">
+                <td colspan="5">No expenses logged yet. Add participants and bills above.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Column: Adjustments & Settlement Results -->
+    <section class="output-sections">
+
+      <!-- Tax & Tip Adjuster Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Tax &amp; Tip Adjuster</h2>
+        </div>
+        <div class="sliders-grid">
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="tax-range">Sales Tax / Service Fee</label>
+              <span id="tax-value">0%</span>
+            </div>
+            <input type="range" id="tax-range" min="0" max="30" step="0.5" value="0">
+          </div>
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="tip-range">Gratuity / Tip</label>
+              <span id="tip-value">15%</span>
+            </div>
+            <input type="range" id="tip-range" min="0" max="40" step="1" value="15">
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Metrics Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Financial Summary</h2>
+          <span id="total-grand-amount" class="highlight-amount">$0.00</span>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Subtotal</span>
+            <span class="metric-value" id="stat-subtotal">$0.00</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Tax / Fees</span>
+            <span class="metric-value" id="stat-tax">$0.00</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Tip Amount</span>
+            <span class="metric-value" id="stat-tip">$0.00</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Total with Tip</span>
+            <span class="metric-value" id="stat-total">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual Breakdown Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Individual Balances</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="balance-table">
+            <thead>
+              <tr>
+                <th>Person</th>
+                <th>Paid</th>
+                <th>Owed Share</th>
+                <th>Net Balance</th>
+              </tr>
+            </thead>
+            <tbody id="balance-tbody">
+              <tr class="empty-row">
+                <td colspan="4">Add participants to view balances.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settlement Plan Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Optimal Settlement Plan</h2>
+          <span class="badge" id="transfer-count">0 transfers</span>
+        </div>
+        <div id="settlement-list" class="settlement-list">
+          <p class="placeholder-text">All balanced or insufficient data for settlement.</p>
+        </div>
+      </div>
+
+      <!-- Visual Debt Network Graph -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Debt Network Flow</h2>
+        </div>
+        <div class="svg-container">
+          <svg id="debt-svg" viewBox="0 0 400 250" width="100%" height="100%">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-primary)" />
+              </marker>
+            </defs>
+            <g id="svg-links"></g>
+            <g id="svg-nodes"></g>
+          </svg>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraSplit &bull; Client-Side Biophilic Expense Settlement Workbench &bull; No data transmitted.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
