@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrid: Workspace Ergonomic Eye-Strain & Desk Lighting Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <h1>AuraGrid</h1>
+            </div>
+            <p class="tagline">Workspace Ergonomic Eye-Strain & Desk Lighting Optimizer</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Control Panel -->
+            <section class="card control-card" aria-labelledby="config-title">
+                <h2 id="config-title" class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Workspace Parameters
+                </h2>
+                
+                <form id="lighting-form" onsubmit="return false;">
+                    <div class="input-group">
+                        <label for="room-type">Room Environment</label>
+                        <select id="room-type">
+                            <option value="home-office">Home Office (General Desk Work)</option>
+                            <option value="coding">Coding / Precision Reading</option>
+                            <option value="design">Color-Critical Design Studio</option>
+                            <option value="ambient">Low-Light Evening Session</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-flex">
+                            <label for="monitor-nits">Monitor Brightness (Nits)</label>
+                            <span id="monitor-nits-val" class="badge">250 nits</span>
+                        </div>
+                        <input type="range" id="monitor-nits" min="80" max="600" step="10" value="250">
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-flex">
+                            <label for="ambient-lux">Ambient Room Light (Lux)</label>
+                            <span id="ambient-lux-val" class="badge">300 lx</span>
+                        </div>
+                        <input type="range" id="ambient-lux" min="50" max="1000" step="25" value="300">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="wall-reflectance">Behind-Monitor Wall Tone</label>
+                        <select id="wall-reflectance">
+                            <option value="0.85">Light Neutral / White (85% Reflectance)</option>
+                            <option value="0.50" selected>Medium Gray / Neutral (50% Reflectance)</option>
+                            <option value="0.20">Dark Accent Wall (20% Reflectance)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-flex">
+                            <label for="work-start">Work Schedule Window</label>
+                            <span id="schedule-val" class="badge">09:00 - 18:00</span>
+                        </div>
+                        <div class="time-range-group">
+                            <input type="time" id="work-start" value="09:00">
+                            <span>to</span>
+                            <input type="time" id="work-end" value="18:00">
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Diagnostic Dashboard -->
+            <section class="card dashboard-card" aria-labelledby="metrics-title">
+                <h2 id="metrics-title" class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    Ergonomic & Visual Diagnostics
+                </h2>
+
+                <div class="metrics-grid">
+                    <div class="metric-box" id="contrast-box">
+                        <span class="metric-label">Screen-to-Wall Ratio</span>
+                        <span class="metric-value" id="res-contrast">--:--</span>
+                        <span class="metric-status" id="stat-contrast">Calculating...</span>
+                    </div>
+
+                    <div class="metric-box" id="strain-box">
+                        <span class="metric-label">Eye Fatigue Risk Index</span>
+                        <span class="metric-value" id="res-strain">--</span>
+                        <span class="metric-status" id="stat-strain">Calculating...</span>
+                    </div>
+
+                    <div class="metric-box" id="temp-box">
+                        <span class="metric-label">Recommended CCT</span>
+                        <span class="metric-value" id="res-temp">-- K</span>
+                        <span class="metric-status" id="stat-temp">Circadian Aligned</span>
+                    </div>
+
+                    <div class="metric-box" id="bias-box">
+                        <span class="metric-label">Bias Light Intensity</span>
+                        <span class="metric-value" id="res-bias">-- lx</span>
+                        <span class="metric-status" id="stat-bias">Backlight Target</span>
+                    </div>
+                </div>
+
+                <div class="recommendation-banner" id="rec-banner">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div id="rec-text">Adjust your display and ambient illumination parameters to optimize visual comfort.</div>
+                </div>
+            </section>
+
+            <!-- Live Visual Simulation Canvas -->
+            <section class="card sim-card" aria-labelledby="sim-title">
+                <h2 id="sim-title" class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    Desk Setup & Bias Lighting Simulation
+                </h2>
+                <div class="canvas-wrapper">
+                    <canvas id="simCanvas" width="700" height="320"></canvas>
+                </div>
+                <div class="sim-legend">
+                    <span class="legend-item"><span class="dot monitor-dot"></span> Monitor Luminance</span>
+                    <span class="legend-item"><span class="dot bias-dot"></span> LED Bias Backlight</span>
+                    <span class="legend-item"><span class="dot ambient-dot"></span> Ambient Wall Illumination</span>
+                </div>
+            </section>
+
+            <!-- Circadian Schedule Timeline -->
+            <section class="card timeline-card" aria-labelledby="timeline-title">
+                <div class="card-header-flex">
+                    <h2 id="timeline-title" class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        24-Hour Circadian Lighting Profile
+                    </h2>
+                    <button id="reset-defaults" class="btn-secondary" type="button">Reset Defaults</button>
+                </div>
+
+                <div class="timeline-container">
+                    <div class="timeline-axis" id="timeline-axis">
+                        <!-- Generated via JS -->
+                    </div>
+                    <div class="timeline-track" id="timeline-track">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+
+                <div class="schedule-table-wrap">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Time Phase</th>
+                                <th>Color Temp (CCT)</th>
+                                <th>Target Brightness</th>
+                                <th>Melatonin Protection</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; AuraGrid Workspace Ergonomics &bull; Built with pure HTML5, CSS3, and JavaScript.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
