@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Biophilic Circadian Lighting & Color Temperature Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </div>
+                <h1>AuraPulse <span class="badge">Circadian Lab</span></h1>
+            </div>
+            <p class="subtitle">Model natural daylight curves, calculate melanopic EDI metrics, and design human-centric lighting environments.</p>
+        </header>
+
+        <!-- MAIN WORKSPACE -->
+        <main class="workspace">
+            <!-- LEFT PANEL: CONTROLS & PARAMS -->
+            <section class="control-panel">
+                <div class="panel-tabs">
+                    <button class="tab-btn active" data-tab="room">Room & Window</button>
+                    <button class="tab-btn" data-tab="schedule">Schedule & Sun</button>
+                    <button class="tab-btn" data-tab="fixtures">Fixtures & Load</button>
+                </div>
+
+                <!-- TAB 1: ROOM -->
+                <div class="tab-content active" id="tab-room">
+                    <div class="input-group">
+                        <label for="room-orientation">Primary Window Orientation</label>
+                        <select id="room-orientation">
+                            <option value="north">North Facing (Soft, Diffuse Light)</option>
+                            <option value="east" selected>East Facing (Morning Sun / High Energy)</option>
+                            <option value="south">South Facing (All-Day Intense Light)</option>
+                            <option value="west">West Facing (Warm Afternoon Glare)</option>
+                            <option value="windowless">Windowless (Artificial Circadian Only)</option>
+                        </select>
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="room-size">Room Floor Area</label>
+                            <span id="room-size-val">18 m²</span>
+                        </div>
+                        <input type="range" id="room-size" min="8" max="50" value="18" step="1">
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="window-ratio">Window-to-Wall Ratio</label>
+                            <span id="window-ratio-val">25%</span>
+                        </div>
+                        <input type="range" id="window-ratio" min="0" max="70" value="25" step="5">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="work-style">Daily Focus Routine</label>
+                        <select id="work-style">
+                            <option value="early">Early Bird (06:00 - 15:00)</option>
+                            <option value="standard" selected>Standard Desk (09:00 - 18:00)</option>
+                            <option value="night">Night Owl (13:00 - 22:00)</option>
+                            <option value="split">Split Shift / Flexible</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SCHEDULE -->
+                <div class="tab-content" id="tab-schedule">
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="time-scrubber">Simulation Time of Day</label>
+                            <span id="time-scrubber-val">12:00 PM</span>
+                        </div>
+                        <input type="range" id="time-scrubber" min="360" max="1320" value="720" step="15">
+                    </div>
+
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-time="390">06:30 (Dawn)</button>
+                        <button class="preset-btn" data-time="540">09:00 (Focus)</button>
+                        <button class="preset-btn" data-time="720">12:00 (Peak)</button>
+                        <button class="preset-btn" data-time="1020">17:00 (Sunset)</button>
+                        <button class="preset-btn" data-time="1200">20:00 (Dusk)</button>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Circadian Phase Status</h4>
+                        <p id="phase-description">Mid-day zenith. High blue spectrum exposure supports cortisol production and sustained focus.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 3: FIXTURES -->
+                <div class="tab-content" id="tab-fixtures">
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="fix-overhead" checked> Main Task Pendant (Tunable LED)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fix-bias" checked> Monitor Bias Backlight (RGBW)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fix-floor"> Floor Uplighter (Warm Accent)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="fix-grow"> Plant Grow Light (Full Spectrum)
+                        </label>
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="manual-dimmer">Manual Dimmer Override</label>
+                            <span id="manual-dimmer-val">100%</span>
+                        </div>
+                        <input type="range" id="manual-dimmer" min="10" max="100" value="100" step="5">
+                    </div>
+                </div>
+
+                <div class="panel-actions">
+                    <button id="btn-reset" class="btn secondary">Reset Defaults</button>
+                    <button id="btn-export" class="btn primary">Export Lighting Recipe</button>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: VISUALIZER & METRICS -->
+            <section class="visualizer-section">
+                <div class="preview-card" id="preview-viewport">
+                    <div class="ambient-glow" id="ambient-glow"></div>
+                    <div class="room-preview-inner">
+                        <div class="window-frame" id="window-frame">
+                            <div class="sun-disk" id="sun-disk"></div>
+                            <div class="sky-gradient" id="sky-gradient"></div>
+                        </div>
+                        <div class="desk-setup">
+                            <div class="monitor-glow" id="monitor-glow"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="live-badge">
+                            <span class="pulse-dot"></span> Live Spectrum Simulation
+                        </div>
+                        <div class="kelvin-overlay" id="kelvin-overlay">
+                            <span id="kelvin-display">5000K</span> • <span id="lux-display">750 lux</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- METRICS DASHBOARD -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Color Temp (CCT)</span>
+                        <span class="metric-value" id="metric-cct">5000 K</span>
+                        <span class="metric-sub" id="metric-cct-desc">Neutral Daylight</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Melanopic EDI</span>
+                        <span class="metric-value" id="metric-medi">280 lux</span>
+                        <span class="metric-sub" id="metric-medi-desc">High Alertness</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Energy Load</span>
+                        <span class="metric-value" id="metric-power">42 W</span>
+                        <span class="metric-sub" id="metric-power-desc">Est. 0.34 kWh / day</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Circadian Alignment</span>
+                        <span class="metric-value" id="metric-score">94%</span>
+                        <span class="metric-sub" id="metric-score-desc">Optimal Synchrony</span>
+                    </div>
+                </div>
+
+                <!-- 24-HOUR CURVE VISUALIZER -->
+                <div class="curve-container">
+                    <div class="curve-header">
+                        <h3>24-Hour Circadian Profile</h3>
+                        <span class="curve-legend"><i class="dot-sun"></i> Natural Sun &nbsp;&nbsp; <i class="dot-task"></i> Task Lighting</span>
+                    </div>
+                    <div class="canvas-wrap">
+                        <canvas id="circadianCanvas" width="640" height="160"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- EXPORT MODAL -->
+        <div class="modal-backdrop" id="exportModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Circadian Lighting Specification</h3>
+                    <button class="close-modal" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Copy or download your customized lighting profile for smart home integration or office design specs.</p>
+                    <textarea id="export-text" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn secondary" id="btn-copy">Copy to Clipboard</button>
+                    <button class="btn primary" id="close-modal-btn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p>AuraPulse Studio &bull; Designed for human wellness, productivity, and biophilic interior harmony.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
