@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBrew: Specialty Coffee Extraction & Ratio Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                <h1>Aura<span>Brew</span></h1>
+            </div>
+            <p class="tagline">Precision Coffee Extraction, Ratio Lab & Brew Timer</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Brew Calculator & Parameters -->
+            <section class="panel calculator-panel">
+                <h2><span class="step-num">01</span> Brew Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="brew-method">Brewing Method</label>
+                    <select id="brew-method">
+                        <option value="v60">Hario V60 (Pour Over)</option>
+                        <option value="chemex">Chemex (Medium-Coarse)</option>
+                        <option value="frenchpress">French Press (Coarse)</option>
+                        <option value="aeropress">AeroPress (Inverted/Medium)</option>
+                        <option value="espresso">Espresso (Fine)</option>
+                        <option value="coldbrew">Cold Brew (Extra Coarse)</option>
+                    </select>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="coffee-dose">Coffee Dose (g)</label>
+                        <input type="number" id="coffee-dose" value="20" min="5" max="100" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="brew-ratio">Brew Ratio (1 : X)</label>
+                        <input type="number" id="brew-ratio" value="16" min="8" max="25" step="0.5">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="water-temp">Water Temp (°C)</label>
+                        <input type="number" id="water-temp" value="93" min="80" max="100" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="grind-size">Grind Profile</label>
+                        <select id="grind-size">
+                            <option value="Fine">Fine (Table Salt)</option>
+                            <option value="Medium-Fine" selected>Medium-Fine (Sand)</option>
+                            <option value="Medium">Medium (Standard Drip)</option>
+                            <option value="Medium-Coarse">Medium-Coarse (Rough Sand)</option>
+                            <option value="Coarse">Coarse (Sea Salt)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="metrics-card">
+                    <div class="metric-item">
+                        <span class="metric-label">Target Water</span>
+                        <span class="metric-value" id="res-water">320 g</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Est. Extraction</span>
+                        <span class="metric-value" id="res-extraction">20.2%</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Est. TDS</span>
+                        <span class="metric-value" id="res-tds">1.35%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Interactive Pour Schedule & Live Timer -->
+            <section class="panel timer-panel">
+                <div class="panel-header">
+                    <h2><span class="step-num">02</span> Pour Schedule & Timer</h2>
+                    <button id="btn-reset-timer" class="btn-subtle">Reset Timer</button>
+                </div>
+
+                <div class="timer-display-container">
+                    <div class="timer-circle">
+                        <svg width="180" height="180">
+                            <circle class="timer-bg" cx="90" cy="90" r="80"></circle>
+                            <circle class="timer-progress" id="timer-progress-ring" cx="90" cy="90" r="80"></circle>
+                        </svg>
+                        <div class="timer-text">
+                            <span id="timer-clock">00:00</span>
+                            <span id="timer-stage" class="stage-badge">Ready</span>
+                        </div>
+                    </div>
+                    <div class="timer-controls">
+                        <button id="btn-start-timer" class="btn-primary">Start Brew</button>
+                        <button id="btn-pause-timer" class="btn-secondary" disabled>Pause</button>
+                    </div>
+                </div>
+
+                <div class="schedule-container">
+                    <h3>Pour-Over Blueprint</h3>
+                    <ul id="schedule-list" class="schedule-list">
+                        <!-- Dynamically populated pouring steps -->
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bean Stash & Notes Ledger -->
+        <section class="panel stash-panel">
+            <div class="panel-header">
+                <h2><span class="step-num">03</span> Bean Stash & Tasting Ledger</h2>
+                <div class="stash-actions">
+                    <button id="btn-export" class="btn-subtle">Export JSON</button>
+                    <button id="btn-import" class="btn-subtle">Import JSON</button>
+                    <input type="file" id="file-input" accept=".json" style="display: none;">
+                </div>
+            </div>
+
+            <form id="bean-form" class="bean-form">
+                <div class="input-group">
+                    <label for="bean-name">Roast / Bean Name</label>
+                    <input type="text" id="bean-name" placeholder="e.g. Ethiopia Yirgacheffe Wash" required>
+                </div>
+                <div class="input-group">
+                    <label for="bean-process">Process / Origin</label>
+                    <input type="text" id="bean-process" placeholder="Washed / Natural / Honey">
+                </div>
+                <div class="input-group">
+                    <label for="bean-rating">Rating (1-5)</label>
+                    <select id="bean-rating">
+                        <option value="5">★★★★★ (Masterpiece)</option>
+                        <option value="4">★★★★☆ (Excellent)</option>
+                        <option value="3">★★★☆☆ (Good)</option>
+                        <option value="2">★★☆☆☆ (Average)</option>
+                        <option value="1">★☆☆☆☆ (Flawed)</option>
+                    </select>
+                </div>
+                <div class="input-group btn-wrapper">
+                    <button type="submit" class="btn-primary">Add Bean Stash</button>
+                </div>
+            </form>
+
+            <div class="table-container">
+                <table id="bean-table">
+                    <thead>
+                        <tr>
+                            <th>Bean Name</th>
+                            <th>Process</th>
+                            <th>Rating</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bean-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>AuraBrew Specialty Coffee Lab • Local-first, privacy-respecting artisan brewing tools.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
