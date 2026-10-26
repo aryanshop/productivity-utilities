@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroPitch: Acoustic Room Resonance & Speaker Placement Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12h20M2 16h20M2 8h20M6 4v16M18 4v16"></path>
+                </svg>
+                <h1>AeroPitch</h1>
+            </div>
+            <p class="tagline">Acoustic Room Resonance, Standing Waves & Speaker Boundary Calculator</p>
+        </header>
+
+        <main class="dashboard">
+            <!-- Sidebar Controls -->
+            <section class="control-panel" aria-label="Room Parameters">
+                <h2>Room Dimensions</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="roomLength">Length (m)</label>
+                        <input type="number" id="roomLength" value="5.5" min="1" max="30" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="roomWidth">Width (m)</label>
+                        <input type="number" id="roomWidth" value="4.0" min="1" max="30" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="roomHeight">Height (m)</label>
+                        <input type="number" id="roomHeight" value="2.6" min="1.5" max="10" step="0.1">
+                    </div>
+                </div>
+
+                <h2>Listening Position & Speaker Setup</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="listenerX">Listener X (Width %)</label>
+                        <input type="number" id="listenerX" value="50" min="10" max="90" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="listenerY">Listener Y (Length %)</label>
+                        <input type="number" id="listenerY" value="62" min="10" max="90" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="tempC">Temp (°C)</label>
+                        <input type="number" id="tempC" value="20" min="0" max="40" step="1">
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="btnCalculate" class="btn primary">Calculate Room Modes</button>
+                    <button id="btnPresetStudio" class="btn secondary">Load Studio Preset</button>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Schroeder Frequency</span>
+                        <span id="schroederVal" class="stat-value">-- Hz</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Room Volume</span>
+                        <span id="volumeVal" class="stat-value">-- m³</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Analysis Area -->
+            <section class="analysis-panel">
+                <!-- Tabs -->
+                <nav class="tab-bar" role="tablist">
+                    <button class="tab-btn active" data-tab="tab-modes" role="tab">Axial Modes & Spectrum</button>
+                    <button class="tab-btn" data-tab="tab-map" role="tab">Room Top-Down Map</button>
+                    <button class="tab-btn" data-tab="tab-sbir" role="tab">SBIR & Placement</button>
+                    <button class="tab-btn" data-tab="tab-report" role="tab">Acoustic Summary</button>
+                </nav>
+
+                <!-- Tab 1: Modes -->
+                <div id="tab-modes" class="tab-content active">
+                    <div class="card">
+                        <h3>Low-Frequency Axial Standing Waves (Room Modes)</h3>
+                        <p class="hint">Frequencies below Schroeder frequency where room dimensions cause severe peaks and nulls. Click a mode to highlight.</p>
+                        <div class="canvas-container">
+                            <canvas id="modeCanvas" width="700" height="220"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Mode Frequency Table (First 4 Harmonics)</h3>
+                        <div class="table-wrapper">
+                            <table id="modeTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order (n)</th>
+                                        <th>Length (Hz)</th>
+                                        <th>Width (Hz)</th>
+                                        <th>Height (Hz)</th>
+                                        <th>Harmonic Category</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamically populated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Map -->
+                <div id="tab-map" class="tab-content">
+                    <div class="card">
+                        <h3>Top-Down Room Geometry & Speaker Layout</h3>
+                        <p class="hint">Recommended speaker triangle (Equilateral 30° toe-in) and listener sweet spot based on 38% rule.</p>
+                        <div class="canvas-container center-canvas">
+                            <canvas id="roomMapCanvas" width="500" height="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: SBIR -->
+                <div id="tab-sbir" class="tab-content">
+                    <div class="card">
+                        <h3>Speaker-Boundary Interference Response (SBIR)</h3>
+                        <p class="hint">Calculates boundary cancellation notch frequencies caused by front and side wall reflections.</p>
+                        <div class="sbir-grid">
+                            <div class="sbir-card">
+                                <h4>Front Wall SBIR (Distance: 0.8m)</h4>
+                                <span id="sbirFrontVal" class="sbir-val">-- Hz</span>
+                                <p class="sbir-desc">First cancellation notch where direct sound and front wall reflection interfere destructively.</p>
+                            </div>
+                            <div class="sbir-card">
+                                <h4>Side Wall SBIR (Distance: 1.0m)</h4>
+                                <span id="sbirSideVal" class="sbir-val">-- Hz</span>
+                                <p class="sbir-desc">Side wall reflection cancellation frequency affecting lower-mid frequencies.</p>
+                            </div>
+                            <div class="sbir-card">
+                                <h4>Floor Bounce (Height: 1.2m)</h4>
+                                <span id="sbirFloorVal" class="sbir-val">-- Hz</span>
+                                <p class="sbir-desc">Console/desk and floor boundary cancellation frequency.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Report -->
+                <div id="tab-report" class="tab-content">
+                    <div class="card">
+                        <h3>Acoustic Treatment Recommendations</h3>
+                        <div id="reportContent" class="report-box">
+                            <!-- Generated report -->
+                        </div>
+                        <button id="btnPrintReport" class="btn secondary" style="margin-top: 1rem;">Export / Print Report</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AeroPitch Acoustic Studio &bull; Designed for precision mixing environments and studio designers.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
