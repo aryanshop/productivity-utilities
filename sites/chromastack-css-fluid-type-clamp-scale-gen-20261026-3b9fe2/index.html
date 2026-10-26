@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromaStack: CSS Fluid Type & Clamp Scale Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">🔤</span>
+        <h1>ChromaStack</h1>
+      </div>
+      <p class="subtitle">Precision CSS Fluid Typography & Modular Scale Generator</p>
+    </div>
+    <div class="header-actions">
+      <button id="theme-toggle" class="btn btn-secondary" aria-label="Toggle preview mode">Toggle Dark Mode</button>
+      <button id="export-btn" class="btn btn-primary">Export CSS Variables</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Control Panel -->
+    <section class="control-panel">
+      <h2>Scale Parameters</h2>
+      
+      <div class="control-group">
+        <label for="min-vw">Min Viewport Width (px)</label>
+        <input type="number" id="min-vw" value="320" min="200" max="1000">
+      </div>
+
+      <div class="control-group">
+        <label for="max-vw">Max Viewport Width (px)</label>
+        <input type="number" id="max-vw" value="1440" min="800" max="3000">
+      </div>
+
+      <div class="control-group">
+        <label for="min-font">Min Base Font Size (rem)</label>
+        <input type="number" id="min-font" value="1" min="0.75" max="1.5" step="0.05">
+      </div>
+
+      <div class="control-group">
+        <label for="max-font">Max Base Font Size (rem)</label>
+        <input type="number" id="max-font" value="1.25" min="1" max="2" step="0.05">
+      </div>
+
+      <div class="control-group">
+        <label for="ratio-select">Modular Scale Ratio</label>
+        <select id="ratio-select">
+          <option value="1.067">Minor Second (1.067)</option>
+          <option value="1.125">Major Second (1.125)</option>
+          <option value="1.2">Minor Third (1.200)</option>
+          <option value="1.25" selected>Major Third (1.250)</option>
+          <option value="1.333">Perfect Fourth (1.333)</option>
+          <option value="1.414">Augmented Fourth (1.414)</option>
+          <option value="1.5">Perfect Fifth (1.500)</option>
+          <option value="1.618">Golden Ratio (1.618)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="steps-above">Scale Steps Above Base</label>
+        <input type="number" id="steps-above" value="4" min="1" max="7">
+      </div>
+
+      <div class="control-group">
+        <label for="steps-below">Scale Steps Below Base</label>
+        <input type="number" id="steps-below" value="2" min="0" max="4">
+      </div>
+
+      <div class="action-row">
+        <button id="reset-btn" class="btn btn-text">Reset Defaults</button>
+      </div>
+    </section>
+
+    <!-- Workspace / Output & Preview -->
+    <section class="workspace">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="preview">Live Typography Preview</button>
+        <button class="tab-btn" data-tab="code">Generated CSS Code</button>
+      </div>
+
+      <!-- Preview Tab -->
+      <div id="preview-tab" class="tab-content active">
+        <div class="preview-wrapper" id="preview-wrapper">
+          <div class="preview-banner">
+            <span>Live Viewport Emulation</span>
+            <span id="current-viewport-label">100% Scale</span>
+          </div>
+          <div class="preview-canvas" id="preview-canvas">
+            <div class="preview-item" data-level="h1">
+              <span class="token-tag">--step-4 (H1)</span>
+              <h1 class="type-sample">Design Systems with Fluid Motion</h1>
+            </div>
+            <div class="preview-item" data-level="h2">
+              <span class="token-tag">--step-3 (H2)</span>
+              <h2 class="type-sample">Harmonious Modular Typography</h2>
+            </div>
+            <div class="preview-item" data-level="h3">
+              <span class="token-tag">--step-2 (H3)</span>
+              <h3 class="type-sample">Responsive Scalability Across All Screens</h3>
+            </div>
+            <div class="preview-item" data-level="h4">
+              <span class="token-tag">--step-1 (H4)</span>
+              <h4 class="type-sample">Subheadings & Component Titles</h4>
+            </div>
+            <div class="preview-item" data-level="body">
+              <span class="token-tag">--step-0 (Body)</span>
+              <p class="type-sample">Typography is the foundation of user interface design. By leveraging CSS clamp() functions, modern web applications can scale text smoothly and predictably from compact smartphone viewports up to expansive ultra-wide desktop monitors without relying on heavy media query breakpoints.</p>
+            </div>
+            <div class="preview-item" data-level="small">
+              <span class="token-tag">--step--1 (Small)</span>
+              <small class="type-sample">Metadata, captions, and secondary disclaimer notices.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Tab -->
+      <div id="code-tab" class="tab-content">
+        <div class="code-header">
+          <span>CSS Custom Properties & Clamp Rules</span>
+          <button id="copy-code-btn" class="btn btn-secondary">Copy to Clipboard</button>
+        </div>
+        <pre><code id="css-code-output">:root {
+  /* Generating... */
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" aria-hidden="true">Copied to clipboard successfully!</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
