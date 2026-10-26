@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStride: Running Biomechanics & Cadence Metronome Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v16"/><path d="M17 8l-4-4-4 4"/><path d="M3 20h18"/></svg>
+                </div>
+                <h1>AuraStride</h1>
+            </div>
+            <p class="tagline">Precision Biomechanics, Stride Optimization & Audio Metronome Lab</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control & Configuration Panel -->
+        <section class="panel config-panel">
+            <h2>Runner Profile & Target Settings</h2>
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="runnerHeight">Height (cm)</label>
+                    <input type="number" id="runnerHeight" value="178" min="120" max="220">
+                </div>
+                <div class="input-group">
+                    <label for="runnerWeight">Weight (kg)</label>
+                    <input type="number" id="runnerWeight" value="70" min="35" max="180">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="targetCadence">Target Cadence (SPM)</label>
+                    <input type="number" id="targetCadence" value="180" min="140" max="220">
+                </div>
+                <div class="input-group">
+                    <label for="runSpeed">Pace (min/km)</label>
+                    <input type="number" id="runSpeed" value="5.0" step="0.1" min="2.5" max="10.0">
+                </div>
+            </div>
+
+            <div class="metronome-controls">
+                <h3>Metronome Engine</h3>
+                <div class="metronome-status">
+                    <span id="metronomeStatusBadge" class="badge stopped">Stopped</span>
+                    <span id="currentBeatDisplay" class="beat-display">Beat: --</span>
+                </div>
+                <button id="toggleMetronomeBtn" class="btn btn-primary">Start Metronome Audio</button>
+            </div>
+        </section>
+
+        <!-- Biomechanics & Analysis Dashboard -->
+        <section class="panel analysis-panel">
+            <h2>Biomechanics & Stride Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Calculated Stride Length</span>
+                    <span id="metricStrideLength" class="metric-value">1.11 m</span>
+                    <span class="metric-hint">Optimal ratio for height & speed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Ground Contact Time</span>
+                    <span id="metricGCT" class="metric-value">215 ms</span>
+                    <span class="metric-hint">Target &lt; 240ms for efficiency</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Vertical Oscillation</span>
+                    <span id="metricOscillation" class="metric-value">7.8 cm</span>
+                    <span class="metric-hint">Vertical bounce per stride</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Calorie Burn</span>
+                    <span id="metricCalories" class="metric-value">720 kcal/hr</span>
+                    <span class="metric-hint">Based on weight & pace</span>
+                </div>
+            </div>
+
+            <!-- Visual Stride Animation Canvas -->
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <h3>Real-time Cadence & Stride Visualizer</h3>
+                    <span class="live-indicator">● Live</span>
+                </div>
+                <canvas id="strideCanvas" width="600" height="160"></canvas>
+            </div>
+        </section>
+
+        <!-- Session Logger & Split Calculator -->
+        <section class="panel log-panel">
+            <div class="section-header">
+                <h2>Workout Split & Session Ledger</h2>
+                <button id="saveSessionBtn" class="btn btn-secondary">Save Current Config</button>
+            </div>
+            <div class="table-responsive">
+                <table id="sessionsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Cadence</th>
+                            <th>Pace</th>
+                            <th>Stride Length</th>
+                            <th>Est. GCT</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionsBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AuraStride &bull; Offline Biomechanics Lab &bull; No data transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
