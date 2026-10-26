@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVault: Cryptographic Vault & Secret Splitting Workbench</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo">
+        <svg class="shield-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <h1>AuraVault</h1>
+      </div>
+      <p class="tagline">Client-side cryptographic entropy, passphrase generation & secret splitting</p>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <nav class="tab-navigation" role="tablist">
+      <button class="tab-btn active" data-target="entropy-tab" role="tab" aria-selected="true">Entropy & Strength</button>
+      <button class="tab-btn" data-target="generator-tab" role="tab" aria-selected="false">Passphrase Generator</button>
+      <button class="tab-btn" data-target="splitter-tab" role="tab" aria-selected="false">Secret Sharing (M-of-N)</button>
+    </nav>
+
+    <!-- Tab 1: Entropy & Strength Analyzer -->
+    <section id="entropy-tab" class="tab-panel active" role="tabpanel">
+      <div class="card">
+        <h2>Password & Secret Strength Inspector</h2>
+        <p class="section-desc">Type or paste a secret below to evaluate its information entropy, NIST guideline compliance, and estimated offline crack resistance.</p>
+        
+        <div class="input-group">
+          <label for="secret-input">Enter password or secret passphrase</label>
+          <div class="password-input-wrap">
+            <input type="password" id="secret-input" placeholder="Type or generate a secure secret..." autocomplete="off">
+            <button type="button" id="toggle-visibility" title="Toggle visibility">Show</button>
+          </div>
+        </div>
+
+        <div class="strength-meter-container">
+          <div class="meter-bar"><div id="meter-fill" class="meter-fill"></div></div>
+          <div class="meter-stats">
+            <span id="strength-label">Strength: Empty</span>
+            <span id="entropy-bits">0 bits of entropy</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-title">Desktop GPU Crack Time</span>
+            <span id="crack-gpu" class="stat-value">Instant</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Enterprise Cluster (1000 GPUs)</span>
+            <span id="crack-cluster" class="stat-value">Instant</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Quantum Threat (Grover's)</span>
+            <span id="crack-quantum" class="stat-value">Instant</span>
+          </div>
+        </div>
+
+        <div class="checklist-container">
+          <h3>NIST Compliance Checks</h3>
+          <ul id="nist-checklist">
+            <li id="check-length" class="fail">At least 12 characters long</li>
+            <li id="check-upper" class="fail">Contains uppercase letters</li>
+            <li id="check-lower" class="fail">Contains lowercase letters</li>
+            <li id="check-digit" class="fail">Contains numeric digits</li>
+            <li id="check-symbol" class="fail">Contains special symbols</li>
+            <li id="check-pattern" class="pass">No obvious sequential or repeated patterns</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Passphrase Generator -->
+    <section id="generator-tab" class="tab-panel" role="tabpanel">
+      <div class="card">
+        <h2>Secure Passphrase Generator</h2>
+        <p class="section-desc">Generate high-entropy, memorable passphrases or randomized cryptographic tokens using browser crypto.</p>
+        
+        <div class="output-box">
+          <input type="text" id="generated-output" readonly value="Click generate below">
+          <button type="button" id="copy-btn" class="primary-btn">Copy Secret</button>
+        </div>
+
+        <div class="generator-controls">
+          <div class="control-mode-toggle">
+            <label><input type="radio" name="gen-mode" value="diceware" checked> Diceware Passphrase</label>
+            <label><input type="radio" name="gen-mode" value="random"> Random Token</label>
+          </div>
+
+          <div id="diceware-options" class="mode-options">
+            <div class="slider-group">
+              <label for="word-count">Word Count: <span id="word-count-val">5</span></label>
+              <input type="range" id="word-count" min="3" max="9" value="5">
+            </div>
+            <div class="slider-group">
+              <label for="separator-char">Separator:</label>
+              <select id="separator-char">
+                <option value="-">Hyphen (-)</option>
+                <option value="_">Underscore (_)</option>
+                <option value=".">Period (.)</option>
+                <option value=" ">Space ( )</option>
+                <option value="/">Slash (/)</option>
+              </select>
+            </div>
+            <div class="checkbox-group">
+              <label><input type="checkbox" id="cap-words" checked> Capitalize Words</label>
+              <label><input type="checkbox" id="add-num" checked> Include Number</label>
+            </div>
+          </div>
+
+          <div id="random-options" class="mode-options hidden">
+            <div class="slider-group">
+              <label for="token-length">Character Length: <span id="token-length-val">20</span></label>
+              <input type="range" id="token-length" min="10" max="64" value="20">
+            </div>
+            <div class="checkbox-group">
+              <label><input type="checkbox" id="opt-upper" checked> Uppercase (A-Z)</label>
+              <label><input type="checkbox" id="opt-lower" checked> Lowercase (a-z)</label>
+              <label><input type="checkbox" id="opt-numbers" checked> Numbers (0-9)</label>
+              <label><input type="checkbox" id="opt-symbols" checked> Symbols (!@#$)</label>
+            </div>
+          </div>
+
+          <button type="button" id="generate-btn" class="action-btn">Generate New Secret</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Secret Splitting (M-of-N) -->
+    <section id="splitter-tab" class="tab-panel" role="tabpanel">
+      <div class="card">
+        <h2>Shamir-Style Secret Splitting (M-of-N Threshold)</h2>
+        <p class="section-desc">Split a sensitive master secret into N shares such that any M shares can reconstruct it, but fewer shares reveal nothing.</p>
+        
+        <div class="input-group">
+          <label for="split-secret">Master Secret to Split</label>
+          <input type="text" id="split-secret" placeholder="Enter secret recovery phrase or key...">
+        </div>
+
+        <div class="split-parameters">
+          <div class="slider-group">
+            <label for="total-shares">Total Shares (N): <span id="total-shares-val">5</span></label>
+            <input type="range" id="total-shares" min="2" max="9" value="5">
+          </div>
+          <div class="slider-group">
+            <label for="threshold-shares">Threshold (M required): <span id="threshold-shares-val">3</span></label>
+            <input type="range" id="threshold-shares" min="2" max="9" value="3">
+          </div>
+        </div>
+
+        <button type="button" id="split-btn" class="action-btn">Split Secret</button>
+
+        <div id="split-results-container" class="hidden">
+          <h3>Generated Recovery Shares</h3>
+          <p class="section-desc">Distribute these independent shares to trusted guardians. Any threshold combination will recover the master secret.</p>
+          <div id="shares-output-list" class="shares-list"></div>
+        </div>
+
+        <hr class="divider">
+
+        <h3>Reconstruct Master Secret</h3>
+        <p class="section-desc">Paste at least M threshold shares below to reconstruct your master secret.</p>
+        <div class="input-group">
+          <textarea id="recovery-input" rows="4" placeholder="Paste share lines here (one share per line)..."></textarea>
+        </div>
+        <button type="button" id="recover-btn" class="action-btn">Reconstruct Secret</button>
+        <div id="recovery-result" class="recovery-output hidden"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>AuraVault &bull; 100% Client-Side Cryptographic Utility &bull; No data transmitted</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
