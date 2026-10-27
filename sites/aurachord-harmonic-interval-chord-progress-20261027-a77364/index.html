@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraChord: Harmonic Interval & Chord Progression Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M9 18V5l12-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+                <h1>Aura<span>Chord</span></h1>
+            </div>
+            <p class="subtitle">Harmonic Interval & Chord Progression Workbench</p>
+        </header>
+
+        <main class="workspace">
+            <!-- Control Panel -->
+            <section class="control-panel">
+                <div class="control-group">
+                    <label for="root-note">Root Note</label>
+                    <select id="root-note">
+                        <option value="0">C</option>
+                        <option value="1">C♯ / D♭</option>
+                        <option value="2">D</option>
+                        <option value="3">D♯ / E♭</option>
+                        <option value="4">E</option>
+                        <option value="5">F</option>
+                        <option value="6">F♯ / G♭</option>
+                        <option value="7" selected>G</option>
+                        <option value="8">G♯ / A♭</option>
+                        <option value="9">A</option>
+                        <option value="10">A♯ / B♭</option>
+                        <option value="11">B</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="scale-type">Scale / Mode</label>
+                    <select id="scale-type">
+                        <option value="major" selected>Major (Ionian)</option>
+                        <option value="minor">Natural Minor (Aeolian)</option>
+                        <option value="harmonic_minor">Harmonic Minor</option>
+                        <option value="dorian">Dorian</option>
+                        <option value="mixolydian">Mixolydian</option>
+                        <option value="pentatonic_major">Major Pentatonic</option>
+                        <option value="pentatonic_minor">Minor Pentatonic</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="synth-waveform">Synth Timbre</label>
+                    <select id="synth-waveform">
+                        <option value="sine">Sine (Smooth)</option>
+                        <option value="triangle" selected>Triangle (Mellow)</option>
+                        <option value="sawtooth">Sawtooth (Bright)</option>
+                        <option value="square">Square (Warm)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Master Audio</label>
+                    <button id="audio-toggle-btn" class="btn secondary">Enable Audio</button>
+                </div>
+            </section>
+
+            <!-- Diatonic Chord Palette -->
+            <section class="section-block">
+                <h2>Diatonic Chords in <span id="current-scale-label">G Major</span></h2>
+                <p class="section-desc">Click any chord card to preview its sound or add it to your progression timeline.</p>
+                <div id="diatonic-grid" class="diatonic-grid">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- Progression Timeline -->
+            <section class="section-block">
+                <div class="timeline-header">
+                    <h2>Progression Timeline</h2>
+                    <div class="timeline-actions">
+                        <button id="play-progression-btn" class="btn primary" disabled>Play Progression</button>
+                        <button id="clear-progression-btn" class="btn danger">Clear All</button>
+                        <button id="save-progression-btn" class="btn">Save to Vault</button>
+                    </div>
+                </div>
+                <p class="section-desc">Build your chord sequence by clicking chords above or selecting below. Rearrange or delete cards anytime.</p>
+                <div id="progression-timeline" class="progression-timeline">
+                    <div class="empty-timeline">Your timeline is empty. Click diatonic chords above to build a sequence.</div>
+                </div>
+            </section>
+
+            <!-- Harmonic Analysis & Saved Vault Grid -->
+            <div class="dual-grid">
+                <section class="section-block">
+                    <h2>Harmonic Analysis</h2>
+                    <div id="harmonic-analysis" class="analysis-card">
+                        <p>Add chords to your timeline to view harmonic movement, Roman numeral function flow, and tension analysis.</p>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <h2>Saved Progressions Vault</h2>
+                    <div id="vault-list" class="vault-list">
+                        <p class="empty-vault">No saved progressions yet.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraChord &bull; Static Harmonic Workbench &bull; Built with Vanilla JS & Web Audio API</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
