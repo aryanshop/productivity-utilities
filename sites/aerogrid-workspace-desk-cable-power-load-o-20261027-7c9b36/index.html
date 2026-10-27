@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroGrid: Workspace Desk Cable & Power Load Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg class="icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+                <h1>AeroGrid <span>Power & Cable Planner</span></h1>
+            </div>
+            <p class="subtitle">Optimize desk electrical load, circuit safety, and cable routing matrices with professional precision.</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Controls & Inventory Input -->
+            <section class="panel controls-panel">
+                <h2>Setup Configuration</h2>
+                <div class="config-group">
+                    <label for="circuit-voltage">Circuit Voltage & Limit</label>
+                    <div class="inline-inputs">
+                        <select id="circuit-voltage">
+                            <option value="120">120V Standard (US/Canada - 15A max)</option>
+                            <option value="230" selected>230V Standard (EU/UK/AU - 13A max)</option>
+                        </select>
+                        <select id="circuit-amperage">
+                            <option value="10">10 Amps</option>
+                            <option value="13">13 Amps</option>
+                            <option value="15" selected>15 Amps</option>
+                            <option value="16">16 Amps</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label for="kwh-rate">Electricity Rate ($ / kWh)</label>
+                    <input type="number" id="kwh-rate" value="0.18" step="0.01" min="0.01" max="2.00">
+                </div>
+
+                <div class="config-group">
+                    <label for="desk-width">Desk Dimensions (cm)</label>
+                    <div class="inline-inputs">
+                        <input type="number" id="desk-width" value="160" min="60" max="350" placeholder="Width">
+                        <input type="number" id="desk-depth" value="80" min="40" max="200" placeholder="Depth">
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <h2>Add Hardware Device</h2>
+                <form id="device-form">
+                    <div class="form-field">
+                        <label for="dev-name">Device Name</label>
+                        <input type="text" id="dev-name" placeholder="e.g. Studio Monitor" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="dev-watts">Power (Watts)</label>
+                            <input type="number" id="dev-watts" value="65" min="1" max="3000" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="dev-category">Category</label>
+                            <select id="dev-category">
+                                <option value="Computer">Computer / Laptop</option>
+                                <option value="Display">Monitor / Display</option>
+                                <option value="Audio">Audio / Speakers</option>
+                                <option value="Lighting">Lighting / LED</option>
+                                <option value="Accessory">Accessory / Peripheral</option>
+                                <option value="Charging">Charger / Power Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="dev-cable">Cable Length (m)</label>
+                            <input type="number" id="dev-cable" value="1.8" step="0.1" min="0.5" max="10">
+                        </div>
+                        <div class="form-field">
+                            <label for="dev-plugs">AC Plugs Required</label>
+                            <input type="number" id="dev-plugs" value="1" min="1" max="3">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add to Workspace</button>
+                </form>
+
+                <div class="data-actions">
+                    <button id="btn-export" class="btn btn-secondary">Export Setup JSON</button>
+                    <label for="import-file" class="btn btn-secondary file-upload-label">Import JSON</label>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                    <button id="btn-reset" class="btn btn-danger">Reset Default</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Analytics, Inventory List & Visualizer -->
+            <div class="dashboard-column">
+                <!-- Analytics Summary Cards -->
+                <section class="metrics-grid">
+                    <div class="metric-card" id="card-power">
+                        <span class="metric-label">Total Power Load</span>
+                        <span class="metric-value" id="val-watts">0 W</span>
+                        <span class="metric-sub" id="val-amps">0.00 Amps</span>
+                    </div>
+                    <div class="metric-card" id="card-capacity">
+                        <span class="metric-label">Circuit Capacity</span>
+                        <span class="metric-value" id="val-capacity-pct">0%</span>
+                        <span class="metric-sub" id="val-capacity-status">Safe Load</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Est. Monthly Cost</span>
+                        <span class="metric-value" id="val-monthly-cost">$0.00</span>
+                        <span class="metric-sub">Assuming 8h/day use</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Cables & Sockets</span>
+                        <span class="metric-value" id="val-total-plugs">0 Outlets</span>
+                        <span class="metric-sub" id="val-total-cable">0.0m total length</span>
+                    </div>
+                </section>
+
+                <!-- Warning Banner Area -->
+                <div id="warning-banner" class="warning-banner hidden">
+                    <svg class="icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span id="warning-text">Warning: Total load exceeds recommended continuous rating for standard surge strip.</span>
+                </div>
+
+                <!-- Hardware Inventory Table -->
+                <section class="panel inventory-panel">
+                    <div class="panel-header">
+                        <h2>Hardware Inventory</h2>
+                        <span class="device-count" id="device-count-badge">0 devices</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Category</th>
+                                    <th>Power (W)</th>
+                                    <th>Cable</th>
+                                    <th>Outlets</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-tbody">
+                                <!-- Dynamic items inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Visual Cable Routing & Desk Layout Map -->
+                <section class="panel visual-panel">
+                    <h2>Desk Cable Routing & Power Topology</h2>
+                    <p class="panel-desc">Visualizing device distribution, cable slack estimation, and surge strip grouping across your desk surface.</p>
+                    <div class="canvas-container">
+                        <canvas id="desk-canvas" width="700" height="350"></canvas>
+                    </div>
+                    <div class="routing-legend">
+                        <span class="legend-item"><span class="dot computer"></span>Computer/Display</span>
+                        <span class="legend-item"><span class="dot audio"></span>Audio/Peripherals</span>
+                        <span class="legend-item"><span class="dot lighting"></span>Lighting/Accessories</span>
+                        <span class="legend-item"><span class="surge-box"></span>Surge Hub</span>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2025 AeroGrid Workspace Optimizer. Client-side privacy-first power & cable planner.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
