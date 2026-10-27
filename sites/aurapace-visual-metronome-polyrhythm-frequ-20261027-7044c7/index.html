@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPace: Visual Metronome & Polyrhythm Frequency Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">⏱️</span>
+                <h1>AuraPace</h1>
+            </div>
+            <p class="tagline">Visual Metronome, Polyrhythm Frequency & Tempo Lab</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Controls & Configuration -->
+            <section class="control-panel card">
+                <h2>Tempo & Meter</h2>
+                
+                <div class="control-group">
+                    <div class="bpm-display-row">
+                        <label for="bpmRange">BPM (Beats Per Minute)</label>
+                        <span id="bpmVal" class="badge">120</span>
+                    </div>
+                    <input type="range" id="bpmRange" min="40" max="240" value="120">
+                    <div class="bpm-buttons">
+                        <button id="btnMinus" class="btn-sm" aria-label="Decrease BPM">-1</button>
+                        <button id="btnPlus" class="btn-sm" aria-label="Increase BPM">+1</button>
+                        <button id="btnTap" class="btn-accent">Tap Tempo</button>
+                    </div>
+                </div>
+
+                <div class="control-row-double">
+                    <div class="control-group">
+                        <label for="timeSigTop">Time Signature</label>
+                        <div class="select-row">
+                            <select id="timeSigTop">
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                            </select>
+                            <span>/</span>
+                            <select id="timeSigBottom">
+                                <option value="4" selected>4</option>
+                                <option value="8">8</option>
+                                <option value="2">2</option>
+                                <option value="16">16</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="subdivision">Subdivision</label>
+                        <select id="subdivision">
+                            <option value="1" selected>Quarter (1)</option>
+                            <option value="2">Eighth (2)</option>
+                            <option value="3">Triplet (3)</option>
+                            <option value="4">Sixteenth (4)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="soundProfile">Click Sound Profile</label>
+                    <select id="soundProfile">
+                        <option value="wood">Classic Woodblock</option>
+                        <option value="beep" selected>Digital Beep</option>
+                        <option value="cowbell">Metal Cowbell</option>
+                        <option value="soft">Soft Sine</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="polyrhythmToggle" class="checkbox-label">
+                        <input type="checkbox" id="polyrhythmToggle">
+                        <span>Enable Polyrhythm Layer (e.g. 3 against 4)</span>
+                    </label>
+                    <div id="polyConfig" class="sub-config disabled">
+                        <label for="polyRatio">Secondary Beats per Measure</label>
+                        <select id="polyRatio" disabled>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="btnStartStop" class="btn-primary btn-lg">▶ Start Metronome</button>
+                    <button id="btnReset" class="btn-secondary">Reset</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Visualizer & Feedback -->
+            <section class="visualizer-panel card">
+                <h2>Visual Pulse & Pendulum</h2>
+                
+                <div class="visual-display-container">
+                    <!-- SVG Pendulum -->
+                    <svg id="pendulumSvg" viewBox="0 0 300 200" width="100%" height="160">
+                        <!-- Pivot point -->
+                        <circle cx="150" cy="20" r="8" fill="var(--text-main)" />
+                        <!-- Swing arc path -->
+                        <path d="M 40 140 Q 150 180 260 140" fill="none" stroke="var(--border)" stroke-dasharray="4 4" stroke-width="2" />
+                        <!-- Rod -->
+                        <line id="pendulumRod" x1="150" y1="20" x2="150" y2="160" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" />
+                        <!-- Bob -->
+                        <circle id="pendulumBob" cx="150" cy="160" r="16" fill="var(--accent)" />
+                    </svg>
+
+                    <!-- Beat Light Dots -->
+                    <div id="beatDotsContainer" class="beat-dots-container">
+                        <!-- Dynamically generated beat indicators -->
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Elapsed Time</span>
+                        <span id="statTime" class="stat-val">00:00</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Beats Counted</span>
+                        <span id="statBeats" class="stat-val">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Current Measure</span>
+                        <span id="statMeasure" class="stat-val">1</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraPace • Client-side timing and rhythm workbench. No external assets required.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
