@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrid: Soil Moisture & Irrigation Water Budget Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                <h1>AuraGrid</h1>
+            </div>
+            <p class="tagline">Precision Soil Moisture & Irrigation Water Budget Planner</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-export" class="btn secondary" title="Export Garden Data">Export JSON</button>
+            <label for="import-file" class="btn secondary upload-btn" title="Import Garden Data">Import JSON</label>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+            <button id="btn-reset" class="btn danger">Reset Default</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panels -->
+        <section class="panels-grid">
+            <!-- Panel 1: Bed & Soil Setup -->
+            <div class="card">
+                <h2>1. Bed & Soil Parameters</h2>
+                <div class="form-group">
+                    <label for="bed-name">Garden Bed / Zone Name</label>
+                    <input type="text" id="bed-name" value="Backyard Raised Bed A">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bed-width">Width (ft)</label>
+                        <input type="number" id="bed-width" value="4" min="0.5" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="bed-length">Length (ft)</label>
+                        <input type="number" id="bed-length" value="8" min="0.5" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="bed-depth">Depth (in)</label>
+                        <input type="number" id="bed-depth" value="10" min="2" max="36" step="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="soil-type">Soil Composition</label>
+                    <select id="soil-type">
+                        <option value="sandy">Sandy Soil (Fast drainage, low retention)</option>
+                        <option value="loam" selected>Garden Loam (Balanced, optimal retention)</option>
+                        <option value="clay">Clay Soil (Slow drainage, high retention)</option>
+                        <option value="potting">Commercial Potting Mix (High organic peat/perlite)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mulch-coverage">Mulch Layer</label>
+                    <select id="mulch-coverage">
+                        <option value="none">No Mulch (High evaporation)</option>
+                        <option value="light">Light Mulch (1-2 inches)</option>
+                        <option value="heavy" selected>Heavy Straw/Woodchip Mulch (3+ inches)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Panel 2: Crop & Climate Profile -->
+            <div class="card">
+                <h2>2. Crop & Climate Profile</h2>
+                <div class="form-group">
+                    <label for="crop-type">Primary Crop Category</label>
+                    <select id="crop-type">
+                        <option value="heavy">Heavy Drinkers (Tomatoes, Squash, Melons)</option>
+                        <option value="moderate" selected>Moderate Drinkers (Leafy Greens, Peppers, Root Veg)</option>
+                        <option value="drought">Drought Tolerant (Herbs, Succulents, Lavender)</option>
+                        <option value="seedlings">New Seedlings / Germination Stage</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="temp-avg">Avg Daily High (°F)</label>
+                        <input type="number" id="temp-avg" value="82" min="40" max="115" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="sun-exposure">Sun Exposure</label>
+                        <select id="sun-exposure">
+                            <option value="full" selected>Full Sun (6+ hrs)</option>
+                            <option value="partial">Partial Shade (3-6 hrs)</option>
+                            <option value="shade">Deep Shade (&lt;3 hrs)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recent-rain">Recent Rainfall (Last 7 Days in inches)</label>
+                    <input type="number" id="recent-rain" value="0.4" min="0" max="10" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="irrigation-method">Irrigation Method Efficiency</label>
+                    <select id="irrigation-method">
+                        <option value="drip" selected>Drip Irrigation / Soaker Hose (90%)</option>
+                        <option value="wand">Hand Watering / Wand (75%)</option>
+                        <option value="sprinkler">Overhead Sprinkler (60%)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Dashboard -->
+        <section class="dashboard-grid">
+            <div class="metric-card">
+                <span class="metric-label">Total Soil Volume</span>
+                <span class="metric-value" id="val-soil-vol">2.67</span>
+                <span class="metric-unit">cubic yards</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Water Needed Per Session</span>
+                <span class="metric-value highlight" id="val-session-water">14.2</span>
+                <span class="metric-unit">gallons</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Recommended Frequency</span>
+                <span class="metric-value" id="val-frequency">Every 3 Days</span>
+                <span class="metric-unit">schedule</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Weekly Water Budget</span>
+                <span class="metric-value" id="val-weekly-total">33.1</span>
+                <span class="metric-unit">gallons / week</span>
+            </div>
+        </section>
+
+        <!-- Interactive Visualizer & Schedule -->
+        <section class="schedule-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2>7-Day Soil Moisture & Irrigation Forecast</h2>
+                    <div class="badge" id="status-badge">Optimal Moisture</div>
+                </div>
+                <p class="section-desc">Simulated daily soil moisture retention curve factoring in evaporation, root uptake, and scheduled watering interventions.</p>
+                
+                <div class="chart-container">
+                    <canvas id="moisture-chart" width="800" height="240"></canvas>
+                </div>
+
+                <div class="schedule-table-wrap">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Evapotranspiration</th>
+                                <th>Rainfall / Added</th>
+                                <th>Moisture Level</th>
+                                <th>Action Required</th>
+                            </tr>
+                        酝</thead>
+                        <tbody id="schedule-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips & Notes -->
+        <section class="tips-grid">
+            <div class="card">
+                <h3>💡 Irrigation Pro-Tips</h3>
+                <ul id="tips-list">
+                    <!-- Populated via JS -->
+                </ul>
+            </div>
+            <div class="card">
+                <h3>📝 Quick Notes & Observations</h3>
+                <div class="form-group">
+                    <textarea id="garden-notes" placeholder="Log observations here (e.g., soil feels slightly damp at 2-inch depth, tomatoes setting fruit...)"></textarea>
+                </div>
+                <button id="btn-save-notes" class="btn primary">Save Notes Locally</button>
+                <span id="save-status" class="save-status"></span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraGrid Soil Moisture & Irrigation Water Budget Planner &bull; Local-first &bull; No data transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
