@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStitch: Textile Fabric Shrinkage & Yield Estimator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.5l-8-8a2.83 2.83 0 0 0-4 0l-1.5 1.5a2.83 2.83 0 0 0 0 4l8 8a2.83 2.83 0 0 0 4 0l1.5-1.5a2.83 2.83 0 0 0 0-4z"/><path d="M12 12l-4 4"/><path d="M15 7l-3 3"/></svg>
+                <h1>AuraStitch</h1>
+            </div>
+            <p class="tagline">Precision Fabric Yardage, Shrinkage & Yield Calculator for Sewists</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Panel: Configurations & Inventory -->
+            <section class="panel config-panel">
+                <h2>Fabric & Project Specs</h2>
+                
+                <div class="input-group-row">
+                    <div class="input-field">
+                        <label for="fabric-width">Fabric Width</label>
+                        <select id="fabric-width">
+                            <option value="44">44" / 45" (Standard Quilting/Cotton)</option>
+                            <option value="54" selected>54" (Standard Garment/Drapery)</option>
+                            <option value="60">60" (Wide Knit / Coating)</option>
+                            <option value="72">72" (Extra Wide Sheeting)</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label for="unit-system">Measurement Unit</label>
+                        <select id="unit-system">
+                            <option value="yards" selected>Yards / Inches</option>
+                            <option value="meters">Meters / Centimeters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group-row">
+                    <div class="input-field">
+                        <label for="warp-shrink">Warp Shrinkage (Length %)</label>
+                        <input type="number" id="warp-shrink" value="5" min="0" max="30" step="0.5">
+                    </div>
+                    <div class="input-field">
+                        <label for="weft-shrink">Weft Shrinkage (Width %)</label>
+                        <input type="number" id="weft-shrink" value="3" min="0" max="30" step="0.5">
+                    </div>
+                </div>
+
+                <div class="input-group-row">
+                    <div class="input-field">
+                        <label for="layout-extra">Layout Waste / Matching (%)</label>
+                        <input type="number" id="layout-extra" value="15" min="0" max="50" step="1">
+                    </div>
+                    <div class="input-field">
+                        <label for="fabric-cost">Fabric Price (per unit)</label>
+                        <input type="number" id="fabric-cost" value="12.50" min="0" step="0.25">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3>Garment / Project Pieces</h3>
+                <form id="add-piece-form" class="add-form">
+                    <div class="input-field">
+                        <label for="piece-name">Piece Name</label>
+                        <input type="text" id="piece-name" placeholder="e.g., Bodice Front" required>
+                    </div>
+                    <div class="input-field small">
+                        <label for="piece-qty">Qty</label>
+                        <input type="number" id="piece-qty" value="2" min="1" max="50" required>
+                    </div>
+                    <div class="input-field small">
+                        <label for="piece-len">Length</label>
+                        <input type="number" id="piece-len" value="24" min="1" step="0.5" required>
+                    </div>
+                    <div class="input-field small">
+                        <label for="piece-wdt">Width</label>
+                        <input type="number" id="piece-wdt" value="18" min="1" step="0.5" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="add-btn">Add Piece</button>
+                </form>
+
+                <div class="piece-list-container">
+                    <table class="piece-table" id="piece-table">
+                        <thead>
+                            <tr>
+                                <th>Piece</th>
+                                <th>Qty</th>
+                                <th>Dimensions</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="piece-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="preset-buttons">
+                    <button type="button" class="btn btn-secondary" id="preset-shirt">Load Shirt Preset</button>
+                    <button type="button" class="btn btn-secondary" id="preset-trousers">Load Trousers Preset</button>
+                    <button type="button" class="btn btn-secondary" id="preset-clear">Clear All</button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Results & Layout Visualizer -->
+            <section class="panel results-panel">
+                <h2>Yield & Cutting Analysis</h2>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Raw Cut Yardage</span>
+                        <span class="metric-value" id="res-raw-yards">0.00 yds</span>
+                        <span class="metric-sub" id="res-raw-meters">0.00 m</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <span class="metric-label">Recommended Buy</span>
+                        <span class="metric-value" id="res-buy-yards">0.00 yds</span>
+                        <span class="metric-sub" id="res-buy-meters">0.00 m</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Estimated Cost</span>
+                        <span class="metric-value" id="res-cost">$0.00</span>
+                        <span class="metric-sub" id="res-area">0 sq ft</span>
+                    </div>
+                </div>
+
+                <div class="shrinkage-alert" id="shrinkage-alert">
+                    <strong>Pre-Wash Warning:</strong> Due to warp (5%) and weft (3%) shrinkage, wash and dry your fabric before cutting or cut pieces <strong>1.5" longer</strong> and <strong>1" wider</strong> than drafted patterns.
+                </div>
+
+                <div class="visualizer-container">
+                    <h3>Fabric Layout Blueprint Simulation</h3>
+                    <p class="visualizer-caption">Visual representation of pieces laid across usable fabric width.</p>
+                    <div class="canvas-wrapper">
+                        <canvas id="layout-canvas" width="600" height="220"></canvas>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn btn-primary" id="btn-export">Export Summary JSON</button>
+                    <button type="button" class="btn btn-secondary" id="btn-print">Print Cut Sheet</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraStitch &mdash; Client-side Textile Calculator. No data uploaded.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
