@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Secure Password Strength & Entropy Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h1>AuraVault</h1>
+            </div>
+            <p class="tagline">Client-Side Cryptographic Entropy & Password Resilience Inspector</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Inspector & Input -->
+            <section class="panel input-panel">
+                <h2>Password Inspector</h2>
+                <p class="panel-desc">Type or test any secret key. All calculations run 100% locally in your browser.</p>
+
+                <div class="input-group">
+                    <label for="password-input">Enter Password or Passphrase</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password-input" placeholder="Type or generate a secure secret..." autocomplete="off" spellcheck="false">
+                        <button type="button" id="toggle-visibility" aria-label="Show password">
+                            <svg id="eye-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="strength-meter-container">
+                    <div class="meter-labels">
+                        <span id="strength-label-text">Strength: <strong>Empty</strong></span>
+                        <span id="entropy-bits-text">0 bits</span>
+                    </div>
+                    <div class="meter-track">
+                        <div id="strength-bar" class="meter-fill"></div>
+                    </div>
+                </div>
+
+                <div class="generator-card">
+                    <h3>Passphrase & Password Generator</h3>
+                    <div class="gen-options">
+                        <div class="gen-mode-tabs">
+                            <button type="button" class="tab-btn active" data-mode="passphrase">Diceware Passphrase</button>
+                            <button type="button" class="tab-btn" data-mode="random">Random Complex</button>
+                        </div>
+                        
+                        <div id="passphrase-options" class="gen-config">
+                            <div class="slider-group">
+                                <label for="word-count">Word Count: <span id="word-count-val">4</span></label>
+                                <input type="range" id="word-count" min="3" max="8" value="4">
+                            </div>
+                            <div class="checkbox-row">
+                                <label><input type="checkbox" id="cap-word" checked> Capitalize</label>
+                                <label><input type="checkbox" id="num-word" checked> Add Number</label>
+                            </div>
+                        </div>
+
+                        <div id="random-options" class="gen-config hidden">
+                            <div class="slider-group">
+                                <label for="char-length">Length: <span id="char-length-val">16</span></label>
+                                <input type="range" id="char-length" min="8" max="64" value="16">
+                            </div>
+                            <div class="checkbox-row">
+                                <label><input type="checkbox" id="inc-upper" checked> A-Z</label>
+                                <label><input type="checkbox" id="inc-lower" checked> a-z</label>
+                                <label><input type="checkbox" id="inc-nums" checked> 0-9</label>
+                                <label><input type="checkbox" id="inc-syms" checked> Symbols</label>
+                            </div>
+                        </div>
+
+                        <button type="button" id="generate-btn" class="primary-btn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                            Generate & Test Secure Secret
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Analytics & Metrics -->
+            <section class="panel analytics-panel">
+                <h2>Cryptographic & Security Analysis</h2>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-title">Character Set Space ($R$)</span>
+                        <span id="metric-charset" class="metric-value">0</span>
+                        <span id="metric-charset-desc" class="metric-sub">Unique symbols utilized</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-title">Shannon Entropy ($H$)</span>
+                        <span id="metric-shannon" class="metric-value">0.0 bits</span>
+                        <span class="metric-sub">Randomness density</span>
+                    </div>
+                </div>
+
+                <div class="crack-times-section">
+                    <h3>Estimated Brute-Force Crack Time</h3>
+                    <div class="crack-list">
+                        <div class="crack-item">
+                            <span class="hardware-label">Desktop CPU <small>(10^9 guesses/sec)</small></span>
+                            <span id="crack-cpu" class="crack-time instant">Instant</span>
+                        </div>
+                        <div class="crack-item">
+                            <span class="hardware-label">High-End GPU Rig <small>(10^11 guesses/sec)</small></span>
+                            <span id="crack-gpu" class="crack-time instant">Instant</span>
+                        </div>
+                        <div class="crack-item">
+                            <span class="hardware-label">Enterprise Cluster <small>(10^13 guesses/sec)</small></span>
+                            <span id="crack-cluster" class="crack-time instant">Instant</span>
+                        </div>
+                        <div class="crack-item">
+                            <span class="hardware-label">Quantum Threat <small>(Grover's Algorithm)</small></span>
+                            <span id="crack-quantum" class="crack-time instant">Instant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nist-compliance-section">
+                    <h3>NIST SP 800-63B Guidelines Audit</h3>
+                    <ul id="nist-checklist" class="checklist">
+                        <li id="nist-length" class="check-fail">
+                            <span class="status-icon">✕</span> Minimum 8 characters length
+                        </li>
+                        <li id="nist-no-repeat" class="check-pass">
+                            <span class="status-icon">✓</span> No excessive repeating character sequences
+                        </li>
+                        <li id="nist-no-dict" class="check-pass">
+                            <span class="status-icon">✓</span> Free of common dictionary words & patterns
+                        </li>
+                        <li id="nist-entropy" class="check-fail">
+                            <span class="status-icon">✕</span> Minimum 64 bits of estimated entropy
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="vulnerabilities-section">
+                    <h3>Detected Patterns & Weaknesses</h3>
+                    <div id="vuln-container" class="vuln-container">
+                        <span class="no-vulns">No major vulnerabilities detected. Keep building strong secrets!</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVault &bull; Zero network requests &bull; Client-side security inspector</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
