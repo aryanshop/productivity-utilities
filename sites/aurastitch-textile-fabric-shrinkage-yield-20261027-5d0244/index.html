@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStitch: Textile Fabric Shrinkage & Yield Estimator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.38 3.46L16 2a4 4 0 0 1-5.65 0L2 10.38a4 4 0 0 1 0 5.65l4.38 4.38a4 4 0 0 1 5.65 0l8.35-8.35a4 4 0 0 1 0-5.65z"></path>
+                    <line x1="10" y1="10" x2="15" y2="15"></line>
+                    <line x1="15" y1="10" x2="10" y2="15"></line>
+                </svg>
+                <h1>AuraStitch</h1>
+            </div>
+            <p class="tagline">Precision Textile Shrinkage, Yardage & Grainline Yield Estimator</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Control Panel / Inputs -->
+        <section class="panel input-panel">
+            <div class="panel-header">
+                <h2>Project Parameters</h2>
+                <button id="reset-defaults-btn" class="btn btn-text" type="button">Reset Defaults</button>
+            </div>
+
+            <!-- Fabric Specs -->
+            <div class="form-group-fieldset">
+                <h3>1. Fabric Specifications</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fabric-width">Fabric Width (<span class="unit-label-width">in</span>)</label>
+                        <input type="number" id="fabric-width" value="54" min="10" max="120" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="fabric-cost">Cost per <span class="unit-label-length">Yard</span> ($)</label>
+                        <input type="number" id="fabric-cost" value="14.50" min="0" max="500" step="0.25">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shrinkage-warp">Warp Shrinkage (Length %) <span class="tooltip-icon" title="Shrinkage along the grainline / length">?</span></label>
+                        <input type="number" id="shrinkage-warp" value="5" min="0" max="30" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="shrinkage-weft">Weft Shrinkage (Width %) <span class="tooltip-icon" title="Shrinkage across the selvedges">?</span></label>
+                        <input type="number" id="shrinkage-weft" value="2" min="0" max="30" step="0.5">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pattern-match-extra">Pattern Match / Directional Nap Extra (%)</label>
+                        <input type="number" id="pattern-match-extra" value="15" min="0" max="50" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="unit-system">Measurement System</label>
+                        <select id="unit-system">
+                            <option value="imperial" selected>Imperial (Inches / Yards)</option>
+                            <option value="metric">Metric (Centimeters / Meters)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garment Components Inventory -->
+            <div class="form-group-fieldset">
+                <div class="fieldset-heading-row">
+                    <h3>2. Garment Components & Pattern Pieces</h3>
+                    <button id="add-piece-btn" class="btn btn-primary" type="button">+ Add Piece</button>
+                </div>
+                <p class="hint">List major pattern blocks (bodice, skirt panels, sleeves, linings) and their un-shrunk cut sizes.</p>
+                
+                <div id="pieces-list-container" class="pieces-list-container">
+                    <!-- Dynamically populated via script.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Output & Visualization Panel -->
+        <section class="panel output-panel">
+            <div class="panel-header">
+                <h2>Calculation & Yield Summary</h2>
+                <div class="action-buttons">
+                    <button id="print-btn" class="btn btn-secondary" type="button">Export Cut Sheet</button>
+                </div>
+            </div>
+
+            <!-- Summary Metric Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Total Cut Area</span>
+                    <span id="metric-area" class="metric-value">0.00</span>
+                    <span id="unit-area-label" class="metric-unit">sq ft</span>
+                </div>
+                <div class="metric-card highlight">
+                    <span class="metric-label">Recommended Yardage</span>
+                    <span id="metric-yardage" class="metric-value">0.0</span>
+                    <span id="unit-length-label" class="metric-unit">Yards</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Fabric Cost</span>
+                    <span id="metric-cost" class="metric-value">$0.00</span>
+                    <span class="metric-unit">Total</span>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown breakdown -->
+            <div class="breakdown-box">
+                <h4>Calculation Breakdown</h4>
+                <ul id="breakdown-list" class="breakdown-list">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+
+            <!-- Visual Cut Layout Simulator -->
+            <div class="layout-visualizer-container">
+                <div class="visualizer-header">
+                    <h4>Fabric Bolt Layout & Grainline Blueprint</h4>
+                    <span id="bolt-dimensions-text" class="bolt-dim-badge">Width: 54" | Length: 3.5 yd</span>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="layout-canvas" width="700" height="350"></canvas>
+                </div>
+                <p class="canvas-hint">Visual representation of pattern pieces laid out along the warp grainline with shrinkage & matching allowances factored in.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraStitch Textile Calculator &bull; Designed for precision tailoring, quilting, and sustainable sewing. All data calculated locally in your browser.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
