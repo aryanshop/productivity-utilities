@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenithType: Micro-Typography Rhythm & Vertical Rhythm Grid Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">⊞</span>
+        <h1>Zenith<span>Type</span></h1>
+      </div>
+      <p class="subtitle">Micro-Typography Rhythm & Vertical Rhythm Grid Workbench</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn secondary" title="Reset to defaults">Reset Defaults</button>
+      <button id="btn-export" class="btn primary" title="Export CSS Tokens">Export CSS</button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Controls Sidebar -->
+    <section class="sidebar" aria-label="Typography Controls">
+      <div class="panel-group">
+        <h2>Scale & Base</h2>
+        <div class="control-row">
+          <label for="base-font">Base Font Size (px)</label>
+          <div class="input-with-val">
+            <input type="range" id="base-font" min="12" max="20" value="16" step="1">
+            <span id="val-base-font">16px</span>
+          </div>
+        </div>
+        <div class="control-row">
+          <label for="modular-scale">Modular Scale Ratio</label>
+          <select id="modular-scale">
+            <option value="1.067">Minor Second (1.067)</option>
+            <option value="1.125">Major Second (1.125)</option>
+            <option value="1.200">Minor Third (1.200)</option>
+            <option value="1.250" selected>Major Third (1.250)</option>
+            <option value="1.333">Perfect Fourth (1.333)</option>
+            <option value="1.414">Augmented Fourth (1.414)</option>
+            <option value="1.500">Perfect Fifth (1.500)</option>
+            <option value="1.618">Golden Ratio (1.618)</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label for="base-line-height">Base Line Height (Leading)</label>
+          <div class="input-with-val">
+            <input type="range" id="base-line-height" min="1.2" max="2.0" value="1.5" step="0.05">
+            <span id="val-base-line-height">1.5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-group">
+        <h2>Vertical Grid & Spacing</h2>
+        <div class="control-row">
+          <label for="grid-unit">Baseline Grid Unit (px)</label>
+          <div class="input-with-val">
+            <input type="range" id="grid-unit" min="4" max="12" value="8" step="1">
+            <span id="val-grid-unit">8px</span>
+          </div>
+        </div>
+        <div class="control-row">
+          <label for="viewport-min">Min Viewport (px)</label>
+          <input type="number" id="viewport-min" value="320" step="20">
+        </div>
+        <div class="control-row">
+          <label for="viewport-max">Max Viewport (px)</label>
+          <input type="number" id="viewport-max" value="1440" step="20">
+        </div>
+      </div>
+
+      <div class="panel-group">
+        <h2>Preview Controls</h2>
+        <div class="toggle-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-grid" checked>
+            <span>Show Baseline Grid Overlay</span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-fluid">
+            <span>Enable Fluid Clamp() Typography</span>
+          </label>
+        </div>
+        <div class="control-row">
+          <label for="preview-font-family">Preview Font Family</label>
+          <select id="preview-font-family">
+            <option value="system-ui, -apple-system, sans-serif">System UI (Sans)</option>
+            <option value="Georgia, Cambria, serif" selected>Editorial Serif</option>
+            <option value="'Courier New', Courier, monospace">Monospace</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Work Area -->
+    <div class="workspace">
+      <!-- Tab Navigation -->
+      <nav class="tab-bar" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="preview" class="tab-btn active">Editorial Preview</button>
+        <button role="tab" aria-selected="false" data-tab="scale-table" class="tab-btn">Type Scale Matrix</button>
+        <button role="tab" aria-selected="false" data-tab="css-code" class="tab-btn">Generated CSS & Clamp()</button>
+      </nav>
+
+      <!-- Tab 1: Editorial Preview Canvas -->
+      <section id="tab-preview" class="tab-content active">
+        <div class="canvas-toolbar">
+          <span class="badge">Simulated Viewport: <strong id="canvas-width-indicator">768px</strong></span>
+          <div class="viewport-presets">
+            <button class="preset-btn" data-width="375">Mobile (375)</button>
+            <button class="preset-btn" data-width="768">Tablet (768)</button>
+            <button class="preset-btn active" data-width="1024">Desktop (1024)</button>
+            <button class="preset-btn" data-width="1280">Wide (1280)</button>
+          </div>
+        </div>
+
+        <div class="preview-wrapper">
+          <div id="baseline-overlay" class="baseline-grid-overlay"></div>
+          <div id="editorial-canvas" class="editorial-canvas">
+            <header class="article-header">
+              <span class="article-category">Typography & Design Architecture</span>
+              <h1 id="prev-h1" class="fluid-h1">The Architecture of Micro-Rhythm & Modular Harmony</h1>
+              <p class="article-meta">Published by ZenithType Engine &bull; 6 min read</p>
+            </header>
+
+            <div class="article-body">
+              <h2 id="prev-h2" class="fluid-h2">Establishing Proportionate Baseline Grids</h2>
+              <p id="prev-p1" class="fluid-p">Good typography is invisible, yet it governs the psychological cadence of reading. By anchoring every element to a strict vertical rhythm grid, text blocks achieve effortless legibility. When line height and margins correlate directly with a base grid unit, optical fatigue diminishes significantly.</p>
+              
+              <blockquote id="prev-quote" class="fluid-quote">
+                &ldquo;Proportion is not merely a mathematical ratio; it is the silent architecture that bridges structure and emotion on the printed or digital page.&rdquo;
+              </blockquote>
+
+              <h3 id="prev-h3" class="fluid-h3">Fluid Scale & CSS Clamp Mathematics</h3>
+              <p id="prev-p2" class="fluid-p">Modern web design demands responsive resilience across disparate screen sizes. Utilizing fluid typography formulas via <code>clamp()</code> allows font sizes to scale smoothly between minimum and maximum viewports without jarring media query jumps.</p>
+
+              <ul id="prev-list" class="fluid-list">
+                <li>Consistent baseline alignment across multi-column layouts.</li>
+                <li>Harmonious modular scale ratios for header hierarchies.</li>
+                <li>Zero layout shift during responsive resizing.</li>
+              </ul>
+
+              <p id="prev-p3" class="fluid-p">As designers and developers refine their craft, mastering these mathematical relationships transforms subjective aesthetic choices into robust, repeatable design systems.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Type Scale Matrix -->
+      <section id="tab-scale-table" class="tab-content">
+        <div class="table-container">
+          <h3>Modular Type Scale & Vertical Step Ledger</h3>
+          <p class="section-desc">Calculated progression based on your chosen base size and modular ratio.</p>
+          <table class="scale-matrix-table">
+            <thead>
+              <tr>
+                <th>Token Level</th>
+                <th>Modular Multiplier</th>
+                <th>Calculated Size (px)</th>
+                <th>Rem Equivalent</th>
+                <th>Target Line Height</th>
+                <th>Visual Specimen</th>
+              </tr>
+            </thead>
+            <tbody id="scale-matrix-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 3: Generated CSS & Clamp() -->
+      <section id="tab-css-code" class="tab-content">
+        <div class="code-card">
+          <div class="code-card-header">
+            <h3>Production-Ready CSS Variables & Clamp Formulae</h3>
+            <button id="btn-copy-css" class="btn secondary sm">Copy Code</button>
+          </div>
+          <pre><code id="css-code-output">/* Generated by ZenithType Engine */
+:root {
+  --base-font-size: 16px;
+  --modular-ratio: 1.25;
+  --base-line-height: 1.5;
+  --grid-unit: 8px;
+}</code></pre>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">CSS Copied to Clipboard!</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
