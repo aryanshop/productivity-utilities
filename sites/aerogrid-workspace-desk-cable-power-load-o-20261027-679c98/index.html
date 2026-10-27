@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroGrid: Workspace Desk Cable & Power Load Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                <h1>AeroGrid</h1>
+            </div>
+            <p class="tagline">Workspace Power Load & Cable Route Intelligence</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control & Overview Dashboard -->
+        <section class="dashboard-grid">
+            <div class="card metric-card">
+                <h3>Total Power Draw</h3>
+                <div class="metric-value" id="total-watts">0 W</div>
+                <div class="metric-sub" id="total-amps">0.00 Amps @ 120V</div>
+            </div>
+            <div class="card metric-card">
+                <h3>Monthly Est. Cost</h3>
+                <div class="metric-value" id="monthly-cost">$0.00</div>
+                <div class="metric-sub" id="cost-detail">Based on $0.15/kWh & 8h/day</div>
+            </div>
+            <div class="card metric-card">
+                <h3>Surge Capacity</h3>
+                <div class="metric-value" id="surge-status">Optimal</div>
+                <div class="metric-sub" id="surge-detail">0 of 1800W max load</div>
+            </div>
+            <div class="card metric-card">
+                <h3>Cable Run Estimate</h3>
+                <div class="metric-value" id="total-cable">0 ft</div>
+                <div class="metric-sub" id="cable-detail">Estimated total cord length</div>
+            </div>
+        </section>
+
+        <!-- Main Workspace Editor -->
+        <div class="workspace-layout">
+            <!-- Left: Device Inventory Management -->
+            <section class="card inventory-section">
+                <div class="section-header">
+                    <h2>Hardware Inventory</h2>
+                    <div class="action-group">
+                        <button id="btn-add-device" class="btn btn-primary">+ Add Device</button>
+                        <button id="btn-preset" class="btn btn-secondary">Load Preset</button>
+                    </div>
+                </div>
+
+                <div class="device-table-wrapper">
+                    <table id="device-table">
+                        <thead>
+                            <tr>
+                                <th>Device Name</th>
+                                <th>Category</th>
+                                <th>Power (W)</th>
+                                <th>Cable (ft)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="device-tbody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Right: Setup Analytics & Cable Matrix -->
+            <section class="card analytics-section">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="power-tab">Power & Cost</button>
+                    <button class="tab-btn" data-tab="cable-tab">Cable Routing Matrix</button>
+                    <button class="tab-btn" data-tab="export-tab">Export & Backup</button>
+                </div>
+
+                <!-- Tab 1: Power & Circuit Load -->
+                <div id="power-tab" class="tab-content active">
+                    <h3>Circuit Safety & Load Analysis</h3>
+                    <p class="hint">Evaluates your setup against standard household electrical circuits.</p>
+                    
+                    <div class="form-group-row">
+                        <label for="circuit-voltage">Circuit Voltage:</label>
+                        <select id="circuit-voltage">
+                            <option value="120">120V Standard (US/CA - 15A Max = 1800W)</option>
+                            <option value="230">230V Standard (EU/UK - 13A Max = 2990W)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-row">
+                        <label for="kwh-rate">Electricity Rate ($/kWh):</label>
+                        <input type="number" id="kwh-rate" value="0.15" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group-row">
+                        <label for="daily-hours">Daily Usage (Hours):</label>
+                        <input type="number" id="daily-hours" value="8" min="1" max="24">
+                    </div>
+
+                    <div class="load-bar-container">
+                        <div class="load-bar-label">
+                            <span>Circuit Capacity Load</span>
+                            <span id="load-percentage">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="load-progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="circuit-advice" id="circuit-advice">
+                        <span class="badge success">Safe</span> Your setup is well within safe operating thresholds for standard wall outlets. Always plug high-draw units directly into wall sockets.
+                    </div>
+                </div>
+
+                <!-- Tab 2: Cable Routing Matrix -->
+                <div id="cable-tab" class="tab-content">
+                    <h3>Desk Cable Routing & Slack Guide</h3>
+                    <p class="hint">Estimated cable runs from desk surface to power strip / hub location.</p>
+                    
+                    <div class="form-group-row">
+                        <label for="routing-style">Routing Method:</label>
+                        <select id="routing-style">
+                            <option value="direct">Direct Drop (Shortest distance)</option>
+                            <option value="tray" selected>Under-Desk Tray / Spine (Recommended)</option>
+                            <option value="perimeter">Desk Perimeter & Leg Wraps</option>
+                        </select>
+                    </div>
+
+                    <div id="cable-breakdown-list" class="cable-breakdown-list">
+                        <!-- Dynamically populated cable list -->
+                    </div>
+                </div>
+
+                <!-- Tab 3: Export & Backup -->
+                <div id="export-tab" class="tab-content">
+                    <h3>Configuration Backup & Report</h3>
+                    <p class="hint">Save your workspace setup or restore from a previous JSON export.</p>
+                    
+                    <div class="export-actions">
+                        <button id="btn-export-json" class="btn btn-primary">Export JSON Backup</button>
+                        <label for="import-file" class="btn btn-secondary file-upload-btn">
+                            Import JSON Backup
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                        </label>
+                        <button id="btn-print" class="btn btn-secondary">Print Summary</button>
+                        <button id="btn-clear" class="btn btn-danger">Clear Setup</button>
+                    </div>
+
+                    <div class="json-preview-wrap">
+                        <textarea id="json-preview" readonly placeholder="JSON configuration output..."></textarea>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Adding / Editing Device -->
+    <div id="device-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Hardware Device</h3>
+                <button class="close-btn" id="modal-close">&times;</button>
+            </div>
+            <form id="device-form">
+                <input type="hidden" id="device-id">
+                <div class="form-group">
+                    <label for="dev-name">Device Name</label>
+                    <input type="text" id="dev-name" required placeholder="e.g., 27" 4K Monitor">
+                </div>
+                <div class="form-group">
+                    <label for="dev-category">Category</label>
+                    <select id="dev-category">
+                        <option value="Display">Display / Monitor</option>
+                        <option value="Computer">Computer / Laptop</option>
+                        <option value="Audio">Audio / Interface / Speakers</option>
+                        <option value="Lighting">Lighting / Lamp</option>
+                        <option value="Peripherals">Peripherals / Hub / Dock</option>
+                        <option value="Charging">Phone / Tablet Charger</option>
+                        <option value="Other">Other Equipment</option>
+                    </select>
+                </div>
+                <div class="form-group-row-dual">
+                    <div class="form-group">
+                        <label for="dev-watts">Power Consumption (Watts)</label>
+                        <input type="number" id="dev-watts" required min="0" max="3000" value="45">
+                    </div>
+                    <div class="form-group">
+                        <label for="dev-cable">Cable Length (ft)</label>
+                        <input type="number" id="dev-cable" required min="1" max="30" value="6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="modal-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Device</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>AeroGrid &bull; Client-side workspace cable & power optimizer. No data is transmitted.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
