@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraBrew: Specialty Coffee Extraction & Ratio Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+        <h1>AuraBrew</h1>
+      </div>
+      <p class="tagline">Precision Coffee Extraction, Ratio & Brew Timer Studio</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Control Panel / Inputs -->
+    <section class="card input-section">
+      <h2>Brew Parameters</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="brewMethod">Brewing Method</label>
+          <select id="brewMethod">
+            <option value="v60">Hario V60 (Pour Over)</option>
+            <option value="chemex">Chemex (Large Batch)</option>
+            <option value="frenchpress">French Press (Immersion)</option>
+            <option value="aeropress">AeroPress (Inverted)</option>
+            <option value="espresso">Espresso (Ratio focused)</option>
+            <option value="coldbrew">Cold Brew (Steep 18h)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="coffeeDose">Coffee Dose (g)</label>
+          <input type="number" id="coffeeDose" value="20" min="5" max="150" step="0.5">
+        </div>
+
+        <div class="input-group">
+          <label for="brewRatio">Brew Ratio (1 : X)</label>
+          <input type="number" id="brewRatio" value="16" min="1" max="25" step="0.5">
+        </div>
+
+        <div class="input-group">
+          <label for="waterTemp">Water Temp (°C)</label>
+          <input type="number" id="waterTemp" value="93" min="70" max="100" step="1">
+        </div>
+
+        <div class="input-group">
+          <label for="grindSize">Grind Size</label>
+          <select id="grindSize">
+            <option value="fine">Fine (Table Salt / Espresso)</option>
+            <option value="medium-fine" selected>Medium-Fine (Sugar Sand / V60)</option>
+            <option value="medium">Medium (Regular Sand / Chemex)</option>
+            <option value="medium-coarse">Medium-Coarse (Rough Sand)</option>
+            <option value="coarse">Coarse (Sea Salt / French Press)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="beanRoast">Roast Level</label>
+          <select id="beanRoast">
+            <option value="light">Light Roast (Higher temp, longer ratio)</option>
+            <option value="medium" selected>Medium Roast (Balanced)</option>
+            <option value="dark">Dark Roast (Lower temp, shorter ratio)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results & Calculations Dashboard -->
+    <section class="card results-section">
+      <h2>Extraction Blueprint</h2>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Water Weight</span>
+          <span class="metric-value" id="outWater">320 g</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Target TDS (Est.)</span>
+          <span class="metric-value" id="outTds">1.35%</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Extraction Yield</span>
+          <span class="metric-value" id="outExtraction">20.2%</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Recommended Grind</span>
+          <span class="metric-value highlight" id="outGrindRec">Medium-Fine</span>
+        </div>
+      </div>
+
+      <div class="recipe-advice" id="recipeAdvice">
+        <h3>💡 Expert Extraction Notes</h3>
+        <p id="adviceText">For Hario V60 with light roast coffee, use 93°C water and pour in 4 distinct pulses after a 45-second bloom.</p>
+      </div>
+    </section>
+
+    <!-- Pour-over / Brew Timer Studio -->
+    <section class="card timer-section">
+      <h2>Interactive Brew Stopwatch & Pour Schedule</h2>
+      <div class="timer-display-container">
+        <div class="timer-clock" id="timerClock">00:00</div>
+        <div class="timer-stage" id="timerStage">Ready to brew</div>
+        <div class="target-water-cue" id="targetWaterCue">Target Water: 0g</div>
+      </div>
+
+      <div class="timer-controls">
+        <button id="startTimerBtn" class="btn btn-primary">Start Brew Timer</button>
+        <button id="pauseTimerBtn" class="btn btn-secondary" disabled>Pause</button>
+        <button id="resetTimerBtn" class="btn btn-outline">Reset</button>
+      </div>
+
+      <div class="pour-schedule-timeline" id="pourScheduleTimeline">
+        <h3>Step-by-Step Pour Plan</h3>
+        <ul id="scheduleList">
+          <!-- Populated via JS -->
+        </ul>
+      </div>
+    </section>
+
+    <!-- Brew Journal Log -->
+    <section class="card journal-section">
+      <div class="journal-header">
+        <h2>Brew Journal & Notes</h2>
+        <button id="saveBrewBtn" class="btn btn-primary btn-sm">Save Current Brew</button>
+      </div>
+      
+      <div class="journal-form">
+        <div class="input-group">
+          <label for="coffeeName">Bean / Origin Name</label>
+          <input type="text" id="coffeeName" placeholder="e.g., Ethiopia Yirgacheffe Wash">
+        </div>
+        <div class="input-group">
+          <label for="brewRating">Rating & Tasting Notes</label>
+          <input type="text" id="brewRating" placeholder="e.g., ⭐️⭐️⭐️⭐️⭐️ - Jasmine, citrus, clean finish">
+        </div>
+      </div>
+
+      <div class="journal-list-wrapper">
+        <h3>Saved Brew Log</h3>
+        <div id="journalList" class="journal-list">
+          <p class="empty-msg">No saved brews yet. Craft your recipe and save it to your local vault!</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>AuraBrew Studio — Local-First Specialty Coffee Calculator & Stopwatch. No data leaves your browser.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
