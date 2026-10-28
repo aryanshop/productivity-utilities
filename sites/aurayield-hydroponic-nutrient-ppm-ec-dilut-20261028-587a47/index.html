@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraYield: Hydroponic Nutrient PPM & EC Dilution Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">🌱</span>
+                <div>
+                    <h1>AuraYield</h1>
+                    <p class="subtitle">Hydroponic Nutrient PPM & EC Dilution Lab</p>
+                </div>
+            </div>
+            <nav class="header-actions">
+                <button id="btn-presets" class="btn secondary">Load Crop Preset</button>
+                <button id="btn-export" class="btn secondary">Export Recipe</button>
+                <button id="btn-reset" class="btn danger">Reset Reservoir</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Left Column: Parameters & Nutrients -->
+        <section class="panel config-panel">
+            <h2>1. Reservoir Configuration</h2>
+            <div class="form-group">
+                <label for="reservoir-volume">Total Water Volume</label>
+                <div class="input-row">
+                    <input type="number" id="reservoir-volume" value="50" min="1" max="2000" step="1">
+                    <select id="volume-unit">
+                        <option value="gal">Gallons (US)</option>
+                        <option value="L">Liters</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="crop-stage">Growth Stage & Target EC</label>
+                <select id="crop-stage">
+                    <option value="seedling">Seedling / Clone (0.4 - 0.8 mS/cm)</option>
+                    <option value="veg" selected>Vegetative Growth (1.2 - 1.6 mS/cm)</option>
+                    <option value="bloom">Early Bloom / Transition (1.6 - 2.0 mS/cm)</option>
+                    <option value="fruit">Heavy Fruiting / Ripening (2.0 - 2.4 mS/cm)</option>
+                    <option value="custom">Custom Target EC</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="custom-ec-group" style="display: none;">
+                <label for="target-ec">Target Electrical Conductivity (EC)</label>
+                <div class="input-row">
+                    <input type="number" id="target-ec" value="1.6" min="0.2" max="4.0" step="0.1">
+                    <span class="unit-label">mS/cm (dS/m)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tds-scale">TDS Conversion Scale</label>
+                <select id="tds-scale">
+                    <option value="500" selected>500 Scale (NaCl - Standard)</option>
+                    <option value="700">700 Scale (442 / Proprietary)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="source-ec">Source Water (Tap/RO) EC</label>
+                <div class="input-row">
+                    <input type="number" id="source-ec" value="0.2" min="0.0" max="1.5" step="0.05">
+                    <span class="unit-label">mS/cm</span>
+                </div>
+            </div>
+
+            <h2 class="section-spacer">2. Stock Concentrates Inventory</h2>
+            <p class="helper-text">Configure your 3-part nutrient formula (mL per gallon/liter ratio contribution).</p>
+            
+            <div class="nutrients-list" id="nutrients-container">
+                <!-- Dynamically rendered nutrient inputs -->
+            </div>
+
+            <button id="btn-add-nutrient" class="btn outline full-width">+ Add Custom Nutrient Concentrate</button>
+        </section>
+
+        <!-- Right Column: Results & Interactive Analysis -->
+        <section class="panel results-panel">
+            <h2>3. Mixing & Dosing Prescription</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Target EC</span>
+                    <span class="metric-value" id="res-target-ec">1.60</span>
+                    <span class="metric-sub">mS/cm</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Target PPM</span>
+                    <span class="metric-value" id="res-target-ppm">800</span>
+                    <span class="metric-sub" id="res-ppm-label">ppm (500 scale)</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Volume</span>
+                    <span class="metric-value" id="res-total-vol">50</span>
+                    <span class="metric-sub" id="res-vol-unit">Gallons</span>
+                </div>
+            </div>
+
+            <div class="prescription-box">
+                <h3>Exact Dosing Amounts</h3>
+                <div class="table-container">
+                    <table id="prescription-table">
+                        <thead>
+                            <tr>
+                                <th>Nutrient Product</th>
+                                <th>Rate / Unit</th>
+                                <th>Total Required</th>
+                                <th>EC Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="analysis-section">
+                <h3>Nutrient Ratio & EC Breakdown</h3>
+                <div class="canvas-container">
+                    <canvas id="ec-breakdown-canvas" width="600" height="220"></canvas>
+                </div>
+            </div>
+
+            <div class="topoff-card">
+                <h3>Evaporation & Top-Off Calculator</h3>
+                <p class="helper-text">Calculate pure water top-off volume when reservoir water level drops due to transpiration.</p>
+                <div class="topoff-grid">
+                    <div class="form-group">
+                        <label for="current-vol">Current Remaining Volume</label>
+                        <input type="number" id="current-vol" value="35" min="1" max="2000">
+                    </div>
+                    <div class="form-group">
+                        <label for="current-ec">Current Measured EC (Salt Buildup)</label>
+                        <input type="number" id="current-ec" value="2.2" min="0.1" max="5.0" step="0.1">
+                    </div>
+                    <div class="result-highlight">
+                        <span>Add RO/Pure Water: </span>
+                        <strong id="topoff-result">15 Gallons</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preset Modal -->
+    <div id="preset-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Crop Nutrient Preset</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="preset-grid">
+                <div class="preset-card" data-preset="tomatoes">
+                    <h4>Tomatoes & Peppers (Heavy Feed)</h4>
+                    <p>Optimized for heavy potassium and calcium demand during fruit set. Target EC: 2.2</p>
+                </div>
+                <div class="preset-card" data-preset="leafy">
+                    <h4>Leafy Greens (Lettuce, Herbs)</h4>
+                    <p>Light nitrogen-focused formula to prevent tip burn and bitter leaves. Target EC: 1.0</p>
+                </div>
+                <div class="preset-card" data-preset="cannabis">
+                    <h4>Cannabis / Medicinal Flora</h4>
+                    <p>Full 3-part micro/grow/bloom profile with cal-mag supplementation. Target EC: 1.8</p>
+                </div>
+                <div class="preset-card" data-preset="strawberries">
+                    <h4>Strawberries & Berries</h4>
+                    <p>Balanced micronutrients with moderate EC for delicate root zones. Target EC: 1.4</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Export Hydroponic Recipe</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <textarea id="export-text" readonly rows="12"></textarea>
+            <div class="modal-footer">
+                <button id="btn-copy-recipe" class="btn primary">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
