@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Micro-Budget & Cash Flow Runway Forecaster</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <h1>AuraSlate</h1>
+            </div>
+            <p class="tagline">Client-side financial runway forecasting & stress-test simulation workbench.</p>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn btn-secondary" title="Reset to default demo data">Reset Defaults</button>
+                <button id="btn-export" class="btn btn-secondary" title="Export financial setup as JSON">Export Data</button>
+                <label for="import-file" class="btn btn-secondary file-upload-label">
+                    Import Data
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                </label>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Column: Inputs & Controls -->
+            <section class="panel input-panel">
+                <h2>Financial Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="starting-cash">Current Liquid Cash Reserves ($)</label>
+                    <input type="number" id="starting-cash" value="12500" min="0" step="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="stress-scenario">Stress Test Scenario (%)</label>
+                    <div class="range-group">
+                        <input type="range" id="stress-scenario" min="-50" max="50" value="0" step="5">
+                        <span id="stress-val" class="badge">0% income change</span>
+                    </div>
+                    <small class="help-text">Simulate sudden drop or surge in monthly earnings.</small>
+                </div>
+
+                <!-- Income Sources -->
+                <div class="section-block">
+                    <div class="block-header">
+                        <h3>Monthly Income</h3>
+                        <button id="add-income" class="btn btn-small btn-primary">+ Add</button>
+                    </div>
+                    <div id="income-list" class="item-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Fixed Expenses -->
+                <div class="section-block">
+                    <div class="block-header">
+                        <h3>Fixed Expenses</h3>
+                        <button id="add-expense" class="btn btn-small btn-primary">+ Add</button>
+                    </div>
+                    <div id="expense-list" class="item-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Analytics & Visualization -->
+            <section class="panel analytics-panel">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <span class="kpi-label">Financial Runway</span>
+                        <span id="kpi-runway" class="kpi-value highlight">--</span>
+                        <span id="kpi-runway-sub" class="kpi-sub">Months remaining</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Net Monthly Burn</span>
+                        <span id="kpi-burn" class="kpi-value">$0</span>
+                        <span id="kpi-burn-sub" class="kpi-sub">Income vs Expenses</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">12-Mo Projected Ending Cash</span>
+                        <span id="kpi-ending" class="kpi-value">$0</span>
+                        <span id="kpi-ending-sub" class="kpi-sub">End of year balance</span>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>12-Month Cash Flow Projection Trajectory</h3>
+                        <div class="legend">
+                            <span class="dot projected"></span> Projected Balance
+                            <span class="dot stress"></span> Stress-Tested Balance
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="runway-canvas" width="700" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Monthly Cash Flow Summary</h3>
+                    <div class="summary-row">
+                        <span>Total Monthly Inflows:</span>
+                        <strong id="sum-inflow" class="text-success">$0.00</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total Monthly Outflows:</span>
+                        <strong id="sum-outflow" class="text-danger">$0.00</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Net Monthly Cash Flow:</span>
+                        <strong id="sum-net">$0.00</strong>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraSlate &bull; 100% Client-Side Privacy &bull; Zero Data Collection</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
