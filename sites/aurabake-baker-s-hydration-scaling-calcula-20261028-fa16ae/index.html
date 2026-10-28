@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBake: Baker's Hydration & Scaling Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+                <h1>AuraBake</h1>
+                <span class="badge">Pro Studio</span>
+            </div>
+            <p class="subtitle">Precision Baker's Percentages, Hydration Math & Recipe Scaling Studio</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Left Column: Controls & Ingredients -->
+        <section class="panel controls-panel">
+            <div class="panel-header">
+                <h2>Recipe Ingredients</h2>
+                <div class="recipe-actions">
+                    <button id="btn-presets" class="btn btn-sm btn-outline">Load Preset</button>
+                    <button id="btn-reset" class="btn btn-sm btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Global Recipe Settings -->
+            <div class="recipe-settings">
+                <div class="input-group">
+                    <label for="recipe-name">Recipe Title</label>
+                    <input type="text" id="recipe-name" value="Artisan Country Sourdough" />
+                </div>
+                <div class="settings-row">
+                    <div class="input-group">
+                        <label for="target-dough-weight">Target Dough Wt (g)</label>
+                        <input type="number" id="target-dough-weight" value="1800" min="100" step="50" />
+                    </div>
+                    <div class="input-group">
+                        <label for="scaling-factor">Scale Multiplier</label>
+                        <input type="number" id="scaling-factor" value="1.0" min="0.1" max="10" step="0.1" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flour Blends Section -->
+            <div class="ingredient-category">
+                <div class="category-header">
+                    <h3>Flours (Total 100%)</h3>
+                    <button id="btn-add-flour" class="btn btn-xs btn-primary">+ Add Flour</button>
+                </div>
+                <div id="flours-list" class="ingredient-list"></div>
+            </div>
+
+            <!-- Liquids & Hydration Section -->
+            <div class="ingredient-category">
+                <div class="category-header">
+                    <h3>Liquids & Hydration</h3>
+                    <button id="btn-add-liquid" class="btn btn-xs btn-primary">+ Add Liquid</button>
+                </div>
+                <div id="liquids-list" class="ingredient-list"></div>
+            </div>
+
+            <!-- Inclusions, Levain & Extras -->
+            <div class="ingredient-category">
+                <div class="category-header">
+                    <h3>Levain, Salt & Inclusions</h3>
+                    <button id="btn-add-other" class="btn btn-xs btn-primary">+ Add Item</button>
+                </div>
+                <div id="others-list" class="ingredient-list"></div>
+            </div>
+
+            <div class="save-recipe-bar">
+                <button id="btn-save-recipe" class="btn btn-success btn-block">Save to Vault</button>
+            </div>
+        </section>
+
+        <!-- Right Column: Analytics, Breakdown & Saved Recipes -->
+        <section class="dashboard-panel">
+            <!-- Key Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Total Flour</span>
+                    <span id="val-total-flour" class="metric-value">1000g</span>
+                </div>
+                <div class="metric-card highlight">
+                    <span class="metric-label">Total Hydration</span>
+                    <span id="val-total-hydration" class="metric-value">78.5%</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Dough Weight</span>
+                    <span id="val-total-weight" class="metric-value">1825g</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Est. Bake Loss (12%)</span>
+                    <span id="val-baked-weight" class="metric-value">1606g</span>
+                </div>
+            </div>
+
+            <!-- Visual Hydration & Weight Distribution Bar -->
+            <div class="card visual-breakdown-card">
+                <h3>Dough Composition Breakdown</h3>
+                <div id="composition-bar" class="composition-bar">
+                    <!-- Dynamically filled -->
+                </div>
+                <div id="composition-legend" class="composition-legend"></div>
+            </div>
+
+            <!-- Baker's Percentage Table & Scaling Notes -->
+            <div class="card summary-card">
+                <div class="card-header-row">
+                    <h3>Formula Summary & Weight Sheet</h3>
+                    <button id="btn-export-text" class="btn btn-sm btn-outline">Copy Formula Text</button>
+                </div>
+                <div class="table-container">
+                    <table id="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Ingredient</th>
+                                <th>Type</th>
+                                <th>Baker's %</th>
+                                <th>Scaled Weight (g)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-tbody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Saved Recipes Vault -->
+            <div class="card saved-vault-card">
+                <div class="card-header-row">
+                    <h3>Saved Recipes Vault</h3>
+                    <span id="vault-count" class="badge">0 saved</span>
+                </div>
+                <div id="saved-recipes-container" class="saved-recipes-list">
+                    <p class="empty-vault-text">No saved recipes in local storage yet. Click "Save to Vault" to store your current formula.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preset Modal / Selector Overlay -->
+    <div id="preset-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Select Artisan Preset Recipe</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preset-grid">
+                    <div class="preset-card" data-preset="country">
+                        <h4>Artisan Country Sourdough</h4>
+                        <p>78% Hydration, 20% Levain, Whole Wheat & Bread Flour blend.</p>
+                    </div>
+                    <div class="preset-card" data-preset="baguette">
+                        <h4>Classic French Baguette</h4>
+                        <p>72% Hydration, Commercial Yeast, Direct Method.</p>
+                    </div>
+                    <div class="preset-card" data-preset="brioche">
+                        <h4>Rich Brioche Loaf</h4>
+                        <p>Enriched dough with butter, eggs, milk, and sugar.</p>
+                    </div>
+                    <div class="preset-card" data-preset="pizza">
+                        <h4>Neapolitan Pizza Dough</h4>
+                        <p>65% Hydration, 3% Salt, Long Cold Ferment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
