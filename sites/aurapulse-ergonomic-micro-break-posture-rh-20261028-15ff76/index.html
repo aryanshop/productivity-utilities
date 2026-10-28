@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Ergonomic Micro-Break & Posture Rhythm Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation / Stats -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h1>AuraPulse</h1>
+            </div>
+            
+            <div class="nav-links">
+                <button class="nav-btn active" data-tab="timer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Pulse Timer
+                </button>
+                <button class="nav-btn" data-tab="stretches">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                    Somatic Stretches
+                </button>
+                <button class="nav-btn" data-tab="ambient">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                    Ambient Sound
+                </button>
+                <button class="nav-btn" data-tab="analytics">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Today's Flow
+                </button>
+                <button class="nav-btn" data-tab="settings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Preferences
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="streak-badge">
+                    <span class="streak-icon">🔥</span>
+                    <div>
+                        <strong id="streakCount">0</strong>
+                        <small>Day Flow Streak</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- TOP HEADER -->
+            <header class="top-bar">
+                <div class="mode-indicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="currentModeText">Ready to Focus</span>
+                </div>
+                <div class="quick-actions">
+                    <button id="quickSoundToggle" class="icon-btn" title="Toggle Ambient Sound">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    </button>
+                    <button id="themeToggle" class="icon-btn" title="Toggle Dark/Light Mode">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- TAB 1: TIMER -->
+            <section id="tab-timer" class="tab-pane active">
+                <div class="timer-hero">
+                    <div class="timer-ring-container">
+                        <svg class="timer-svg" viewBox="0 0 200 200">
+                            <circle class="timer-track" cx="100" cy="100" r="88" />
+                            <circle class="timer-progress" id="timerProgress" cx="100" cy="100" r="88" />
+                        </svg>
+                        <div class="timer-display">
+                            <span id="timeRemaining">25:00</span>
+                            <small id="timerSublabel">Focus Session</small>
+                        </div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button id="startPauseBtn" class="btn btn-primary btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            Start Flow
+                        </button>
+                        <button id="resetBtn" class="btn btn-outline">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                            Reset
+                        </button>
+                        <button id="skipBtn" class="btn btn-outline">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                            Skip
+                        </button>
+                    </div>
+
+                    <div class="session-type-pills">
+                        <button class="pill active" data-session="focus">Deep Flow</button>
+                        <button class="pill" data-session="micro">Micro-Break</button>
+                        <button class="pill" data-session="eyestrain">20-20-20 Eye Rest</button>
+                    </div>
+                </div>
+
+                <!-- Active Suggestion Card -->
+                <div class="suggestion-card" id="activeSuggestionCard">
+                    <div class="suggestion-icon" id="suggestionIcon">🧘</div>
+                    <div class="suggestion-content">
+                        <h3 id="suggestionTitle">Ergonomic Posture Check</h3>
+                        <p id="suggestionText">Drop your shoulders away from your ears, relax your jaw, and adjust your lower back support.</p>
+                    </div>
+                    <button class="btn btn-sm btn-subtle" id="nextSuggestionBtn">Next Tip</button>
+                </div>
+            </section>
+
+            <!-- TAB 2: STRETCHES -->
+            <section id="tab-stretches" class="tab-pane">
+                <div class="section-header">
+                    <h2>Somatic & Desk Stretches</h2>
+                    <p>Guided movement flows designed for seated professionals to relieve tension and reset posture.</p>
+                </div>
+
+                <div class="category-filter">
+                    <button class="filter-btn active" data-filter="all">All Exercises</button>
+                    <button class="filter-btn" data-filter="neck">Neck & Shoulders</button>
+                    <button class="filter-btn" data-filter="spine">Spine & Torso</button>
+                    <button class="filter-btn" data-filter="wrists">Wrists & Hands</button>
+                </div>
+
+                <div class="stretch-grid" id="stretchGrid">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- TAB 3: AMBIENT SOUND -->
+            <section id="tab-ambient" class="tab-pane">
+                <div class="section-header">
+                    <h2>Generative Ambient Soundscapes</h2>
+                    <p>Procedural synthetic audio engineered via Web Audio API to block distraction and promote deep flow.</p>
+                </div>
+
+                <div class="sound-card-grid">
+                    <div class="sound-card" data-sound="rain">
+                        <div class="sound-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>
+                        </div>
+                        <div class="sound-info">
+                            <h3>Soft Rain</h3>
+                            <p>Filtered white noise cushion</p>
+                        </div>
+                        <div class="sound-toggle">
+                            <label class="switch">
+                                <input type="checkbox" class="sound-checkbox" data-sound="rain">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sound-card" data-sound="waves">
+                        <div class="sound-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg>
+                        </div>
+                        <div class="sound-info">
+                            <h3>Coastal Waves</h3>
+                            <p>Rhythmic low-pass filtered sweep</p>
+                        </div>
+                        <div class="sound-toggle">
+                            <label class="switch">
+                                <input type="checkbox" class="sound-checkbox" data-sound="waves">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sound-card" data-sound="binaural">
+                        <div class="sound-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                        </div>
+                        <div class="sound-info">
+                            <h3>Alpha Binaural (10Hz)</h3>
+                            <p>Binaural beat for relaxed focus</p>
+                        </div>
+                        <div class="sound-toggle">
+                            <label class="switch">
+                                <input type="checkbox" class="sound-checkbox" data-sound="binaural">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sound-card" data-sound="forest">
+                        <div class="sound-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10v.2A3 3 0 0 1 8.9 16v0H5v0h0a3 3 0 0 1-1.1-5.8v-.2a3 3 0 0 1 5.9-1.8z"></path><path d="M17 14v.2A3 3 0 0 1 15.9 20h-7v0a3 3 0 0 1-1.1-5.8v-.2a3 3 0 0 1 5.9-1.8z"></path><path d="M12 2v4"></path><path d="M12 18v4"></path></svg>
+                        </div>
+                        <div class="sound-info">
+                            <h3>Forest Wind</h3>
+                            <p>Gentle resonant harmonic pad</p>
+                        </div>
+                        <div class="sound-toggle">
+                            <label class="switch">
+                                <input type="checkbox" class="sound-checkbox" data-sound="forest">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="master-volume-box">
+                    <label for="masterVolume">Master Volume</label>
+                    <input type="range" id="masterVolume" min="0" max="1" step="0.05" value="0.5">
+                </div>
+            </section>
+
+            <!-- TAB 4: ANALYTICS -->
+            <section id="tab-analytics" class="tab-pane">
+                <div class="section-header">
+                    <h2>Today's Flow & Posture Metrics</h2>
+                    <p>Review your session completion rates and ergonomic micro-break compliance.</p>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-num" id="statFocusCount">0</span>
+                        <span class="metric-label">Deep Flow Sessions</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-num" id="statBreakCount">0</span>
+                        <span class="metric-label">Micro-Breaks Completed</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-num" id="statMinutes">0m</span>
+                        <span class="metric-label">Focused Work Time</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Session Distribution</h3>
+                    <div class="bar-chart" id="flowChart">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" id="clearStatsBtn">Reset Today's Log</button>
+                </div>
+            </section>
+
+            <!-- TAB 5: SETTINGS -->
+            <section id="tab-settings" class="tab-pane">
+                <div class="section-header">
+                    <h2>Pulse Preferences</h2>
+                    <p>Customize timer durations and reminder frequencies to match your workflow.</p>
+                </div>
+
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="settingFocusDuration">Deep Flow Duration (minutes)</label>
+                        <input type="number" id="settingFocusDuration" min="1" max="120" value="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="settingMicroDuration">Micro-Break Duration (minutes)</label>
+                        <input type="number" id="settingMicroDuration" min="1" max="30" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="settingEyeDuration">20-20-20 Eye Rest Duration (seconds)</label>
+                        <input type="number" id="settingEyeDuration" min="10" max="120" value="20">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="settingSoundCue" checked>
+                            Play bell chime when timer completes
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="saveSettingsBtn">Save Preferences</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Posture Check Modal Popup -->
+    <div class="modal-backdrop" id="postureModal">
+        <div class="modal">
+            <div class="modal-icon">🌿</div>
+            <h2>Time for a Micro-Break!</h2>
+            <p id="modalMessage">You've completed your focus session. Stand up, stretch your spine, and look 20 feet away.</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="modalStartBreakBtn">Start 5m Break</button>
+                <button class="btn btn-outline" id="modalDismissBtn">Skip & Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
