@@ -1,0 +1,165 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStash: Micro-Subscription & SaaS Burn Rate Auditor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation Header -->
+        <header class="app-header">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                <h1>AuraStash</h1>
+            </div>
+            <p class="tagline">Micro-Subscription & SaaS Burn Rate Auditor</p>
+            <div class="header-actions">
+                <button id="export-btn" class="btn secondary" title="Export JSON">Export Data</button>
+                <button id="import-btn" class="btn secondary" title="Import JSON">Import Data</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+                <button id="reset-btn" class="btn danger-outline" title="Reset to Sample Data">Reset</button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Metrics & Add Form -->
+            <section class="control-column">
+                <!-- KPI Summary Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <span class="kpi-label">Monthly Burn</span>
+                        <span class="kpi-value" id="kpi-monthly">$0.00</span>
+                        <span class="kpi-sub" id="kpi-active-count">0 active items</span>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Annual Commitment</span>
+                        <span class="kpi-value" id="kpi-annual">$0.00</span>
+                        <span class="kpi-sub" id="kpi-daily">$0.00 / day</span>
+                    </div>
+                </div>
+
+                <!-- Add / Edit Subscription Form -->
+                <div class="card form-card">
+                    <h2 id="form-title">Add Subscription</h2>
+                    <form id="sub-form">
+                        <input type="hidden" id="sub-id">
+                        <div class="form-group">
+                            <label for="sub-name">Service / Name</label>
+                            <input type="text" id="sub-name" placeholder="e.g., Cloud Hosting, Spotify" required autocomplete="off">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sub-cost">Cost ($)</label>
+                                <input type="number" id="sub-cost" step="0.01" min="0" placeholder="15.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sub-cycle">Billing Cycle</label>
+                                <select id="sub-cycle">
+                                    <option value="monthly">Monthly</option>
+                                    <option value="annual">Annual</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sub-category">Category</label>
+                                <select id="sub-category">
+                                    <option value="Developer Tools">Developer Tools</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Cloud & Hosting">Cloud & Hosting</option>
+                                    <option value="Productivity">Productivity</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sub-renewal">Renewal Date</label>
+                                <input type="date" id="sub-renewal">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="save-sub-btn" class="btn primary">Add Subscription</button>
+                            <button type="button" id="cancel-edit-btn" class="btn secondary" style="display: none;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- What-If Simulator Card -->
+                <div class="card simulator-card">
+                    <h2>Trim Simulator</h2>
+                    <p class="section-desc">Toggle subscriptions to simulate savings instantly.</p>
+                    <div id="simulator-list" class="simulator-list">
+                        <!-- Dynamically populated toggle pills -->
+                    </div>
+                    <div class="simulation-result">
+                        <span>Simulated Annual Savings:</span>
+                        <strong id="simulated-savings">$0.00</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Analytics, Filters & Table -->
+            <section class="data-column">
+                <!-- Visual breakdown / chart card -->
+                <div class="card chart-card">
+                    <h2>Category Breakdown</h2>
+                    <div id="category-bars" class="category-bars">
+                        <!-- Dynamically generated bars -->
+                    </div>
+                </div>
+
+                <!-- Subscriptions Table / List -->
+                <div class="card table-card">
+                    <div class="table-header-controls">
+                        <h2>Active Subscriptions</h2>
+                        <div class="filter-controls">
+                            <input type="text" id="search-input" placeholder="Search subscriptions...">
+                            <select id="filter-category">
+                                <option value="all">All Categories</option>
+                                <option value="Developer Tools">Developer Tools</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Cloud & Hosting">Cloud & Hosting</option>
+                                <option value="Productivity">Productivity</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Category</th>
+                                    <th>Cycle</th>
+                                    <th>Monthly Eq.</th>
+                                    <th>Renewal</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sub-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraStash &bull; Local-First Micro-Subscription Auditor &bull; All data stays in your browser.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
