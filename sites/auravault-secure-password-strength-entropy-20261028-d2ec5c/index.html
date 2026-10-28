@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Secure Password Strength & Entropy Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h1>AuraVault</h1>
+            </div>
+            <p class="tagline">Client-Side Cryptographic Strength & Entropy Inspector</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Input & Generator -->
+            <section class="card input-card">
+                <div class="card-header">
+                    <h2>Password Inspector</h2>
+                    <span class="badge secure">Offline Secure</span>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password-input">Enter password or passphrase to analyze:</label>
+                    <div class="password-field-wrapper">
+                        <input type="password" id="password-input" placeholder="Type or generate a secure password..." autocomplete="off" spellcheck="false">
+                        <button type="button" id="toggle-visibility" title="Show/Hide Password">
+                            <svg id="eye-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="strength-meter-container">
+                    <div class="strength-labels">
+                        <span id="strength-label-text">Rating: Empty</span>
+                        <span id="entropy-bits-text">0 bits</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div id="meter-fill" class="meter-fill"></div>
+                    </div>
+                </div>
+
+                <div class="generator-section">
+                    <h3>Passphrase & Password Generator</h3>
+                    <div class="gen-options">
+                        <div class="gen-option-row">
+                            <label for="gen-type">Type:</label>
+                            <select id="gen-type">
+                                <option value="passphrase">Diceware Passphrase (Words)</option>
+                                <option value="random">Random Alphanumeric + Symbols</option>
+                            </select>
+                        </div>
+                        <div class="gen-option-row" id="word-count-row">
+                            <label for="word-count">Word Count: <span id="word-count-val">4</span></label>
+                            <input type="range" id="word-count" min="3" max="8" value="4">
+                        </div>
+                        <div class="gen-option-row" id="char-length-row" style="display: none;">
+                            <label for="char-length">Length: <span id="char-length-val">16</span></label>
+                            <input type="range" id="char-length" min="8" max="64" value="16">
+                        </div>
+                        <div class="gen-toggles">
+                            <label><input type="checkbox" id="gen-symbols" checked> Symbols (!@#)</label>
+                            <label><input type="checkbox" id="gen-numbers" checked> Numbers (0-9)</label>
+                            <label><input type="checkbox" id="gen-uppercase" checked> Uppercase (A-Z)</label>
+                        </div>
+                    </div>
+                    <button type="button" id="generate-btn" class="primary-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        Generate & Test Secure Password
+                    </button>
+                    <button type="button" id="copy-btn" class="secondary-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy Password to Clipboard
+                    </button>
+                    <div id="copy-notification" class="notification" style="display: none;">Copied to clipboard!</div>
+                </div>
+            </section>
+
+            <!-- Right Column: Analysis & Cracking Estimates -->
+            <div class="analysis-column">
+                <!-- Brute Force Simulation Card -->
+                <section class="card">
+                    <h2>Estimated Brute-Force Crack Time</h2>
+                    <p class="card-subtitle">Calculated assuming continuous hash testing across diverse hardware architectures.</p>
+                    
+                    <div class="crack-grid">
+                        <div class="crack-item">
+                            <div class="hardware-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            </div>
+                            <div class="crack-details">
+                                <span class="hw-name">Desktop CPU (10 GH/s)</span>
+                                <span id="time-cpu" class="crack-time">Instant</span>
+                            </div>
+                        </div>
+
+                        <div class="crack-item">
+                            <div class="hardware-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+                            </div>
+                            <div class="crack-details">
+                                <span class="hw-name">Gaming GPU Rig (100 GH/s)</span>
+                                <span id="time-gpu" class="crack-time">Instant</span>
+                            </div>
+                        </div>
+
+                        <div class="crack-item">
+                            <div class="hardware-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1z"></path></svg>
+                            </div>
+                            <div class="crack-details">
+                                <span class="hw-name">Cloud Cluster (1 TH/s)</span>
+                                <span id="time-cluster" class="crack-time">Instant</span>
+                            </div>
+                        </div>
+
+                        <div class="crack-item">
+                            <div class="hardware-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            </div>
+                            <div class="crack-details">
+                                <span class="hw-name">State-Level Farm (100 TH/s)</span>
+                                <span id="time-state" class="crack-time">Instant</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NIST Guidelines & Weaknesses Card -->
+                <section class="card">
+                    <h2>NIST Compliance & Pattern Diagnostics</h2>
+                    <ul id="diagnostics-list" class="diagnostics-list">
+                        <li class="diag-item neutral">Enter a password to begin diagnostics.</li>
+                    </ul>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVault &bull; 100% Client-Side &bull; No data is ever transmitted or stored remotely.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
