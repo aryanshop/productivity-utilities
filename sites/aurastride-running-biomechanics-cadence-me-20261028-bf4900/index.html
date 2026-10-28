@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStride: Running Biomechanics & Cadence Metronome Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 4v16"/><path d="M17 8h-4"/><path d="M12 12h5"/><path d="M11 16h6"/><path d="M6 18c2-2 3-5 3-9s-1-7-3-9"/>
+                </svg>
+                <h1>AuraStride</h1>
+            </div>
+            <p class="subtitle">Precision Running Biomechanics & Cadence Metronome Lab</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Left Control Panel -->
+        <section class="control-panel">
+            <div class="panel-card">
+                <h2>Runner Profile & Speed</h2>
+                <div class="input-group">
+                    <label for="runnerHeight">Height (<span class="unit-label-height">cm</span>)</label>
+                    <div class="input-row">
+                        <input type="number" id="runnerHeight" value="175" min="120" max="220" step="1">
+                        <div class="unit-toggle">
+                            <button type="button" class="unit-btn active" data-unit="metric" data-target="height">cm</button>
+                            <button type="button" class="unit-btn" data-unit="imperial" data-target="height">in</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="runnerWeight">Weight (<span class="unit-label-weight">kg</span>)</label>
+                    <div class="input-row">
+                        <input type="number" id="runnerWeight" value="70" min="35" max="180" step="1">
+                        <div class="unit-toggle">
+                            <button type="button" class="unit-btn active" data-unit="metric" data-target="weight">kg</button>
+                            <button type="button" class="unit-btn" data-unit="imperial" data-target="weight">lbs</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="runSpeed">Running Speed (<span class="unit-label-speed">min/km</span>)</label>
+                    <input type="range" id="runSpeedSlider" min="3.0" max="10.0" step="0.1" value="5.0">
+                    <div class="slider-value-display">
+                        <span id="speedDisplay">5:00 min/km</span>
+                        <span id="speedKmhDisplay">(12.0 km/h)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Cadence & Metronome</h2>
+                <div class="input-group">
+                    <label for="targetCadence">Target Cadence (SPM)</label>
+                    <div class="cadence-controls">
+                        <button type="button" class="adj-btn" data-change="-5">-5</button>
+                        <button type="button" class="adj-btn" data-change="-1">-1</button>
+                        <input type="number" id="targetCadence" value="180" min="120" max="220" step="1">
+                        <button type="button" class="adj-btn" data-change="+1">+1</button>
+                        <button type="button" class="adj-btn" data-change="+5">+5</button>
+                    </div>
+                </div>
+
+                <div class="metronome-box">
+                    <button id="metronomeToggle" class="btn primary-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <span>Start Metronome Beat</span>
+                    </button>
+                    <div class="visual-pendulum">
+                        <div id="pendulumDot" class="pendulum-dot"></div>
+                    </div>
+                    <div class="sound-settings">
+                        <label><input type="checkbox" id="audioCue" checked> Audio Click</label>
+                        <label for="soundFreq">Pitch:</label>
+                        <select id="soundFreq">
+                            <option value="800">High Woodblock</option>
+                            <option value="600" selected>Standard Click</option>
+                            <option value="400">Deep Thump</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Analytics & Output Panel -->
+        <section class="analytics-panel">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Calculated Stride Length</span>
+                    <span class="metric-value" id="resStrideLength">1.11 m</span>
+                    <span class="metric-sub" id="resStrideInches">43.7 in</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Ground Contact</span>
+                    <span class="metric-value" id="resGCT">210 ms</span>
+                    <span class="metric-sub">Optimal: < 200ms</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Vertical Oscillation Est.</span>
+                    <span class="metric-value" id="resOscillation">7.8 cm</span>
+                    <span class="metric-sub">Low bounce range</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Energy Efficiency Score</span>
+                    <span class="metric-value" id="resEfficiency">94%</span>
+                    <span class="metric-sub">Low Injury Risk Profile</span>
+                </div>
+            </div>
+
+            <!-- Stride vs Cadence Interactive Chart Card -->
+            <div class="panel-card chart-card">
+                <div class="chart-header">
+                    <h2>Stride Length & Cadence Curve</h2>
+                    <span class="chart-info">At your current speed of <strong id="activeSpeedLabel">5:00 min/km</strong></span>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="strideChart" width="600" height="220"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-color curve-color"></span> Stride Length (m)</span>
+                    <span class="legend-item active-marker-legend"><span class="legend-color dot-color"></span> Your Current Setup (180 SPM)</span>
+                </div>
+            </div>
+
+            <!-- Workout Split & Log Section -->
+            <div class="panel-card">
+                <div class="split-header">
+                    <h2>Distance Split Calculator</h2>
+                    <button id="saveSessionBtn" class="btn secondary-btn">Save Session Stats</button>
+                </div>
+                <div class="splits-table-wrapper">
+                    <table id="splitsTable">
+                        <thead>
+                            <tr>
+                                <th>Distance</th>
+                                <th>Pace</th>
+                                <th>Cumulative Time</th>
+                                <th>Total Strides</th>
+                            </tr>
+                        </thead>
+                        <tbody id="splitsTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Saved Sessions Log -->
+            <div class="panel-card">
+                <div class="split-header">
+                    <h2>Saved Biomechanics Sessions</h2>
+                    <button id="clearSessionsBtn" class="btn text-btn">Clear History</button>
+                </div>
+                <div id="sessionLogList" class="session-log-list">
+                    <p class="empty-msg">No saved sessions yet. Configure your metrics and click "Save Session Stats".</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraStride Lab &bull; Client-side Running Biomechanics & Metronome Workbench</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
