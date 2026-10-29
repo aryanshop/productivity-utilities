@@ -1,0 +1,144 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraPulse: Biometric Recovery & Breathing Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">◉</span>
+        <h1>AuraPulse</h1>
+      </div>
+      <p class="tagline">Autonomic Nervous System Recovery & Resonance Breathing Studio</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export" class="btn secondary" title="Export Recovery Data">Export JSON</button>
+      <button id="btn-import" class="btn secondary" title="Import Recovery Data">Import JSON</button>
+      <input type="file" id="file-input" accept=".json" style="display: none;">
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Column: Check-in & Metrics -->
+    <section class="panel daily-checkin-panel">
+      <h2>Daily Autonomic Check-in</h2>
+      <p class="section-desc">Log your daily somatic recovery indicators to compute your nervous system readiness score.</p>
+      
+      <form id="checkin-form">
+        <div class="form-group">
+          <label for="sleep-quality">Sleep Quality (1 - 10): <span id="val-sleep" class="range-val">7</span></label>
+          <input type="range" id="sleep-quality" min="1" max="10" value="7">
+        </div>
+
+        <div class="form-group">
+          <label for="muscle-soreness">Muscle Soreness (1 - 10): <span id="val-soreness" class="range-val">3</span></label>
+          <input type="range" id="muscle-soreness" min="1" max="10" value="3">
+        </div>
+
+        <div class="form-group">
+          <label for="mental-fatigue">Mental Clarity / Fatigue (1 - 10): <span id="val-fatigue" class="range-val">6</span></label>
+          <input type="range" id="mental-fatigue" min="1" max="10" value="6">
+        </div>
+
+        <div class="form-group">
+          <label for="hydration-level">Hydration & Nutrition (1 - 10): <span id="val-hydration" class="range-val">8</span></label>
+          <input type="range" id="hydration-level" min="1" max="10" value="8">
+        </div>
+
+        <button type="submit" class="btn primary full-width">Calculate Recovery Index</button>
+      </form>
+
+      <div class="score-card">
+        <div class="score-display">
+          <span id="recovery-score-num">--</span>
+          <span class="score-label">Readiness Index</span>
+        </div>
+        <div id="recovery-status-text" class="score-status">Complete check-in to analyze autonomic balance.</div>
+      </div>
+    </section>
+
+    <!-- Center Column: Resonant Breathing Studio -->
+    <section class="panel breathing-studio-panel">
+      <h2>Resonance Breathing Studio</h2>
+      <p class="section-desc">Synchronize your breath to 0.1Hz (5.5 breaths/min) to stimulate vagal nerve tone.</p>
+
+      <div class="preset-selector">
+        <button class="preset-btn active" data-inhale="4" data-hold="2" data-exhale="4" data-hold2="2">Box (4-2-4-2)</button>
+        <button class="preset-btn" data-inhale="5.5" data-hold="0" data-exhale="5.5" data-hold2="0">Coherent (5.5s)</button>
+        <button class="preset-btn" data-inhale="4" data-hold="7" data-exhale="8" data-hold2="0">Deep Sleep (4-7-8)</button>
+        <button class="preset-btn" data-inhale="4" data-hold="0" data-exhale="6" data-hold2="0">Vagal Calm (4-6)</button>
+      </div>
+
+      <div class="breathing-visualizer-container">
+        <svg class="breathing-svg" viewBox="0 0 300 300">
+          <defs>
+            <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--primary-light)" />
+              <stop offset="100%" stop-color="var(--accent)" />
+            </linearGradient>
+          </defs>
+          <circle cx="150" cy="150" r="110" class="bg-ring" />
+          <circle cx="150" cy="150" r="110" id="dynamic-ring" class="dynamic-ring" />
+          <circle cx="150" cy="150" r="70" class="inner-core" />
+        </svg>
+        <div class="breathing-overlay">
+          <span id="breath-phase-text">Ready</span>
+          <span id="breath-timer">--</span>
+        </div>
+      </div>
+
+      <div class="audio-toggle-container">
+        <label class="checkbox-label">
+          <input type="checkbox" id="audio-chime-toggle">
+          <span>Enable Ambient Binaural Chimes (Web Audio API)</span>
+        </label>
+      </div>
+
+      <div class="breathing-controls">
+        <button id="btn-start-breath" class="btn primary">Start Session</button>
+        <button id="btn-stop-breath" class="btn secondary" disabled>End Session</button>
+      </div>
+    </section>
+
+    <!-- Right Column: History & Insights -->
+    <section class="panel history-panel">
+      <h2>Recovery Analytics</h2>
+      <p class="section-desc">Review your session streaks and autonomic recovery trends over time.</p>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-num" id="stat-sessions">0</span>
+          <span class="stat-lbl">Total Sessions</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-streak">0</span>
+          <span class="stat-lbl">Day Streak</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-minutes">0</span>
+          <span class="stat-lbl">Minutes Bred</span>
+        </div>
+      </div>
+
+      <div class="history-log-container">
+        <h3>Recent Check-ins</h3>
+        <ul id="history-list" class="history-list">
+          <li class="empty-item">No logs recorded yet. Complete your first check-in!</li>
+        </ul>
+      </div>
+
+      <button id="btn-clear-history" class="btn danger small-btn">Clear Local History</button>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraPulse Studio &bull; Local-First Autonomic Balance & Recovery Utility</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
