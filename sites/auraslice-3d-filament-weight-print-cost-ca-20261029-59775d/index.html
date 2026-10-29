@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlice: 3D Filament Weight & Print Cost Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <h1>AuraSlice</h1>
+            </div>
+            <p class="tagline">Precision 3D Printing Economics & Filament Spool Inventory Workbench</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left Column: Calculators & Spool Setup -->
+            <div class="column">
+                <!-- Spool Parameters Card -->
+                <section class="card">
+                    <h2>Filament & Spool Parameters</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="spoolName">Filament Name / Material</label>
+                            <input type="text" id="spoolName" value="eSUN PLA+ Black" placeholder="e.g., Prusaament PLA">
+                        </div>
+                        <div class="form-group">
+                            <label for="spoolCost">Spool Purchase Price ($)</label>
+                            <input type="number" id="spoolCost" value="24.99" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="spoolWeight">Spool Net Weight (g)</label>
+                            <input type="number" id="spoolWeight" value="1000" min="1" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="emptySpoolWeight">Empty Spool Tare (g)</label>
+                            <input type="number" id="emptySpoolWeight" value="220" min="0" step="10">
+                        </div>
+                    </div>
+                    <div class="spool-quick-select">
+                        <span class="label">Presets:</span>
+                        <button type="button" class="badge-btn" data-weight="1000" data-cost="22.00">1kg Standard ($22)</button>
+                        <button type="button" class="badge-btn" data-weight="750" data-cost="20.00">750g Premium ($20)</button>
+                        <button type="button" class="badge-btn" data-weight="2300" data-cost="45.00">2.3kg Large ($45)</button>
+                    </div>
+                </section>
+
+                <!-- Print Job Parameters Card -->
+                <section class="card">
+                    <h2>Print Job Specifications</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="printWeight">Print Grams Used (g)</label>
+                            <input type="number" id="printWeight" value="85" min="0.1" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="printHours">Print Duration (Hours)</label>
+                            <input type="number" id="printHours" value="6.5" min="0.1" step="0.25">
+                        </div>
+                        <div class="form-group">
+                            <label for="printerWatts">Printer Power Draw (Watts)</label>
+                            <input type="number" id="printerWatts" value="150" min="10" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="kwhCost">Electricity Cost ($/kWh)</label>
+                            <input type="number" id="kwhCost" value="0.15" min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="printerWear">Machine Maintenance / hr ($)</label>
+                            <input type="number" id="printerWear" value="0.50" min="0" step="0.05">
+                        </div>
+                        <div class="form-group">
+                            <label for="failRisk">Failure / Waste Risk (%)</label>
+                            <input type="number" id="failRisk" value="10" min="0" max="100" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="laborTime">Post-Processing / Labor (Mins)</label>
+                            <input type="number" id="laborTime" value="15" min="0" step="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="laborRate">Labor Rate ($ / Hour)</label>
+                            <input type="number" id="laborRate" value="20.00" min="0" step="1">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="markupPercent">Profit Markup Percentage (%)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="markupRange" min="0" max="300" value="100" step="5">
+                            <span id="markupValue">100%</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Financial Results & Inventory -->
+            <div class="column">
+                <!-- Results Breakdown Card -->
+                <section class="card highlight-card">
+                    <h2>Print Cost & Revenue Breakdown</h2>
+                    <div class="cost-hero">
+                        <div class="cost-item">
+                            <span class="label">Total Production Cost</span>
+                            <span class="value" id="resTotalCost">$0.00</span>
+                        </div>
+                        <div class="cost-item highlight">
+                            <span class="label">Suggested Retail Price</span>
+                            <span class="value" id="resRetailPrice">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-table">
+                        <div class="row">
+                            <span>Filament Material Cost</span>
+                            <span id="resFilamentCost">$0.00</span>
+                        </div>
+                        <div class="row">
+                            <span>Electrical Power Cost</span>
+                            <span id="resPowerCost">$0.00</span>
+                        </div>
+                        <div class="row">
+                            <span>Machine Wear & Maintenance</span>
+                            <span id="resWearCost">$0.00</span>
+                        </div>
+                        <div class="row">
+                            <span>Labor & Post-Processing</span>
+                            <span id="resLaborCost">$0.00</span>
+                        </div>
+                        <div class="row">
+                            <span>Failure & Waste Contingency</span>
+                            <span id="resRiskCost">$0.00</span>
+                        </div>
+                        <div class="row total-profit">
+                            <span>Estimated Net Profit</span>
+                            <span id="resProfit">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="canvas-container">
+                        <canvas id="costChart" width="340" height="160"></canvas>
+                    </div>
+
+                    <div class="action-row">
+                        <button type="button" class="primary-btn" id="saveSpoolBtn">Save Spool to Inventory</button>
+                        <button type="button" class="secondary-btn" id="exportCsvBtn">Export Print Cost Report</button>
+                    </div>
+                </section>
+
+                <!-- Spool Inventory Vault Card -->
+                <section class="card">
+                    <div class="card-header-flex">
+                        <h2>Spool Inventory Vault</h2>
+                        <span class="badge" id="spoolCountBadge">0 spools</span>
+                    </div>
+                    <div class="inventory-list" id="inventoryList">
+                        <!-- Dynamically populated -->
+                        <div class="empty-state">No spools saved in local vault yet.</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraSlice Local-First 3D Printing Cost Workbench &bull; All calculations run instantly in your browser.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
