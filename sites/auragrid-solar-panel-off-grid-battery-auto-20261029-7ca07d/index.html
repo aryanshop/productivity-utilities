@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrid: Solar Panel & Off-Grid Battery Autonomy Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                </svg>
+                <h1>AuraGrid</h1>
+            </div>
+            <p class="subtitle">Precision Solar Array Sizing & Off-Grid Autonomy Planner</p>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- Control Panel / Input Form -->
+        <section class="config-section card">
+            <h2>System Configuration</h2>
+            <div class="config-grid">
+                <div class="input-group">
+                    <label for="sunHours">Peak Sun Hours / Day</label>
+                    <input type="number" id="sunHours" value="4.5" min="1" max="10" step="0.1">
+                    <span class="unit">hours</span>
+                </div>
+                <div class="input-group">
+                    <label for="panelWattage">Default Panel Rating</label>
+                    <input type="number" id="panelWattage" value="400" min="50" max="700" step="10">
+                    <span class="unit">Watts</span>
+                </div>
+                <div class="input-group">
+                    <label for="systemVoltage">System Voltage</label>
+                    <select id="systemVoltage">
+                        <option value="12">12V DC</option>
+                        <option value="24">24V DC</option>
+                        <option value="48" selected>48V DC (Recommended)</option>
+                    </select>
+                    <span class="unit">Volts</span>
+                </div>
+                <div class="input-group">
+                    <label for="batteryType">Battery Chemistry</label>
+                    <select id="batteryType">
+                        <option value="0.8" selected>LiFePO4 (80% Usable DoD)</option>
+                        <option value="0.5">AGM / Gel (50% Usable DoD)</option>
+                        <option value="0.3">Flooded Lead-Acid (30% DoD)</option>
+                    </select>
+                    <span class="unit">DoD</span>
+                </div>
+                <div class="input-group">
+                    <label for="autonomyDays">Target Autonomy Days</label>
+                    <input type="number" id="autonomyDays" value="2" min="1" max="7" step="1">
+                    <span class="unit">days (no sun)</span>
+                </div>
+                <div class="input-group">
+                    <label for="systemLosses">System Efficiency Factor</label>
+                    <input type="number" id="systemLosses" value="80" min="50" max="95" step="1">
+                    <span class="unit">% (Inverter/Temp)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Appliance Load Inventory -->
+        <section class="appliances-section card">
+            <div class="section-header">
+                <h2>Appliance Load Inventory</h2>
+                <button id="addApplianceBtn" class="btn btn-primary">+ Add Custom Load</button>
+            </div>
+            <div class="table-responsive">
+                <table id="applianceTable">
+                    <thead>
+                        <tr>
+                            <th>Appliance / Device</th>
+                            <th>Power (Watts)</th>
+                            <th>Hours / Day</th>
+                            <th>Energy (Wh / Day)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applianceList">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Results Summary Dashboard -->
+        <section class="results-dashboard">
+            <div class="metric-card card">
+                <h3>Daily Energy Demand</h3>
+                <div class="metric-value" id="totalWh">0</div>
+                <span class="metric-unit">Watt-hours / day</span>
+            </div>
+            <div class="metric-card card">
+                <h3>Solar Array Needed</h3>
+                <div class="metric-value" id="totalPanels">0</div>
+                <span class="metric-unit" id="panelText">0 panels (400W each)</span>
+            </div>
+            <div class="metric-card card">
+                <h3>Battery Bank Capacity</h3>
+                <div class="metric-value" id="totalBatteryAh">0</div>
+                <span class="metric-unit" id="batteryAhUnit">Ah at 48V</span>
+            </div>
+            <div class="metric-card card">
+                <h3>Charge Controller (MPPT)</h3>
+                <div class="metric-value" id="mpptAmps">0</div>
+                <span class="metric-unit">Amps Minimum Rating</span>
+            </div>
+        </section>
+
+        <!-- Interactive Power Generation vs Consumption Graph -->
+        <section class="chart-section card">
+            <h2>24-Hour Energy Balance Simulation</h2>
+            <p class="section-desc">Simulated solar harvest curve versus cumulative household load over a 24-hour cycle.</p>
+            <div class="canvas-container">
+                <canvas id="energyCanvas" width="900" height="350"></canvas>
+            </div>
+            <div class="chart-legend">
+                <span class="legend-item"><span class="dot solar"></span> Solar Generation (Wh)</span>
+                <span class="legend-item"><span class="dot load"></span> Cumulative Load (Wh)</span>
+            </div>
+        </section>
+
+        <!-- Action Toolbar -->
+        <div class="toolbar">
+            <button id="resetDefaults" class="btn btn-secondary">Reset Defaults</button>
+            <button id="exportConfig" class="btn btn-secondary">Export System JSON</button>
+        </div>
+    </main> 
+
+    <footer class="app-footer">
+        <p>AuraGrid &mdash; Local-First Off-Grid Energy Planner. All calculations performed client-side.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
