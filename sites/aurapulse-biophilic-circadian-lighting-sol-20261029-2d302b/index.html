@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Biophilic Circadian Lighting & Solar Arc Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <h1>AuraPulse</h1>
+            </div>
+            <p class="subtitle">Biophilic Circadian Lighting & Solar Arc Design Studio</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Control Panel -->
+            <section class="control-panel card">
+                <h2>Workspace Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="windowOrientation">Window Orientation</label>
+                    <select id="windowOrientation">
+                        <option value="north">North Facing (Diffused cool light)</option>
+                        <option value="south" selected>South Facing (Direct warm light)</option>
+                        <option value="east">East Facing (Morning direct light)</option>
+                        <option value="west">West Facing (Evening direct light)</option>
+                        <option value="windowless">Windowless / Artificial Only</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="roomDepth">Room Depth from Window (<span id="roomDepthVal">4.5</span> m)</label>
+                    <input type="range" id="roomDepth" min="1" max="12" step="0.5" value="4.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="workStart">Work Shift Hours</label>
+                    <div class="time-inputs">
+                        <div>
+                            <label for="workStart" class="sub-label">Start</label>
+                            <input type="time" id="workStart" value="08:00">
+                        </div>
+                        <div>
+                            <label for="workEnd" class="sub-label">End</label>
+                            <input type="time" id="workEnd" value="17:00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="glareControl">Window Glare & Shading</label>
+                    <select id="glareControl">
+                        <option value="none">No Blinds (Full Exposure)</option>
+                        <option value="translucent" selected>Translucent Blinds (Soft Diffuse)</option>
+                        <option value="opaque">Opaque Blinds (Heavy Shading)</option>
+                    </select>
+                </div>
+
+                <button id="recalcBtn" class="btn primary">Update Solar Simulation</button>
+            </section>
+
+            <!-- Visualization & Analysis Panel -->
+            <section class="display-panel">
+                <!-- Solar Arc Canvas Card -->
+                <div class="card solar-card">
+                    <div class="card-header-row">
+                        <h2>Solar Arc & Illuminance Simulation</h2>
+                        <span id="currentTimeDisplay" class="badge">12:00 PM</span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="solarCanvas" width="600" height="280"></canvas>
+                    </div>
+                    <div class="time-scrubber-container">
+                        <label for="timeScrubber">Scrub Solar Time: <span id="scrubberTimeVal">12:00</span></label>
+                        <input type="range" id="timeScrubber" min="360" max="1260" step="15" value="720">
+                    </div>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="card metric-card">
+                        <h3>Melanopic Lux (mEDI)</h3>
+                        <div class="metric-value" id="mediVal">--</div>
+                        <p class="metric-desc">Biological stimulus for daytime alertness & circadian entrainment.</p>
+                    </div>
+                    <div class="card metric-card">
+                        <h3>Color Temp (Kelvin)</h3>
+                        <div class="metric-value" id="kelvinVal">--</div>
+                        <p class="metric-desc">Correlated Color Temperature (CCT) at current simulated hour.</p>
+                    </div>
+                    <div class="card metric-card">
+                        <h3>Circadian Phase Shift Risk</h3>
+                        <div class="metric-value" id="riskVal">--</div>
+                        <p class="metric-desc">Evaluation of evening blue-light suppression hazard.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Schedule & Lighting Recipe Section -->
+        <section class="recipe-section card">
+            <div class="card-header-row">
+                <h2>Automated Circadian Lighting Prescription</h2>
+                <button id="exportBtn" class="btn secondary">Export Schedule JSON</button>
+            </div>
+            <p class="section-intro">Recommended color temperature and illuminance targets throughout your operational workday.</p>
+            <div class="table-responsive">
+                <table id="scheduleTable">
+                    <thead>
+                        <tr>
+                            <th>Time Window</th>
+                            <th>Phase</th>
+                            <th>Target CCT (K)</th>
+                            <th>Target Lux</th>
+                            <th>Biological Objective</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraPulse Studio &bull; Client-side biophilic lighting calculator &amp; circadian rhythm designer.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
