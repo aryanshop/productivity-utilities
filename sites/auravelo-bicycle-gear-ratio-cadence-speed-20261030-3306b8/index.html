@@ -1,0 +1,213 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVelo: Bicycle Gear Ratio & Cadence Speed Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="5.5" cy="17.5" r="3.5"/>
+          <circle cx="18.5" cy="17.5" r="3.5"/>
+          <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L9 11l-4 3m8 3.5l3-6.5h3.5m-11.5 3h4"/>
+          <path d="m12 6.5-3 4.5h5"/>
+        </svg>
+        <h1>AuraVelo</h1>
+      </div>
+      <p class="subtitle">Precision Drivetrain, Gear Ratio & Cadence Speed Workbench</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-preset-modal" class="btn btn-secondary" aria-label="Load Bike Presets">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Presets
+      </button>
+      <button id="btn-reset" class="btn btn-secondary" aria-label="Reset Defaults">Reset</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Configuration Panel -->
+    <section class="card config-panel">
+      <h2>Drivetrain Configuration</h2>
+      
+      <div class="form-grid">
+        <!-- Wheel Size -->
+        <div class="form-group">
+          <label for="wheel-size">Wheel / Tire Size</label>
+          <select id="wheel-size">
+            <option value="2105">700c x 25mm (2105 mm)</option>
+            <option value="2136">700c x 28mm (2136 mm)</option>
+            <option value="2255" selected>29" x 2.1" MTB (2255 mm)</option>
+            <option value="2170">27.5" x 2.1" MTB (2170 mm)</option>
+            <option value="2070">26" x 1.95" MTB (2070 mm)</option>
+            <option value="1490">20" BMX (1490 mm)</option>
+            <option value="custom">Custom Perimeter...</option>
+          </select>
+        </div>
+
+        <!-- Custom Circumference -->
+        <div class="form-group" id="custom-circ-group" style="display: none;">
+          <label for="custom-circ">Circumference (mm)</label>
+          <input type="number" id="custom-circ" value="2136" min="500" max="3000" step="1">
+        </div>
+
+        <!-- Unit System -->
+        <div class="form-group">
+          <label for="unit-system">Speed Unit</label>
+          <select id="unit-system">
+            <option value="kmh" selected>Kilometers per hour (km/h)</option>
+            <option value="mph">Miles per hour (mph)</option>
+          </select>
+        </div>
+
+        <!-- Target Cadence -->
+        <div class="form-group">
+          <label for="target-cadence">Target Cadence (RPM): <span id="cadence-val">90</span></label>
+          <input type="range" id="target-cadence" min="50" max="130" value="90" step="1">
+        </div>
+
+        <!-- Crank Length -->
+        <div class="form-group">
+          <label for="crank-length">Crank Arm Length (mm)</label>
+          <select id="crank-length">
+            <option value="165">165 mm</option>
+            <option value="170" selected>170 mm</option>
+            <option value="172.5">172.5 mm</option>
+            <option value="175">175 mm</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Chainrings & Cogs -->
+      <div class="gears-config-grid">
+        <div class="gear-input-section">
+          <div class="section-header">
+            <h3>Chainrings (Front)</h3>
+            <span class="hint">Comma-separated teeth</span>
+          </div>
+          <input type="text" id="chainrings-input" value="50, 34" placeholder="e.g. 52, 36, 26">
+          <div id="chainrings-chips" class="chip-container"></div>
+        </div>
+
+        <div class="gear-input-section">
+          <div class="section-header">
+            <h3>Cassette Cogs (Rear)</h3>
+            <span class="hint">Comma-separated teeth</span>
+          </div>
+          <input type="text" id="cogs-input" value="11, 12, 13, 14, 16, 18, 21, 24, 28, 32, 36" placeholder="e.g. 11, 13, 15...">
+          <div id="cogs-chips" class="chip-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Metric Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-label">Min Gear Ratio (Easy)</span>
+        <span id="metric-min-ratio" class="metric-value">0.94</span>
+        <span id="metric-min-inches" class="metric-sub">19.9 in / 1.58m</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Max Gear Ratio (Hard)</span>
+        <span id="metric-max-ratio" class="metric-value">4.55</span>
+        <span id="metric-max-inches" class="metric-sub">96.5 in / 7.68m</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Speed @ <span id="summary-cadence-label">90</span> RPM (Max)</span>
+        <span id="metric-max-speed" class="metric-value">41.5</span>
+        <span id="metric-speed-unit" class="metric-sub">km/h</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Total Gear Range</span>
+        <span id="metric-gear-range" class="metric-value">484%</span>
+        <span class="metric-sub">Spread capacity</span>
+      </div>
+    </section>
+
+    <!-- Visual Cadence vs Speed Matrix Chart -->
+    <section class="card chart-card">
+      <div class="card-header-flex">
+        <h2>Cadence vs Speed Matrix</h2>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="dot ring-1"></span> Outer / Big Ring</span>
+          <span class="legend-item"><span class="dot ring-2"></span> Inner / Small Ring</span>
+        </div>
+      </div>
+      <p class="section-desc">Speeds across your entire cassette at your target cadence (<span id="chart-cadence-ref">90</span> RPM).</p>
+      <div class="canvas-wrapper">
+        <canvas id="speed-matrix-canvas" width="900" height="320"></canvas>
+      </div>
+    </section>
+
+    <!-- Detailed Matrix Table -->
+    <section class="card">
+      <h2>Complete Gear Ratio & Speed Table</h2>
+      <p class="section-desc">Detailed breakdown of Gear Inches, Development (meters per crank turn), and Speed at target RPM for every chainring-cog combination.</p>
+      <div class="table-responsive">
+        <table id="gear-table">
+          <thead>
+            <tr>
+              <th>Ring / Cog</th>
+              <th>Ratio</th>
+              <th>Gear Inches</th>
+              <th>Development (m)</th>
+              <th>Speed (<span class="tbl-unit">km/h</span>) @ <span id="tbl-cadence">90</span> RPM</th>
+              <th>Step %</th>
+            </tr>
+          </thead>
+          <tbody id="gear-table-body">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Preset Modal -->
+  <div id="preset-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Load Bike Preset</h3>
+        <button id="btn-close-modal" class="btn-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="section-desc">Select a classic drivetrain configuration to load instantly:</p>
+        <div class="preset-grid">
+          <button class="preset-card" data-preset="road2x11">
+            <h4>Road Endurance 2x11</h4>
+            <p>Chainrings: 50/34T | Cassette: 11-34T</p>
+          </button>
+          <button class="preset-card" data-preset="gravel1x12">
+            <h4>Gravel 1x12</h4>
+            <p>Chainrings: 42T | Cassette: 10-52T</p>
+          </button>
+          <button class="preset-card" data-preset="mtb1x12">
+            <h4>Modern MTB 1x12</h4>
+            <p>Chainrings: 32T | Cassette: 10-51T</p>
+          </button>
+          <button class="preset-card" data-preset="commuter3x8">
+            <h4>Urban Commuter 3x8</h4>
+            <p>Chainrings: 48/38/28T | Cassette: 11-32T</p>
+          </button>
+          <button class="preset-card" data-preset="track">
+            <h4>Track / Fixed Gear</h4>
+            <p>Chainrings: 48T | Cassette: 16T (Fixed)</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>AuraVelo &bull; Client-Side Drivetrain Workbench &bull; No cookies, no trackers.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
