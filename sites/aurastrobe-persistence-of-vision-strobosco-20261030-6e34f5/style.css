@@ -1,0 +1,347 @@
+:root {
+    --bg-base: #090a0f;
+    --bg-surface: #12151f;
+    --bg-surface-hover: #1b2030;
+    --border-color: #242c42;
+    --text-main: #f0f4f8;
+    --text-muted: #8c9bb8;
+    --accent-primary: #3b82f6;
+    --accent-primary-hover: #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.25);
+    --accent-secondary: #06b6d4;
+    --danger: #ef4444;
+    --success: #10b981;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    height: 100vh;
+    width: 100vw;
+}
+
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow-y: auto;
+    }
+}
+
+/* Control Panel Sidebar */
+.control-panel {
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.brand-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    width: 42px;
+    color: #fff;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.brand-header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Mode Tabs */
+.mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--bg-base);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: var(--bg-surface);
+    color: var(--text-main);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.mode-panel {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mode-panel.active {
+    display: flex;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.control-group label {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+.range-with-val {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.range-with-val span {
+    font-size: 0.82rem;
+    font-weight: 600;
+    min-width: 75px;
+    text-align: right;
+    color: var(--accent-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+input[type="text"], select {
+    background: var(--bg-base);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: var(--accent-primary);
+}
+
+.action-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.btn.primary {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.btn.primary:hover {
+    background: var(--accent-primary-hover);
+}
+
+.btn.secondary {
+    background: var(--bg-base);
+    border-color: var(--border-color);
+    color: var(--text-main);
+    flex: 1;
+}
+
+.btn.secondary:hover {
+    background: var(--bg-surface-hover);
+}
+
+.btn.outline {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn.outline:hover {
+    color: var(--text-main);
+    border-color: var(--text-muted);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.panel-footer {
+    margin-top: auto;
+    padding-top: 10px;
+}
+
+/* Workspace */
+.workspace {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    background: var(--bg-base);
+    overflow-y: auto;
+}
+
+.workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-pill {
+    align-items: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    display: flex;
+    font-size: 0.85rem;
+    gap: 8px;
+    padding: 6px 14px;
+}
+
+.pulse-dot {
+    background: var(--success);
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+    box-shadow: 0 0 8px var(--success);
+}
+
+.pulse-dot.paused {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+}
+
+.workspace-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    height: 38px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-main);
+}
+
+/* Canvas Area */
+.canvas-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    flex: 1;
+    min-height: 360px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Telemetry Grid */
+.telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.telemetry-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+}
+
+.metric-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.metric-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-desc {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}

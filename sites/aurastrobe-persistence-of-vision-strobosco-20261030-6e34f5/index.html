@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStrobe: Persistence of Vision & Stroboscopic Frequency Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar controls -->
+        <aside class="control-panel">
+            <header class="brand-header">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="2" x2="12" y2="12"/>
+                        <line x1="12" y1="12" x2="20" y2="16"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>AuraStrobe</h1>
+                    <p class="subtitle">POV & Strobe Lab</p>
+                </div>
+            </header>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="mode-tabs" role="tablist">
+                <button role="tab" aria-selected="true" data-mode="strobe" class="tab-btn active">Stroboscopic Freeze</button>
+                <button role="tab" aria-selected="false" data-mode="pov" class="tab-btn">POV Display</button>
+            </div>
+
+            <!-- Mode 1: Strobe Controls -->
+            <div id="panel-strobe" class="mode-panel active">
+                <div class="control-group">
+                    <label for="target-rpm">Target Object Speed (RPM)</label>
+                    <div class="range-with-val">
+                        <input type="range" id="target-rpm" min="60" max="6000" step="10" value="1200">
+                        <span id="val-target-rpm">1200 RPM</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="flash-hz">Strobe Flash Rate (Hz / FPS)</label>
+                    <div class="range-with-val">
+                        <input type="range" id="flash-hz" min="1" max="100" step="0.5" value="20">
+                        <span id="val-flash-hz">20.0 Hz</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="duty-cycle">Flash Pulse Duty Cycle (%)</label>
+                    <div class="range-with-val">
+                        <input type="range" id="duty-cycle" min="1" max="50" step="1" value="10">
+                        <span id="val-duty-cycle">10%</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="harmonics-count">Harmonic Order Limit</label>
+                    <select id="harmonics-count">
+                        <option value="3">3 Harmonics (Fundamental + 2)</option>
+                        <option value="5" selected>5 Harmonics (Standard)</option>
+                        <option value="8">8 Harmonics (Deep Analysis)</option>
+                    </select>
+                </div>
+
+                <div class="action-row">
+                    <button id="btn-sync-strobe" class="btn secondary">Auto-Sync to Freeze (1:1)</button>
+                    <button id="btn-strobe-audio" class="btn outline">Toggle Tone Sync</button>
+                </div>
+            </div>
+
+            <!-- Mode 2: POV Controls -->
+            <div id="panel-pov" class="mode-panel">
+                <div class="control-group">
+                    <label for="pov-chars">Text Message (POV Wand)</label>
+                    <input type="text" id="pov-chars" value="AURA STROBE" maxlength="16">
+                </div>
+
+                <div class="control-group">
+                    <label for="sweep-rpm">Wand / Blade RPM</label>
+                    <div class="range-with-val">
+                        <input type="range" id="sweep-rpm" min="300" max="3000" step="50" value="900">
+                        <span id="val-sweep-rpm">900 RPM</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="led-count">Vertical LED Column Height</label>
+                    <div class="range-with-val">
+                        <input type="range" id="led-count" min="7" max="31" step="2" value="15">
+                        <span id="val-led-count">15 Pixels</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="refresh-hz">Multiplex Refresh Rate (Hz)</label>
+                    <div class="range-with-val">
+                        <input type="range" id="refresh-hz" min="100" max="1000" step="25" value="400">
+                        <span id="val-refresh-hz">400 Hz</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export and presets -->
+            <div class="panel-footer">
+                <button id="btn-export" class="btn primary full-width">Export Lab Session (.JSON)</button>
+            </div>
+        </aside>
+
+        <!-- Main Stage Workspace -->
+        <main class="workspace">
+            <header class="workspace-header">
+                <div class="status-pill">
+                    <span class="pulse-dot" id="sim-status-dot"></span>
+                    <span id="sim-status-text">Simulation Running</span>
+                </div>
+                <div class="workspace-actions">
+                    <button id="btn-pause" class="icon-btn" title="Pause Simulation">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    </button>
+                    <button id="btn-reset" class="icon-btn" title="Reset Defaults">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Canvas Display Area -->
+            <div class="canvas-container">
+                <canvas id="lab-canvas"></canvas>
+            </div>
+
+            <!-- Telemetry & Calculation Readouts -->
+            <section class="telemetry-grid">
+                <div class="telemetry-card">
+                    <span class="metric-label">Phase Alignment Ratio</span>
+                    <span class="metric-value" id="stat-ratio">1.00 : 1</span>
+                    <span class="metric-desc" id="stat-ratio-desc">Perfect optical freeze</span>
+                </div>
+                <div class="telemetry-card">
+                    <span class="metric-label">Apparent Motion State</span>
+                    <span class="metric-value" id="stat-motion">Stationary (Freeze)</span>
+                    <span class="metric-desc" id="stat-motion-desc">Zero slip velocity</span>
+                </div>
+                <div class="telemetry-card">
+                    <span class="metric-label">Harmonic Alias Frequencies</span>
+                    <span class="metric-value" id="stat-harmonics">20.0 Hz, 40.0 Hz</span>
+                    <span class="metric-desc">Stroboscopic multiples</span>
+                </div>
+                <div class="telemetry-card">
+                    <span class="metric-label">POV Sweep Duration / Resolution</span>
+                    <span class="metric-value" id="stat-pov-res">66.7 ms / 360 slices</span>
+                    <span class="metric-desc">Per full revolution</span>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
