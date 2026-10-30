@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraStitch: Textile Fabric Shrinkage & Yield Estimator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="6.5"/></svg>
+        <span>AuraStitch</span>
+      </div>
+      <h1>Textile Fabric Shrinkage & Yield Estimator</h1>
+      <p class="subtitle">Precision yardage calculator, shrinkage allowance planner, and cut-layout cost optimizer for tailors and makers.</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="workspace">
+      <!-- Input Panel -->
+      <section class="panel input-panel" aria-labelledby="config-heading">
+        <h2 id="config-heading" class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Fabric & Project Parameters
+        </h2>
+
+        <div class="input-group">
+          <label for="fabricName">Fabric / Project Name</label>
+          <input type="text" id="fabricName" value="Linen Summer Trousers & Tunic" placeholder="e.g., Organic Cotton Canvas">
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label for="unitSystem">Measurement Unit</label>
+            <select id="unitSystem">
+              <option value="metric">Metric (cm / meters)</option>
+              <option value="imperial" selected>Imperial (inches / yards)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fabricWidth">Fabric Bolt Width</label>
+            <div class="unit-suffix">
+              <input type="number" id="fabricWidth" value="54" min="10" max="120" step="0.5">
+              <span class="unit-tag width-unit-label">in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label for="shrinkWarp">Warp Shrinkage (Length)</label>
+            <div class="unit-suffix">
+              <input type="number" id="shrinkWarp" value="6" min="0" max="30" step="0.5">
+              <span class="unit-tag">%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="shrinkWeft">Weft Shrinkage (Width)</label>
+            <div class="unit-suffix">
+              <input type="number" id="shrinkWeft" value="3" min="0" max="30" step="0.5">
+              <span class="unit-tag">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label for="patternMatching">Pattern Match / Nap Allowance</label>
+            <div class="unit-suffix">
+              <input type="number" id="patternMatching" value="10" min="0" max="50" step="1">
+              <span class="unit-tag">%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="fabricCost">Cost per Unit Length</label>
+            <div class="prefix-input">
+              <span class="prefix-tag">$</span>
+              <input type="number" id="fabricCost" value="14.50" min="0" max="500" step="0.25">
+            </div>
+          </div>
+        </div>
+
+        <!-- Garment Pieces Manager -->
+        <div class="pieces-section">
+          <div class="pieces-header">
+            <h3>Pattern Pieces Inventory</h3>
+            <button type="button" id="addPieceBtn" class="btn btn-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Piece
+            </button>
+          </div>
+          <div id="piecesList" class="pieces-list">
+            <!-- Dynamically populated pieces -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Output & Visualization Panel -->
+      <section class="panel output-panel" aria-labelledby="results-heading">
+        <h2 id="results-heading" class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Yield & Cut Specification
+        </h2>
+
+        <!-- Metrics Summary Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card highlight">
+            <span class="metric-label">Recommended Yardage</span>
+            <span class="metric-value" id="totalYardage">3.45</span>
+            <span class="metric-sub" id="totalYardageUnit">Yards (Pre-shrink cut)</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Total Fabric Cost</span>
+            <span class="metric-value" id="totalCost">$50.03</span>
+            <span class="metric-sub" id="costPerPiece">~$8.34 / panel avg</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Total Piece Area</span>
+            <span class="metric-value" id="totalArea">2,450</span>
+            <span class="metric-sub" id="totalAreaUnit">sq. inches</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Estimated Waste Rate</span>
+            <span class="metric-value" id="wasteRate">18.4%</span>
+            <span class="metric-sub">Includes grain & match</span>
+          </div>
+        </div>
+
+        <!-- Interactive Cut Layout Canvas / SVG Blueprint -->
+        <div class="blueprint-card">
+          <div class="blueprint-header">
+            <h3>Simulated Bolt Layout & Grainline Map</h3>
+            <span class="blueprint-tag" id="boltDimensionsTag">Bolt: 54" width</span>
+          </div>
+          <div class="canvas-container">
+            <svg id="layoutSvg" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet">
+              <!-- SVG Rendered Dynamically -->
+            </svg>
+          </div>
+          <p class="blueprint-hint">Visual approximation of pattern blocks laid out along the grainline. Colored blocks represent individual garment pattern pieces.</p>
+        </div>
+
+        <!-- Detailed Breakdown & Shrinkage Compensation Table -->
+        <div class="breakdown-card">
+          <h3>Post-Wash Shrinkage & Cut Dimensions</h3>
+          <div class="table-wrapper">
+            <table id="breakdownTable">
+              <thead>
+                <tr>
+                  <th>Pattern Piece</th>
+                  <th>Cut Size (Pre-Wash)</th>
+                  <th>Finished Size (Post-Wash)</th>
+                  <th>Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Action Export Bar -->
+        <div class="action-bar">
+          <button type="button" id="resetDefaultBtn" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset Defaults
+          </button>
+          <button type="button" id="exportSummaryBtn" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Cut Sheet (TXT)
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraStitch Textile Studio &bull; Designed for precision garment planning &amp; zero-waste tailoring.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
