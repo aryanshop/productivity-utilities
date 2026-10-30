@@ -1,0 +1,138 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVelo: Bicycle Gear Ratio & Drivetrain Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6.5H19L21 12H17.5L15 6.5Z"/><path d="M12 17.5V11L8 11.5L5.5 17.5"/><path d="M12 11L14.5 6.5H11"/></svg>
+                <h1>AuraVelo</h1>
+            </div>
+            <p class="subtitle">Precision Drivetrain, Cadence & Gear Ratio Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Configuration Sidebar -->
+        <aside class="control-panel" aria-label="Drivetrain Configuration">
+            <h2>Drivetrain Specs</h2>
+            
+            <div class="input-group">
+                <label for="wheelSize">Wheel / Tire Size</label>
+                <select id="wheelSize">
+                    <option value="2.105">700c x 25mm (ISO 622 - 2096mm)</option>
+                    <option value="2.125" selected>700c x 28mm (ISO 622 - 2136mm)</option>
+                    <option value="2.155">700c x 35mm (ISO 622 - 2168mm)</option>
+                    <option value="2.220">29" x 2.1" MTB (ISO 622 - 2288mm)</option>
+                    <option value="2.070">27.5" / 650b x 2.1" (ISO 584 - 2133mm)</option>
+                    <option value="1.980">26" x 1.5" (ISO 559 - 2026mm)</option>
+                    <option value="1.693">20" BMX (ISO 406 - 1590mm)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="chainrings">Chainring Teeth (comma separated)</label>
+                <input type="text" id="chainrings" value="50, 34" placeholder="e.g. 52, 36">
+                <small class="hint">Front crankset tooth counts</small>
+            </div>
+
+            <div class="input-group">
+                <label for="cogs">Cassette / Cog Teeth (comma separated)</label>
+                <input type="text" id="cogs" value="11, 12, 13, 15, 17, 19, 21, 24, 28, 32, 36" placeholder="e.g. 11, 13, 15...">
+                <small class="hint">Rear sprocket tooth counts from small to large</small>
+            </div>
+
+            <div class="input-group">
+                <label for="cadence">Target Cadence (RPM)</label>
+                <div class="range-wrapper">
+                    <input type="range" id="cadence" min="60" max="120" value="90">
+                    <span id="cadenceVal">90 RPM</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="speedUnit">Speed Units</label>
+                <div class="segmented">
+                    <button type="button" class="unit-btn active" data-unit="kmh">KM/H</button>
+                    <button type="button" class="unit-btn" data-unit="mph">MPH</button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="resetDefaults" class="btn secondary">Reset Standard</button>
+                <button id="exportData" class="btn primary">Export Table CSV</button>
+            </div>
+        </aside>
+
+        <!-- Analysis & Output Panel -->
+        <section class="display-panel">
+            <!-- Summary Metrics Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Lowest Gear (Climbing)</span>
+                    <span class="metric-value" id="lowGear">--</span>
+                    <span class="metric-sub" id="lowGearRatio">Ratio: --</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Highest Gear (Sprinting)</span>
+                    <span class="metric-value" id="highGear">--</span>
+                    <span class="metric-sub" id="highGearRatio">Ratio: --</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Gear Range</span>
+                    <span class="metric-value" id="gearRange">--</span>
+                    <span class="metric-sub">Spread percentage</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Speed at Target Cadence</span>
+                    <span class="metric-value" id="targetSpeedAvg">--</span>
+                    <span class="metric-sub" id="speedUnitLabel">km/h average</span>
+                </div>
+            </div>
+
+            <!-- Visualization Canvas -->
+            <div class="card canvas-card">
+                <div class="card-header">
+                    <h3>Cadence vs. Speed Matrix</h3>
+                    <span class="badge" id="activeCadenceBadge">90 RPM Reference</span>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="speedChart" height="240"></canvas>
+                </div>
+            </div>
+
+            <!-- Drivetrain Matrix Table -->
+            <div class="card table-card">
+                <div class="card-header">
+                    <h3>Complete Gear Combinations</h3>
+                    <p class="hint">Showing Speed (top value) & Gear Inches (bottom value)</p>
+                </div>
+                <div class="table-wrapper">
+                    <table id="gearTable">
+                        <thead>
+                            <tr>
+                                <th>Chainring</th>
+                                <!-- Cogs populated via JS -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>AuraVelo Drivetrain Lab &bull; Client-Side Cycling Mechanics Utility</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
