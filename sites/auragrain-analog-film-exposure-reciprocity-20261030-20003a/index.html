@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrain: Analog Film Exposure & Reciprocity Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                    <line x1="7" y1="2" x2="7" y2="22"></line>
+                    <line x1="17" y1="2" x2="17" y2="22"></line>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <line x1="2" y1="7" x2="7" y2="7"></line>
+                    <line x1="2" y1="17" x2="7" y2="17"></line>
+                    <line x1="17" y1="7" x2="22" y2="7"></line>
+                    <line x1="17" y1="17" x2="22" y2="17"></line>
+                </svg>
+                <h1>AuraGrain</h1>
+            </div>
+            <p class="tagline">Analog Exposure, Reciprocity Compensation & Darkroom Timer Suite</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workbench">
+            <!-- Left Column: Controls & Calculators -->
+            <section class="control-panel">
+                <!-- Tab Switcher -->
+                <div class="tab-bar">
+                    <button class="tab-btn active" data-tab="reciprocity">Reciprocity Calculator</button>
+                    <button class="tab-btn" data-tab="timer">Darkroom Timer</button>
+                    <button class="tab-btn" data-tab="dilution">Chemistry Dilution</button>
+                </div>
+
+                <!-- Tab 1: Reciprocity Failure & Exposure -->
+                <div id="reciprocity-tab" class="tab-content active">
+                    <div class="card">
+                        <h2>Camera & Metering Settings</h2>
+                        
+                        <div class="form-group">
+                            <label for="film-stock">Film Stock Characteristic (Schwarzschild Exponent p)</label>
+                            <select id="film-stock">
+                                <option value="1.26">Ilford HP5 Plus / Delta (p ≈ 1.26)</option>
+                                <option value="1.31">Kodak Tri-X 400 (p ≈ 1.31)</option>
+                                <option value="1.40">Kodak T-Max 100 (p ≈ 1.40)</option>
+                                <option value="1.45">Fujifilm Acros II (Exceptional Reciprocity)</option>
+                                <option value="1.35" selected>Generic B&W Film (p ≈ 1.35)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="metered-time-val">Metered Exposure Time</label>
+                                <div class="input-unit-group">
+                                    <input type="number" id="metered-time-val" value="4" min="0.1" max="300" step="0.1">
+                                    <select id="metered-time-unit">
+                                        <option value="1">Seconds</option>
+                                        <option value="60">Minutes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="iso-select">Film ISO</label>
+                                <select id="iso-select">
+                                    <option value="25">ISO 25</option>
+                                    <option value="50">ISO 50</option>
+                                    <option value="100" selected>ISO 100</option>
+                                    <option value="200">ISO 200</option>
+                                    <option value="400">ISO 400</option>
+                                    <option value="800">ISO 800</option>
+                                    <option value="1600">ISO 1600</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Optical Filters & Factors</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-nd6" data-stops="2"> 2-Stop ND (ND0.6)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-nd12" data-stops="4"> 4-Stop ND (ND1.2)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-cpl" data-stops="1.5"> Circular Polarizer (1.5 stops)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-red" data-stops="3"> Red Contrast Filter (3 stops)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Display -->
+                    <div class="card output-card">
+                        <h2>Calculated Exposure Output</h2>
+                        <div class="metric-grid">
+                            <div class="metric-box">
+                                <span class="metric-label">Metered Time</span>
+                                <span class="metric-value" id="out-metered">4.0 s</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-label">Filter Compensation</span>
+                                <span class="metric-value" id="out-filter">0 Stops</span>
+                            </div>
+                            <div class="metric-box highlight">
+                                <span class="metric-label">Corrected Exposure (Reciprocity)</span>
+                                <span class="metric-value large" id="out-corrected">12.6 s</span>
+                            </div>
+                        </div>
+                        <div class="action-row">
+                            <button id="btn-send-timer" class="btn primary">Send to Darkroom Timer &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Darkroom Timer -->
+                <div id="timer-tab" class="tab-content">
+                    <div class="card">
+                        <h2>Precision Darkroom & Exposure Timer</h2>
+                        <div class="form-group">
+                            <label for="timer-duration">Target Duration (Seconds)</label>
+                            <input type="number" id="timer-duration" value="12.6" min="1" max="3600" step="0.1">
+                        </div>
+                        <div class="timer-display-box">
+                            <div id="timer-countdown" class="countdown-digits">00:12.6</div>
+                            <div class="progress-bar-container">
+                                <div id="timer-progress" class="progress-bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="timer-controls">
+                            <button id="timer-start" class="btn primary">Start Timer</button>
+                            <button id="timer-pause" class="btn secondary" disabled>Pause</button>
+                            <button id="timer-reset" class="btn secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Chemistry Dilution Calculator -->
+                <div id="dilution-tab" class="tab-content">
+                    <div class="card">
+                        <h2>Film Developer Dilution Lab</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dev-ratio">Dilution Ratio</label>
+                                <select id="dev-ratio">
+                                    <option value="1:9">1:9 (One-Shot / HC-110 / Rodinal)</option>
+                                    <option value="1:25">1:25 (Rodinal Standard)</option>
+                                    <option value="1:50" selected>1:50 (Rodinal High Dilution)</option>
+                                    <option value="1:1">1:1 (ID-11 / D-76 Stock Mix)</option>
+                                    <option value="1:3">1:3 (HC-110 Dilution B)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tank-volume">Total Working Solution (ml)</label>
+                                <input type="number" id="tank-volume" value="500" min="100" max="3000" step="50">
+                            </div>
+                        </div>
+
+                        <div class="dilution-results">
+                            <div class="dilution-item">
+                                <span class="d-label">Concentrate Required:</span>
+                                <span class="d-val" id="res-concentrate">9.8 ml</span>
+                            </div>
+                            <div class="dilution-item">
+                                <span class="d-label">Water Required:</span>
+                                <span class="d-val" id="res-water">490.2 ml</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Sunny 16 & Visualizer Canvas -->
+            <section class="info-panel">
+                <div class="card">
+                    <h2>Reciprocity Failure Curve</h2>
+                    <p class="card-desc">Visualizing exponential shutter time compensation curve ($T_{corr} = T^{p}$)</p>
+                    <div class="canvas-container">
+                        <canvas id="exposure-canvas" width="400" height="220"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Sunny 16 Quick Reference</h2>
+                    <div class="sunny-table">
+                        <div class="sunny-row">
+                            <span class="sunny-cond">Bright Sun (Clear Shadows)</span>
+                            <span class="sunny-val">f/16 @ 1/ISO</span>
+                        </div>
+                        <div class="sunny-row">
+                            <span class="sunny-cond">Hazy / Weak Sun (Soft Shadows)</span>
+                            <span class="sunny-val">f/11 @ 1/ISO</span>
+                        </div>
+                        <div class="sunny-row">
+                            <span class="sunny-cond">Cloudy Bright (No Shadows)</span>
+                            <span class="sunny-val">f/8 @ 1/ISO</span>
+                        </div>
+                        <div class="sunny-row">
+                            <span class="sunny-cond">Open Shade / Heavy Overcast</span>
+                            <span class="sunny-val">f/5.6 @ 1/ISO</span>
+                        </div>
+                        <div class="sunny-row">
+                            <span class="sunny-cond">Golden Hour / Sunset</span>
+                            <span class="sunny-val">f/4 @ 1/ISO</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; AuraGrain Analog Studio &bull; Client-Side Photographic Utilities &bull; No Tracking</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
