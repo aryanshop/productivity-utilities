@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrit: Abrasive Grain & Sandblasting Media Efficiency Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <h1>AuraGrit</h1>
+            </div>
+            <p class="subtitle">Precision Surface Preparation, Abrasive Consumption & Air Compressor Efficiency Lab</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panels Grid -->
+        <div class="panels-grid">
+            
+            <!-- SECTION 1: Surface & Geometry -->
+            <section class="card" aria-labelledby="surface-heading">
+                <div class="card-header">
+                    <h2 id="surface-heading">
+                        <span class="step-num">01</span> Surface & Geometry
+                    </h2>
+                    <span class="card-badge">Dimensions</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="shapeSelect">Surface Geometry</label>
+                        <select id="shapeSelect">
+                            <option value="flat">Flat Sheet / Plate / Panel</option>
+                            <option value="pipe">Cylindrical Pipe / Tube</option>
+                            <option value="tank">Spherical Tank / Vessel</option>
+                            <option value="custom">Custom Area (Direct sq ft / m²)</option>
+                        </select>
+                    </div>
+
+                    <div id="dimFieldsFlat" class="dim-group">
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label for="lengthInput">Length</label>
+                                <input type="number" id="lengthInput" value="10" min="0.1" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="widthInput">Width / Height</label>
+                                <input type="number" id="widthInput" value="5" min="0.1" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dimFieldsPipe" class="dim-group" style="display: none;">
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label for="pipeLength">Pipe Length</label>
+                                <input type="number" id="pipeLength" value="12" min="0.1" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="pipeDiameter">Outer Diameter</label>
+                                <input type="number" id="pipeDiameter" value="2" min="0.1" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dimFieldsCustom" class="dim-group" style="display: none;">
+                        <div class="form-group">
+                            <label for="customAreaInput">Total Surface Area</label>
+                            <input type="number" id="customAreaInput" value="50" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="unitSystem">Unit System</label>
+                            <select id="unitSystem">
+                                <option value="imperial">Imperial (ft, lbs, PSI)</option>
+                                <option value="metric">Metric (m, kg, Bar)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sidesFactor">Sides to Blast</label>
+                            <select id="sidesFactor">
+                                <option value="1">Single Side (1x)</option>
+                                <option value="2">Both Sides / Perimeter (2x)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="substrateType">Substrate Material</label>
+                        <select id="substrateType">
+                            <option value="steel">Structural Steel (Carbon Steel)</option>
+                            <option value="aluminum">Aluminum / Soft Alloy</option>
+                            <option value="hardwood">Hardwood / Timber</option>
+                            <option value="stone">Stone / Concrete / Brick</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="conditionLevel">Initial Surface Condition & Coating</label>
+                        <select id="conditionLevel">
+                            <option value="light">Light Mill Scale / Surface Rust (Sa 2)</option>
+                            <option value="heavy">Heavy Rust / Thick Mill Scale (Sa 2.5)</option>
+                            <option value="paint">Multiple Paint Layers / Epoxy (Heavy)</option>
+                            <option value="pitting">Deep Pitting / Severe Corrosion</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Media & Equipment -->
+            <section class="card" aria-labelledby="media-heading">
+                <div class="card-header">
+                    <h2 id="media-heading">
+                        <span class="step-num">02</span> Media & Equipment
+                    </h2>
+                    <span class="card-badge">Parameters</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="mediaSelect">Blasting Media Type</label>
+                        <select id="mediaSelect">
+                            <option value="alum_oxide">Aluminum Oxide (High Aggressive, Reusable)</option>
+                            <option value="glass_bead">Glass Beads (Satin / Peening, Moderate)</option>
+                            <option value="garnet">Garnet Sand (Fast Cut, Eco-Friendly)</option>
+                            <option value="walnut">Walnut Shells (Soft Substrates, Stripping)</option>
+                            <option value="steel_shot">Steel Shot / Grit (Heavy Industrial, Recyclable)</option>
+                        </select>
+                    </div>
+
+                    <div class="media-info-box" id="mediaInfoDesc">
+                        Select a media type to view profile characteristics.
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="nozzleSize">Nozzle Orifice Size</label>
+                            <select id="nozzleSize">
+                                <option value="3">No. 3 (3/16" - 4.8mm)</option>
+                                <option value="4" selected>No. 4 (1/4" - 6.4mm)</option>
+                                <option value="5">No. 5 (5/16" - 7.9mm)</option>
+                                <option value="6">No. 6 (3/8" - 9.5mm)</option>
+                                <option value="8">No. 8 (1/2" - 12.7mm)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="targetPSI">Operating Pressure (<span id="unitPressureLabel">PSI</span>)</label>
+                            <input type="number" id="targetPSI" value="90" min="40" max="150" step="5">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="recoveryCycles">Media Recovery / Reuse Count</label>
+                            <input type="number" id="recoveryCycles" value="3" min="1" max="20" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="mediaCostPerUnit">Media Cost (<span id="unitCurrencyLabel">$</span> / Unit)</label>
+                            <input type="number" id="mediaCostPerUnit" value="1.25" min="0.05" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="operatorLaborRate">Operator Hourly Rate ($ / hr)</label>
+                        <input type="number" id="operatorLaborRate" value="45.00" min="10" step="5">
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- RESULTS DASHBOARD -->
+        <section class="results-section card" aria-labelledby="results-heading">
+            <div class="card-header">
+                <h2 id="results-heading">
+                    <span class="step-num">03</span> Operational & Economic Output
+                </h2>
+                <div class="result-actions">
+                    <button id="btnSaveJob" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Save Job to Log
+                    </button>
+                    <button id="btnPrintReport" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Export Summary
+                    </button>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Total Surface Area</span>
+                    <span class="metric-value" id="outArea">--</span>
+                    <span class="metric-sub" id="outAreaSub">Effective area</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Abrasive Consumption</span>
+                    <span class="metric-value" id="outAbrasiveWeight">--</span>
+                    <span class="metric-sub" id="outAbrasiveSub">Net weight needed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Air Compressor CFM</span>
+                    <span class="metric-value" id="outCFM">--</span>
+                    <span class="metric-sub" id="outCFMSub">Required air volume</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Blast Time</span>
+                    <span class="metric-value" id="outTime">--</span>
+                    <span class="metric-sub" id="outTimeSub">Total active hours</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Job Cost</span>
+                    <span class="metric-value" id="outCost">--</span>
+                    <span class="metric-sub" id="outCostSub">Media + Labor</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Media Recycling Value</span>
+                    <span class="metric-value" id="outRecycleValue">--</span>
+                    <span class="metric-sub" id="outRecycleSub">Savings from reuse</span>
+                </div>
+            </div>
+
+            <!-- Visual Breakdown Canvas / Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>Cost & Resource Distribution Breakdown</h3>
+                    <span class="chart-legend">
+                        <span class="legend-item"><span class="dot dot-media"></span> Media Material</span>
+                        <span class="legend-item"><span class="dot dot-labor"></span> Operator Labor</span>
+                        <span class="legend-item"><span class="dot dot-energy"></span> Energy & Wear</span>
+                    </span>
+                </div>
+                <div class="breakdown-bar-wrapper">
+                    <div id="breakdownBar" class="breakdown-bar">
+                        <div id="barMedia" class="bar-segment bar-media" style="width: 40%"></div>
+                        <div id="barLabor" class="bar-segment bar-labor" style="width: 50%"></div>
+                        <div id="barEnergy" class="bar-segment bar-energy" style="width: 10%"></div>
+                    </div>
+                </div>
+                <div class="breakdown-legend-details" id="breakdownDetails">
+                    Media: $0.00 (40%) | Labor: $0.00 (50%) | Energy & Overheads: $0.00 (10%)
+                </div>
+            </div>
+        </section>
+
+        <!-- SAVED JOBS LOG -->
+        <section class="card log-section" aria-labelledby="log-heading">
+            <div class="card-header">
+                <h2 id="log-heading">
+                    <span class="step-num">04</span> Saved Job Estimates Log
+                </h2>
+                <button id="btnClearLog" class="btn btn-outline btn-sm">Clear Log</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="jobTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Substrate / Shape</th>
+                                <th>Media Type</th>
+                                <th>Area</th>
+                                <th>Abrasive</th>
+                                <th>Time</th>
+                                <th>Est. Cost</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobTableBody">
+                            <tr class="empty-row">
+                                <td colspan="8">No jobs saved in session memory yet. Click "Save Job to Log" above.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraGrit Lab &bull; Client-Side Industrial Estimation Workspace &bull; Built with Vanilla HTML5, CSS3 & ES6</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
