@@ -1,0 +1,148 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraSlate: Freelance Project Scope & Milestone Cost Estimator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">◈</span>
+        <h1>AuraSlate</h1>
+      </div>
+      <p class="tagline">Precision Project Scoping & Milestone Cost Estimator</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn btn-secondary" title="Reset to defaults">Reset Form</button>
+      <button id="btn-export" class="btn btn-secondary" title="Export project template">Export JSON</button>
+      <label class="btn btn-secondary file-upload-label">
+        Import JSON
+        <input type="file" id="import-file" accept=".json" hidden>
+      </label>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="grid-dashboard">
+      <!-- Left Column: Inputs & Configuration -->
+      <section class="panel config-panel">
+        <h2>Project Parameters</h2>
+        
+        <div class="form-group">
+          <label for="project-name">Project Title</label>
+          <input type="text" id="project-name" value="E-Commerce Platform Redesign" placeholder="Enter project name...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pricing-model">Pricing Strategy</label>
+            <select id="pricing-model">
+              <option value="hourly">Hourly Rate</option>
+              <option value="value" selected>Value / Fixed Scope</option>
+            </select>
+          </div>
+          <div class="form-group" id="rate-group">
+            <label for="base-rate">Base Rate ($ / hr)</label>
+            <input type="number" id="base-rate" value="85" min="10" max="500">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="complexity">Complexity Multiplier</label>
+            <select id="complexity">
+              <option value="0.9">Simple (0.9x)</option>
+              <option value="1.0" selected>Standard (1.0x)</option>
+              <option value="1.25">Complex / Enterprise (1.25x)</option>
+              <option value="1.5">R&D / High Risk (1.5x)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contingency">Contingency Buffer (%)</label>
+            <input type="number" id="contingency" value="15" min="0" max="50" step="5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="client-budget">Target Client Budget (Optional $)</label>
+          <input type="number" id="client-budget" value="12000" placeholder="e.g. 15000">
+        </div>
+
+        <div class="section-divider"></div>
+
+        <h3>Project Phases & Estimated Hours</h3>
+        <div id="phases-container" class="phases-list">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <div class="add-phase-row">
+          <button id="btn-add-phase" class="btn btn-outline">+ Add Custom Phase</button>
+        </div>
+      </section>
+
+      <!-- Right Column: Results, Breakdown & Canvas -->
+      <div class="results-column">
+        <!-- Summary Metric Cards -->
+        <section class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Total Estimated Cost</span>
+            <span class="metric-value" id="res-total-cost">$0</span>
+            <span class="metric-sub" id="res-effective-rate">Effective rate: $0/hr</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Total Estimated Hours</span>
+            <span class="metric-value" id="res-total-hours">0 hrs</span>
+            <span class="metric-sub" id="res-duration">Est. Duration: 0 wks</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Contingency Buffer</span>
+            <span class="metric-value" id="res-buffer-cost">$0</span>
+            <span class="metric-sub" id="res-buffer-pct">15% safety margin</span>
+          </div>
+        </section>
+
+        <!-- Milestone Breakdown Section -->
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Milestone Payment Schedule</h2>
+            <button id="btn-generate-milestones" class="btn btn-small btn-primary">Auto-Split Milestones</button>
+          </div>
+          <p class="panel-desc">Define milestone payment splits and deliverables for client invoicing.</p>
+          
+          <div id="milestones-container" class="milestones-list">
+            <!-- Dynamically populated -->
+          </div>
+          <button id="btn-add-milestone" class="btn btn-outline mt-10">+ Add Milestone</button>
+        </section>
+
+        <!-- Timeline & Distribution Visualizer -->
+        <section class="panel">
+          <h2>Project Phase Distribution</h2>
+          <div class="canvas-container">
+            <canvas id="chart-canvas" width="600" height="220"></canvas>
+          </div>
+        </section>
+
+        <!-- Export Summary Statement -->
+        <section class="panel summary-statement-panel">
+          <h2>Client Proposal Statement</h2>
+          <textarea id="proposal-statement" readonly rows="6"></textarea>
+          <div class="statement-actions">
+            <button id="btn-copy-proposal" class="btn btn-primary">Copy Proposal Summary</button>
+            <span id="copy-feedback" class="copy-feedback">Copied to clipboard!</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraSlate &bull; Local-First Freelance Project Scoping Workbench &bull; No Data Sent to Cloud</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
