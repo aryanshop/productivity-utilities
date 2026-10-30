@@ -1,0 +1,129 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraSlate: Markdown Kanban & Focus Sprint Board</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-logo">AS</div>
+      <div>
+        <h1>AuraSlate</h1>
+        <p class="subtitle">Local Kanban & Focus Sprint Board</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="focus-mode-btn" class="btn secondary-btn">🍅 Sprint Timer</button>
+      <button id="add-task-btn" class="btn primary-btn">+ New Task</button>
+      <button id="export-btn" class="btn secondary-btn">Export JSON</button>
+      <label class="btn secondary-btn upload-btn">
+        Import JSON <input type="file" id="import-file" accept=".json" hidden>
+      </label>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search tasks by title or tag... (e.g. #bug)">
+      </div>
+      <div class="filter-group">
+        <select id="priority-filter">
+          <option value="all">All Priorities</option>
+          <option value="high">High Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Low Priority</option>
+        </select>
+        <button id="clear-completed-btn" class="btn danger-outline">Clear Done</button>
+      </div>
+    </div>
+
+    <div class="kanban-board" id="kanban-board">
+      <!-- Columns will be injected by JavaScript -->
+    </div>
+  </main>
+
+  <!-- Task Modal -->
+  <div id="task-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Create New Task</h2>
+        <button class="close-btn" id="close-modal-btn">&times;</button>
+      </div>
+      <form id="task-form">
+        <input type="hidden" id="task-id">
+        <div class="form-group">
+          <label for="task-title-input">Task Title</label>
+          <input type="text" id="task-title-input" required placeholder="What needs to be done?">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-status-select">Column</label>
+            <select id="task-status-select">
+              <option value="backlog">Backlog</option>
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="task-priority-select">Priority</label>
+            <select id="task-priority-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="task-tags-input">Tags (comma separated)</label>
+          <input type="text" id="task-tags-input" placeholder="frontend, bug, v1">
+        </div>
+        <div class="form-group">
+          <div class="tab-header">
+            <button type="button" class="tab-btn active" data-tab="write">Markdown Note</button>
+            <button type="button" class="tab-btn" data-tab="preview">Preview</button>
+          </div>
+          <textarea id="task-content-input" rows="6" placeholder="Write notes in Markdown... e.g. **Bold**, *Italic*, - List"></textarea>
+          <div id="task-preview-pane" class="preview-pane hidden"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn secondary-btn" id="cancel-modal-btn">Cancel</button>
+          <button type="submit" class="btn primary-btn" id="save-task-btn">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Focus Timer Modal -->
+  <div id="timer-modal" class="modal">
+    <div class="modal-content timer-modal-content">
+      <div class="modal-header">
+        <h2>Focus Sprint Timer</h2>
+        <button class="close-btn" id="close-timer-btn">&times;</button>
+      </div>
+      <div class="timer-display">
+        <div class="timer-ring">
+          <span id="timer-time">25:00</span>
+        </div>
+        <p id="timer-status-text" class="timer-status">Ready to focus?</p>
+      </div>
+      <div class="timer-controls">
+        <button id="timer-start-btn" class="btn primary-btn">Start</button>
+        <button id="timer-pause-btn" class="btn secondary-btn" disabled>Pause</button>
+        <button id="timer-reset-btn" class="btn secondary-btn">Reset</button>
+      </div>
+      <div class="timer-presets">
+        <button class="btn preset-btn" data-time="15">15m Sprint</button>
+        <button class="btn preset-btn active" data-time="25">25m Pomodoro</button>
+        <button class="btn preset-btn" data-time="50">50m Deep Work</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
