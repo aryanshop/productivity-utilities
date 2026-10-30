@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse - Ergonomic Micro-Break & Posture Rhythm Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <h1>AuraPulse</h1>
+            </div>
+            <p class="tagline">Ergonomic Micro-Break & Posture Rhythm Architect</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Timer Dashboard Section -->
+            <section class="card timer-section" aria-label="Timer Dashboard">
+                <div class="mode-selector" role="tablist">
+                    <button class="mode-btn active" data-mode="work" role="tab" aria-selected="true">Deep Focus</button>
+                    <button class="mode-btn" data-mode="break" role="tab" aria-selected="false">Micro Break</button>
+                    <button class="mode-btn" data-mode="stretch" role="tab" aria-selected="false">Desk Stretch</button>
+                </div>
+
+                <div class="timer-display-container">
+                    <svg class="progress-ring" width="280" height="280" viewBox="0 0 280 280">
+                        <circle class="ring-bg" cx="140" cy="140" r="120" />
+                        <circle class="ring-progress" id="progressRing" cx="140" cy="140" r="120" />
+                    </svg>
+                    <div class="timer-text-content">
+                        <span id="timerStatusLabel" class="status-label">READY</span>
+                        <div id="timeDisplay" class="time-display">25:00</div>
+                        <span id="sessionTypeLabel" class="session-label">Deep Work Session</span>
+                    </div>
+                </div>
+
+                <div class="timer-controls">
+                    <button id="startPauseBtn" class="btn btn-primary">Start Session</button>
+                    <button id="resetBtn" class="btn btn-secondary">Reset</button>
+                    <button id="soundToggleBtn" class="btn btn-icon" title="Toggle Sound Chimes" aria-label="Toggle Sound">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Ergonomic Guidance & Actions Section -->
+            <section class="card guidance-section" aria-label="Ergonomic Guidance">
+                <h2>Active Ergonomic Protocol</h2>
+                <div id="protocolCard" class="protocol-card">
+                    <div class="protocol-icon-wrapper" id="protocolIcon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="protocol-content">
+                        <h3 id="protocolTitle">Posture Alignment & Spinal Check</h3>
+                        <p id="protocolDesc">Drop your shoulders away from your ears, align your ears over your shoulders, and plant both feet firmly flat on the floor.</p>
+                    </div>
+                </div>
+
+                <div class="quick-stretches">
+                    <h3>Recommended Desk Movement Library</h3>
+                    <div class="stretch-chips">
+                        <button class="chip" data-stretch="neck">Neck Release</button>
+                        <button class="chip" data-stretch="eyes">20-20-20 Eye Rule</button>
+                        <button class="chip" data-stretch="wrists">Wrist Mobility</button>
+                        <button class="chip" data-stretch="spine">Thoracic Twist</button>
+                    </div>
+                    <div id="stretchDetailBox" class="stretch-detail-box">
+                        <p>Select a movement chip above to view step-by-step ergonomic guidance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Daily Statistics & Log Section -->
+            <section class="card stats-section" aria-label="Daily Statistics">
+                <h2>Daily Rhythm Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value" id="completedPomodoros">0</span>
+                        <span class="stat-label">Focus Sessions</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="totalFocusMinutes">0</span>
+                        <span class="stat-label">Minutes Focused</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="streakCount">0</span>
+                        <span class="stat-label">Active Streak</span>
+                    </div>
+                </div>
+
+                <div class="recent-sessions">
+                    <h3>Recent Completed Blocks</h3>
+                    <ul id="sessionLogList" class="session-log-list">
+                        <li class="empty-log">No sessions completed yet today. Start a focus block to build your rhythm!</li>
+                    </ul>
+                </div>
+
+                <div class="action-row">
+                    <button id="clearStatsBtn" class="btn btn-text">Clear Today's Log</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraPulse &bull; Built for healthy workflows. All data stays locally in your browser.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
