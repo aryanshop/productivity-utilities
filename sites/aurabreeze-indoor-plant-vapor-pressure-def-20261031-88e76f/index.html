@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBreeze: VPD & Plant Transpiration Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.5 2 8a9 9 0 0 1-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.5 12 13 13 10"/></svg>
+                <span>AuraBreeze Lab</span>
+            </div>
+            <h1>Vapor Pressure Deficit & Transpiration Architect</h1>
+            <p class="subtitle">Optimize indoor climate parameters for peak photosynthesis, stomatal health, and bumper harvests.</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Control Panel / Input Section -->
+        <section class="card input-section">
+            <h2>Climate Parameters</h2>
+            <div class="grid-inputs">
+                <div class="input-group">
+                    <label for="tempUnit">Temperature Unit</label>
+                    <select id="tempUnit">
+                        <option value="C" selected>Celsius (°C)</option>
+                        <option value="F">Fahrenheit (°F)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="airTemp">Air Temperature (<span id="unitLabelTemp">°C</span>)</label>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="airTempRange" min="10" max="45" step="0.5" value="24">
+                        <input type="number" id="airTemp" min="10" max="45" step="0.5" value="24">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="relHum">Relative Humidity (%)</label>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="relHumRange" min="10" max="99" step="1" value="65">
+                        <input type="number" id="relHum" min="10" max="99" step="1" value="65">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="leafOffset">Leaf Temp Offset (<span id="unitLabelOffset">°C</span>)</label>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="leafOffsetRange" min="-5" max="5" step="0.5" value="-1.5">
+                        <input type="number" id="leafOffset" min="-5" max="5" step="0.5" value="-1.5">
+                    </div>
+                    <span class="hint">Leaves transpire and cool themselves; typically 1-2°C below ambient under good LED/sunlight.</span>
+                </div>
+                <div class="input-group">
+                    <label for="growthStage">Target Growth Stage</label>
+                    <select id="growthStage">
+                        <option value="prop">Propagation / Clones (0.4 - 0.8 kPa)</option>
+                        <option value="veg" selected>Early / Mid Vegetative (0.8 - 1.2 kPa)</option>
+                        <option value="lateVeg">Late Vegetative / Early Bloom (1.0 - 1.4 kPa)</option>
+                        <option value="flower">Mid / Late Flowering (1.2 - 1.6 kPa)</option>
+                        <option value="drying">Harvest Drying / Curing (0.6 - 1.0 kPa)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="dashboard-grid">
+            <div class="card primary-metric-card">
+                <span class="card-label">Calculated VPD</span>
+                <div class="metric-display">
+                    <span id="vpdValue" class="metric-number">--</span>
+                    <span class="metric-unit">kPa</span>
+                </div>
+                <div id="vpdStatusBadge" class="status-badge optimal">Optimal Range</div>
+                <p id="vpdAdvice" class="advice-text">Evaluating microclimate parameters...</p>
+            </div>
+
+            <div class="card metrics-grid">
+                <div class="sub-metric">
+                    <span class="sub-label">Leaf Temperature</span>
+                    <span id="leafTempVal" class="sub-val">--</span>
+                </div>
+                <div class="sub-metric">
+                    <span class="sub-label">Dew Point</span>
+                    <span id="dewPointVal" class="sub-val">--</span>
+                </div>
+                <div class="sub-metric">
+                    <span class="sub-label">Saturated Vapor Pressure (SVP)</span>
+                    <span id="svpVal" class="sub-val">--</span>
+                </div>
+                <div class="sub-metric">
+                    <span class="sub-label">Actual Vapor Pressure (AVP)</span>
+                    <span id="avpVal" class="sub-val">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Matrix & Guidance Section -->
+        <section class="card matrix-section">
+            <div class="section-header">
+                <h2>VPD Growth Stage Guide & Actionable Recommendations</h2>
+                <button id="btnLogClimate" class="btn secondary-btn">Save Climate Snapshot</button>
+            </div>
+            <div class="recommendation-box" id="recommendationDetails">
+                <h3>Climate Analysis</h3>
+                <ul id="recommendationList">
+                    <li>Adjust relative humidity or temperature to hit target range.</li>
+                </ul>
+            </div>
+
+            <div class="stage-table-wrapper">
+                <table class="stage-table">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Target VPD (kPa)</th>
+                            <th>Ideal Temp</th>
+                            <th>Ideal RH (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-stage="prop">
+                            <td>Propagation / Clones</td>
+                            <td>0.4 - 0.8</td>
+                            <td>20 - 24 °C</td>
+                            <td>75 - 85%</td>
+                        </tr>
+                        <tr data-stage="veg">
+                            <td>Early / Mid Vegetative</td>
+                            <td>0.8 - 1.2</td>
+                            <td>22 - 28 °C</td>
+                            <td>60 - 70%</td>
+                        </tr>
+                        <tr data-stage="lateVeg">
+                            <td>Late Veg / Early Bloom</td>
+                            <td>1.0 - 1.4</td>
+                            <td>22 - 26 °C</td>
+                            <td>55 - 65%</td>
+                        </tr>
+                        <tr data-stage="flower">
+                            <td>Mid / Late Flowering</td>
+                            <td>1.2 - 1.6</td>
+                            <td>20 - 25 °C</td>
+                            <td>45 - 55%</td>
+                        </tr>
+                        <tr data-stage="drying">
+                            <td>Drying & Curing</td>
+                            <td>0.6 - 1.0</td>
+                            <td>18 - 21 °C</td>
+                            <td>55 - 60%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Saved Snapshots Log -->
+        <section class="card log-section">
+            <div class="section-header">
+                <h2>Saved Climate Snapshots</h2>
+                <div class="log-actions">
+                    <button id="btnExportLog" class="btn outline-btn">Export JSON</button>
+                    <button id="btnClearLog" class="btn outline-btn danger-text">Clear History</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="log-table" id="logTable">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Air Temp</th>
+                            <th>RH %</th>
+                            <th>Leaf Temp</th>
+                            <th>VPD</th>
+                            <th>Stage</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                        <tr class="empty-row">
+                            <td colspan="8">No climate snapshots saved yet. Click "Save Climate Snapshot" above.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AuraBreeze VPD Lab &bull; Client-Side Horticultural Precision &bull; No Data Transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
