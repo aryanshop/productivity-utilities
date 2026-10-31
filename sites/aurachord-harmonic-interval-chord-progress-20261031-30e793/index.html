@@ -1,0 +1,161 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraChord: Harmonic Interval & Chord Progression Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+        </div>
+        <div>
+          <h1>AuraChord</h1>
+          <p class="subtitle">Harmonic Interval & Chord Progression Lab</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="toggle-audio-btn" class="btn btn-outline" aria-pressed="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <span>Sound: Muted</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Control Panel -->
+    <section class="control-panel card">
+      <h2>Key & Scale Selection</h2>
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="root-note-select">Root Note</label>
+          <select id="root-note-select">
+            <option value="C">C</option>
+            <option value="C#">C♯ / D♭</option>
+            <option value="D">D</option>
+            <option value="D#">D♯ / E♭</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F♯ / G♭</option>
+            <option value="G">G</option>
+            <option value="G#">G♯ / A♭</option>
+            <option value="A">A</option>
+            <option value="A#">A♯ / B♭</option>
+            <option value="B">B</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="mode-select">Scale / Mode</label>
+          <select id="mode-select">
+            <option value="major">Major (Ionian)</option>
+            <option value="minor">Natural Minor (Aeolian)</option>
+            <option value="harmonic-minor">Harmonic Minor</option>
+            <option value="dorian">Dorian</option>
+            <option value="mixolydian">Mixolydian</option>
+            <option value="pentatonic-major">Major Pentatonic</option>
+            <option value="pentatonic-minor">Minor Pentatonic</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="voicing-select">Default Voicing</label>
+          <select id="voicing-select">
+            <option value="triad">Triad (1-3-5)</option>
+            <option value="seventh">7th Chord (1-3-5-7)</option>
+            <option value="sus2">Suspended 2 (1-2-5)</option>
+            <option value="sus4">Suspended 4 (1-4-5)</option>
+            <option value="add9">Add 9 (1-3-5-9)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diatonic Palette -->
+    <section class="palette-section">
+      <div class="section-header">
+        <h2>Diatonic Chord Palette</h2>
+        <p>Click any chord to audition or drag/add to your progression timeline.</p>
+      </div>
+      <div id="diatonic-chords-grid" class="chords-grid">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- Progression Builder Timeline -->
+    <section class="timeline-section card">
+      <div class="section-header">
+        <div class="flex-row">
+          <h2>Progression Timeline</h2>
+          <div class="timeline-actions">
+            <button id="play-progression-btn" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              Play All
+            </button>
+            <button id="clear-progression-btn" class="btn btn-secondary">
+              Clear
+            </button>
+            <button id="save-progression-btn" class="btn btn-secondary">
+              Save Preset
+            </button>
+          </div>
+        </div>
+        <div class="timeline-settings">
+          <div class="tempo-control">
+            <label for="tempo-slider">Tempo: <span id="tempo-val">120</span> BPM</label>
+            <input type="range" id="tempo-slider" min="60" max="180" value="120">
+          </div>
+        </div>
+      </div>
+      
+      <div id="timeline-slots" class="timeline-slots">
+        <!-- Injected via JS -->
+      </div>
+      <div id="progression-analysis" class="progression-analysis">
+        <p class="placeholder-text">Add chords above to analyze harmonic cadence & Roman numeral progression.</p>
+      </div>
+    </section>
+
+    <!-- Saved Presets & Inspector -->
+    <div class="bottom-grid">
+      <section class="card">
+        <h2>Saved Progressions</h2>
+        <div id="saved-presets-list" class="saved-presets-list">
+          <p class="placeholder-text">No saved presets yet. Build a progression and click Save Preset.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Harmonic Reference & Theory</h2>
+        <div class="theory-notes">
+          <div class="theory-item">
+            <h4>Tonic Functions (I, iii, vi)</h4>
+            <p>Establish the home key, providing stability and resolution.</p>
+          </div>
+          <div class="theory-item">
+            <h4>Subdominant Functions (ii, IV)</h4>
+            <p>Create motion and pull away from the tonic center, opening up harmonic space.</p>
+          </div>
+          <div class="theory-item">
+            <h4>Dominant Functions (V, vii°)</h4>
+            <p>Contain strong harmonic tension that urgently demands resolution back to the tonic.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraChord Harmonic Lab &mdash; Local-first music theory workbench with Web Audio synthesis.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
