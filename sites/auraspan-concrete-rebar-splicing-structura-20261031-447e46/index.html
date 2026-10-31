@@ -1,0 +1,181 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraSpan: Concrete Rebar Splicing & Structural Cover Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">📐</span>
+        <h1>AuraSpan</h1>
+      </div>
+      <p class="tagline">Concrete Rebar Splicing, Development Length & Cover Calculator</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-save-session" class="btn btn-outline" title="Save current setup to browser storage">💾 Save Session</button>
+      <button id="btn-export-json" class="btn btn-primary" title="Export calculation report as JSON">📥 Export JSON</button>
+      <button id="btn-reset" class="btn btn-ghost">Reset Defaults</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- Configuration Panel -->
+    <section class="panel config-panel">
+      <h2>Structural Parameters</h2>
+      
+      <div class="form-group">
+        <label for="member-type">Structural Member Type</label>
+        <select id="member-type">
+          <option value="beam">Beam / Girder</option>
+          <option value="column">Column / Pier</option>
+          <option value="slab">Slab / Wall (Cast-in-place)</option>
+          <option value="footing">Foundation / Footing (Earth-supported)</option>
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="rebar-size">Rebar Designation</label>
+          <select id="rebar-size">
+            <option value="3">#3 (3/8" / 9.5 mm)</option>
+            <option value="4">#4 (1/2" / 12.7 mm)</option>
+            <option value="5" selected>#5 (5/8" / 15.9 mm)</option>
+            <option value="6">#6 (3/4" / 19.1 mm)</option>
+            <option value="7">#7 (7/8" / 22.2 mm)</option>
+            <option value="8">#8 (1" / 25.4 mm)</option>
+            <option value="9">#9 (1-1/8" / 28.7 mm)</option>
+            <option value="10">#10 (1-1/4" / 32.3 mm)</option>
+            <option value="11">#11 (1-3/8" / 35.8 mm)</option>
+            <option value="14">#14 (1-3/4" / 43.0 mm)</option>
+            <option value="18">#18 (2-1/4" / 57.3 mm)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="concrete-fc">Concrete Strength ($f'_c$)</label>
+          <select id="concrete-fc">
+            <option value="3000">3,000 psi (20.7 MPa)</option>
+            <option value="4000" selected>4,000 psi (27.6 MPa)</option>
+            <option value="5000">5,000 psi (34.5 MPa)</option>
+            <option value="6000">6,000 psi (41.4 MPa)</option>
+            <option value="8000">8,000 psi (55.2 MPa)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="exposure-cond">Environmental Exposure</label>
+          <select id="exposure-cond">
+            <option value="interior" selected>Interior / Protected</option>
+            <option value="weathered">Exterior / Weather Exposed</option>
+            <option value="corrosive">Marine / Deicing Chemicals / Corrosive</option>
+            <option value="earth">Cast against / Permanently in Earth</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="bar-spacing">Clear Spacing Between Bars</label>
+          <select id="bar-spacing">
+            <option value="normal" selected>Normal (&ge; 1 bar dia / 2" clear)</option>
+            <option value="tight">Tight / Bundled (&lt; 1 bar dia)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="bar-count">Total Number of Bars</label>
+          <input type="number" id="bar-count" value="12" min="1" max="500">
+        </div>
+
+        <div class="form-group">
+          <label for="bar-length">Individual Stock Bar Length (ft)</label>
+          <input type="number" id="bar-length" value="20" min="5" max="60" step="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="unit-system">Calculation Unit System</label>
+        <div class="radio-group">
+          <label><input type="radio" name="units" value="imperial" checked> US Customary (Inches / lbs)</label>
+          <label><input type="radio" name="units" value="metric"> Metric (mm / kg)</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results & Calculations Panel -->
+    <section class="panel results-panel">
+      <h2>Structural Computation Summary</h2>
+      
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-label">Min. Development Length ($l_d$)</span>
+          <span id="res-dev-length" class="metric-value">--</span>
+          <span id="res-dev-length-alt" class="metric-sub">--</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Class B Splice Length ($1.3 \times l_d$)</span>
+          <span id="res-splice-length" class="metric-value">--</span>
+          <span id="res-splice-length-alt" class="metric-sub">--</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Minimum Concrete Clear Cover</span>
+          <span id="res-clear-cover" class="metric-value">--</span>
+          <span id="res-cover-note" class="metric-sub">ACI 318 Standard</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Total Estimated Rebar Weight</span>
+          <span id="res-total-weight" class="metric-value">--</span>
+          <span id="res-weight-sub" class="metric-sub">Includes splice allowance</span>
+        </div>
+      </div>
+
+      <!-- Visual Cross Section & Splice Diagram -->
+      <div class="canvas-container">
+        <div class="canvas-header">
+          <h3>Structural Cross-Section & Cover Visualization</h3>
+          <span id="canvas-status-badge" class="badge badge-ok">Compliant Cover</span>
+        </div>
+        <canvas id="structure-canvas" width="650" height="300"></canvas>
+        <p class="canvas-caption">Schematic cross-section showing concrete member bounds, clear cover distance, and longitudinal rebar arrangement.</p>
+      </div>
+
+      <!-- Detailed Schedule Breakdown -->
+      <div class="schedule-section">
+        <h3>Rebar Cut List & Splice Schedule</h3>
+        <div class="table-wrapper">
+          <table id="cut-list-table">
+            <thead>
+              <tr>
+                <th>Bar Mark</th>
+                <th>Bar Size</th>
+                <th>Stock Length</th>
+                <th>Splice Allowance</th>
+                <th>Effective Span</th>
+                <th>Required Qty</th>
+              </tr>
+            </thead>
+            <tbody id="cut-list-tbody">
+              <!-- Populated via script -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraSpan Structural Suite &bull; Client-side calculation utility aligned with standard ACI 318 principles. Verify all professional structural drawings with a licensed Professional Engineer (PE).</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
