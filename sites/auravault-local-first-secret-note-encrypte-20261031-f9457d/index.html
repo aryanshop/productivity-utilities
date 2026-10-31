@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Secure Client-Side Secret Note Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h1>Aura<span>Vault</span></h1>
+            </div>
+            <p class="subtitle">Client-Side AES-GCM Encryption & Secure Secret Note Studio</p>
+            <div class="security-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Zero Server Transmission • 100% Local Web Crypto API
+            </div>
+        </header>
+
+        <main class="workspace">
+            <nav class="tab-nav" role="tablist">
+                <button role="tab" aria-selected="true" id="tab-encrypt" class="tab-btn active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Encrypt Secret
+                </button>
+                <button role="tab" aria-selected="false" id="tab-decrypt" class="tab-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7aa 5 5 0 0 1 9.9-1"></path>
+                        <circle cx="12" cy="16" r="1"></circle>
+                    </svg>
+                    Decrypt Secret
+                </button>
+                <button role="tab" aria-selected="false" id="tab-generator" class="tab-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                    </svg>
+                    Passphrase Lab
+                </button>
+            </nav>
+
+            <!-- ENCRYPT PANEL -->
+            <section id="panel-encrypt" class="panel active" role="tabpanel" aria-labelledby="tab-encrypt">
+                <div class="panel-grid">
+                    <div class="input-card">
+                        <h2>Compose Secret Note</h2>
+                        <p class="card-desc">Write sensitive credentials, notes, or keys to encrypt into a secure package.</p>
+                        
+                        <div class="form-group">
+                            <label for="secret-input">Secret Content</label>
+                            <textarea id="secret-input" placeholder="Paste API keys, private passwords, or confidential notes here..." rows="6"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="encrypt-passphrase">Encryption Passphrase</label>
+                            <div class="input-with-action">
+                                <input type="password" id="encrypt-passphrase" placeholder="Enter a strong master passphrase...">
+                                <button type="button" id="toggle-enc-pass" class="icon-btn" title="Show/Hide Passphrase">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="entropy-meter">
+                                <div class="entropy-bar" id="entropy-bar"></div>
+                            </div>
+                            <span class="entropy-text" id="entropy-text">Passphrase strength: None</span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry-select">Burn After Reading</label>
+                                <select id="expiry-select">
+                                    <option value="0">Never (Permanent Archive)</option>
+                                    <option value="1">1 Read (Self-Destruct)</option>
+                                    <option value="24">24 Hours</option>
+                                    <option value="168">7 Days</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="button" id="btn-encrypt" class="primary-btn">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    Lock & Encrypt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="output-card">
+                        <h2>Encrypted Payload Package</h2>
+                        <p class="card-desc">AES-GCM ciphertext packaged with random salt and initialization vector (IV).</p>
+                        
+                        <div class="form-group">
+                            <label for="ciphertext-output">Ciphertext Envelope (Base64 JSON)</label>
+                            <textarea id="ciphertext-output" readonly placeholder="Encrypted package will appear here..." rows="10"></textarea>
+                        </div>
+
+                        <div class="action-row">
+                            <button type="button" id="btn-copy-cipher" class="secondary-btn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                Copy Ciphertext
+                            </button>
+                            <button type="button" id="btn-download-vault" class="secondary-btn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export Vault File
+                            </button>
+                            <button type="button" id="btn-send-decrypt" class="accent-btn" disabled>
+                                Load into Decryptor 
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DECRYPT PANEL -->
+            <section id="panel-decrypt" class="panel" role="tabpanel" aria-labelledby="tab-decrypt">
+                <div class="panel-grid">
+                    <div class="input-card">
+                        <h2>Unlock Secret Package</h2>
+                        <p class="card-desc">Paste an encrypted AuraVault envelope and enter the correct master passphrase.</p>
+                        
+                        <div class="form-group">
+                            <label for="ciphertext-input">Encrypted Payload / File Upload</label>
+                            <div class="file-drop-zone" id="drop-zone">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span>Drag & drop vault file here, or <label for="vault-file-input" class="file-browse-link">browse</label></span>
+                                <input type="file" id="vault-file-input" accept=".json,application/json" style="display:none;">
+                            </div>
+                            <textarea id="ciphertext-input" placeholder="Or paste base64 ciphertext envelope here..." rows="5"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="decrypt-passphrase">Decryption Passphrase</label>
+                            <div class="input-with-action">
+                                <input type="password" id="decrypt-passphrase" placeholder="Enter master passphrase...">
+                                <button type="button" id="toggle-dec-pass" class="icon-btn" title="Show/Hide Passphrase">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="button" id="btn-decrypt" class="primary-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                                <circle cx="12" cy="16" r="1"></circle>
+                            </svg>
+                            Decrypt & Reveal
+                        </button>
+                    </div>
+
+                    <div class="output-card">
+                        <h2>Decrypted Secret Result</h2>
+                        <p class="card-desc">Successfully decrypted secret content in clear text.</p>
+                        
+                        <div class="form-group">
+                            <label for="plaintext-output">Plaintext Content</label>
+                            <textarea id="plaintext-output" readonly placeholder="Decrypted message will appear here securely..." rows="10"></textarea>
+                        </div>
+
+                        <div class="action-row">
+                            <button type="button" id="btn-copy-plain" class="secondary-btn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                Copy Plaintext
+                            </button>
+                            <button type="button" id="btn-clear-decrypted" class="danger-btn" disabled>
+                                Clear & Wipe Memory
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASSPHRASE GENERATOR PANEL -->
+            <section id="panel-generator" class="panel" role="tabpanel" aria-labelledby="tab-generator">
+                <div class="generator-card">
+                    <h2>High-Entropy Passphrase Generator</h2>
+                    <p class="card-desc">Generate cryptographically secure passphrases using Diceware wordlists or random alphanumeric strings.</p>
+                    
+                    <div class="gen-options">
+                        <div class="form-group">
+                            <label for="gen-mode">Generator Mode</label>
+                            <select id="gen-mode">
+                                <option value="diceware">Diceware Word Passphrase (Memorable)</option>
+                                <option value="random">Random Alphanumeric & Symbols (Complex)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="group-word-count">
+                            <label for="word-count">Word Count: <span id="word-count-val">5</span> words</label>
+                            <input type="range" id="word-count" min="3" max="9" value="5">
+                        </div>
+
+                        <div class="form-group" id="group-char-length" style="display:none;">
+                            <label for="char-length">Character Length: <span id="char-length-val">20</span> chars</label>
+                            <input type="range" id="char-length" min="12" max="64" value="20">
+                        </div>
+
+                        <div class="checkbox-row" id="group-symbols">
+                            <label><input type="checkbox" id="chk-upper" checked> Uppercase (A-Z)</label>
+                            <label><input type="checkbox" id="chk-nums" checked> Numbers (0-9)</label>
+                            <label><input type="checkbox" id="chk-symbols" checked> Symbols (!@#$)</label>
+                        </div>
+                    </div>
+
+                    <div class="passphrase-display-box">
+                        <input type="text" id="generated-pass-output" readonly>
+                        <button type="button" id="btn-regenerate" class="icon-btn" title="Generate New Passphrase">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                        </button>
+                        <button type="button" id="btn-copy-gen" class="primary-btn">
+                            Copy Passphrase
+                        </button>
+                    </div>
+
+                    <div class="entropy-stats">
+                        <div class="stat-box">
+                            <span class="stat-label">Estimated Entropy</span>
+                            <span class="stat-val" id="gen-entropy-val">-- bits</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Offline Brute-Force Time</span>
+                            <span class="stat-val" id="gen-crack-val">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVault Security Suite • Designed with pure Web Crypto PBKDF2 + AES-GCM (256-bit)</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
