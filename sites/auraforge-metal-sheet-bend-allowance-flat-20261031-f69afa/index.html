@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraForge: Metal Sheet Bend Allowance & Flat Pattern Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-icon">⚡</span>
+                <h1>AuraForge</h1>
+            </div>
+            <p class="tagline">Precision Sheet Metal Bend Allowance & Flat Pattern Laboratory</p>
+        </header>
+
+        <main class="workspace">
+            <section class="control-panel">
+                <div class="card">
+                    <h2>Material & Thickness</h2>
+                    <div class="form-group">
+                        <label for="materialSelect">Preset Material</label>
+                        <select id="materialSelect">
+                            <option value="custom">Custom / Manual K-Factor</option>
+                            <option value="0.33">Aluminum 5052 (K: 0.33)</option>
+                            <option value="0.44" selected>Mild Steel A36 (K: 0.44)</option>
+                            <option value="0.45">Stainless Steel 304 (K: 0.45)</option>
+                            <option value="0.42">Copper Alloy (K: 0.42)</option>
+                            <option value="0.38">Brass (K: 0.38)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="thickness">Thickness (T)</label>
+                            <input type="number" id="thickness" value="2.0" step="0.1" min="0.1" max="50">
+                            <span class="unit">mm</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="kFactor">K-Factor</label>
+                            <input type="number" id="kFactor" value="0.44" step="0.01" min="0.05" max="0.60">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Geometry & Bends</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bendAngle">Bend Angle (&theta;)</label>
+                            <input type="number" id="bendAngle" value="90" step="1" min="1" max="179">
+                            <span class="unit">&deg;</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="insideRadius">Inside Radius (R)</label>
+                            <input type="number" id="insideRadius" value="2.0" step="0.1" min="0.0" max="100">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="flange1">Flange 1 (L1)</label>
+                            <input type="number" id="flange1" value="50.0" step="0.5" min="1" max="1000">
+                            <span class="unit">mm</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="flange2">Flange 2 (L2)</label>
+                            <input type="number" id="flange2" value="50.0" step="0.5" min="1" max="1000">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card actions-card">
+                    <button id="savePresetBtn" class="btn btn-secondary">Save to Local Logs</button>
+                    <button id="resetBtn" class="btn btn-outline">Reset Defaults</button>
+                </div>
+            </section>
+
+            <section class="display-panel">
+                <div class="card results-card">
+                    <h2>Calculation Results</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">Bend Allowance (BA)</span>
+                            <span class="metric-value" id="resBA">0.00</span>
+                            <span class="metric-unit">mm</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Bend Deduction (BD)</span>
+                            <span class="metric-value" id="resBD">0.00</span>
+                            <span class="metric-unit">mm</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Setback (SB)</span>
+                            <span class="metric-value" id="resSB">0.00</span>
+                            <span class="metric-unit">mm</span>
+                        </div>
+                        <div class="metric-box highlight">
+                            <span class="metric-label">Total Flat Length (L_total)</span>
+                            <span class="metric-value" id="resTotal">0.00</span>
+                            <span class="metric-unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card canvas-card">
+                    <div class="canvas-header">
+                        <h2>Technical Profile & Flat Pattern Preview</h2>
+                        <div class="view-toggles">
+                            <button class="toggle-btn active" data-view="both">Split View</button>
+                            <button class="toggle-btn" data-view="flat">Flat Pattern</button>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="forgeCanvas" width="700" height="350"></canvas>
+                    </div>
+                </div>
+
+                <div class="card log-card">
+                    <h2>Saved Calculation Logs</h2>
+                    <div class="table-container">
+                        <table id="logTable">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Thick</th>
+                                    <th>Angle</th>
+                                    <th>Radius</th>
+                                    <th>Flat Len</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <tr class="empty-row"><td colspan="6">No saved logs yet. Click 'Save to Local Logs'.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; AuraForge Workbench &bull; Client-side Sheet Metal Fabrication Lab</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
