@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVane: Wind Sail & Kite Traction Force Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19 12H2"/></svg>
+            </div>
+            <div>
+                <h1>AuraVane</h1>
+                <p class="subtitle">Aerodynamic Wind Sail & Traction Force Calculator</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="reset-defaults" class="btn btn-secondary" type="button">Reset Defaults</button>
+            <button id="export-session" class="btn btn-primary" type="button">Export Log</button>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <section class="control-panel">
+            <div class="card">
+                <h2>Environmental & Gear Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="wind-speed">True Wind Speed (<span id="wind-speed-unit-lbl">knots</span>)</label>
+                    <div class="range-row">
+                        <input type="range" id="wind-speed-range" min="2" max="50" value="18" step="1">
+                        <input type="number" id="wind-speed" min="1" max="100" value="18">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="wind-angle">True Wind Angle (<span id="wind-angle-val">60</span>° off bow)</label>
+                    <input type="range" id="wind-angle" min="0" max="180" value="60" step="5">
+                    <div class="range-ticks">
+                        <span>0° (Headwind)</span>
+                        <span>90° (Beam)</span>
+                        <span>180° (Tailwind)</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="craft-speed">Craft Speed (<span id="craft-speed-unit-lbl">knots</span>)</label>
+                    <div class="range-row">
+                        <input type="range" id="craft-speed-range" min="0" max="40" value="10" step="0.5">
+                        <input type="number" id="craft-speed" min="0" max="80" value="10" step="0.5">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="sail-area">Sail / Kite Area (<span id="sail-area-unit-lbl">m²</span>)</label>
+                    <div class="range-row">
+                        <input type="range" id="sail-area-range" min="2" max="50" value="12" step="0.5">
+                        <input type="number" id="sail-area" min="1" max="200" value="12" step="0.5">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label for="lift-coeff">Lift Coefficient ($C_L$)</label>
+                        <input type="number" id="lift-coeff" min="0.1" max="3.0" value="1.4" step="0.05">
+                    </div>
+                    <div class="input-group">
+                        <label for="drag-coeff">Drag Coefficient ($C_D$)</label>
+                        <input type="number" id="drag-coeff" min="0.05" max="1.5" value="0.3" step="0.05">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="air-temp">Air Temperature (°C)</label>
+                    <input type="number" id="air-temp" min="-20" max="50" value="20" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="unit-system">Measurement Units</label>
+                    <select id="unit-system">
+                        <option value="metric">Metric (Knots, m², kg, N)</option>
+                        <option value="imperial">Imperial (MPH, sq.ft, lbs, lbf)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-panel">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Apparent Wind Speed</span>
+                    <span class="metric-value" id="res-aws">--</span>
+                    <span class="metric-sub" id="res-awa">Angle: --°</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Traction Force</span>
+                    <span class="metric-value primary" id="res-force">--</span>
+                    <span class="metric-sub" id="res-force-lbs">--</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Drive Force (Forward)</span>
+                    <span class="metric-value" id="res-drive">--</span>
+                    <span class="metric-sub" id="res-heel">Heel Force: --</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Beaufort Scale & Risk</span>
+                    <span class="metric-value" id="res-beaufort">--</span>
+                    <span class="metric-sub" id="res-risk-status">Status: Normal</span>
+                </div>
+            </div>
+
+            <div class="card canvas-card">
+                <div class="card-header">
+                    <h2>Aerodynamic Vector Field & Apparent Wind Triangle</h2>
+                    <span id="canvas-status" class="badge">Live Simulation</span>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="vector-canvas" width="600" height="360"></canvas>
+                </div>
+                <div class="canvas-legend">
+                    <span class="legend-item"><i class="dot true-wind"></i> True Wind</span>
+                    <span class="legend-item"><i class="dot craft-vec"></i> Craft Velocity</span>
+                    <span class="legend-item"><i class="dot apparent-wind"></i> Apparent Wind</span>
+                    <span class="legend-item"><i class="dot lift-vec"></i> Resultant Force</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Traction Log & Scenario Snapshots</h2>
+                    <button id="save-snapshot" class="btn btn-secondary btn-sm" type="button">Save Current Setup</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="snapshot-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>TWS</th>
+                                <th>Angle</th>
+                                <th>Sail Area</th>
+                                <th>App. Wind</th>
+                                <th>Traction Force</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="snapshot-tbody">
+                            <tr class="empty-row">
+                                <td colspan="7">No saved snapshots yet. Click 'Save Current Setup' to record.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraVane Aerodynamics Workbench &bull; Client-Side Physics &bull; No external data collection</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
