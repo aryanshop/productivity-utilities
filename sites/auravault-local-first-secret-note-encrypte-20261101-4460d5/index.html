@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVault: Local-First Secret Note & Encrypted Share Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>AuraVault</h1>
+          <p class="subtitle">Client-Side Zero-Knowledge Encryption Studio</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-new-note" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Secret
+        </button>
+        <button id="btn-export-vault" class="btn btn-secondary" title="Export encrypted vault database">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Export Vault
+        </button>
+        <label id="btn-import-vault" class="btn btn-secondary" title="Import vault database">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Import
+          <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        </label>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+      <!-- Sidebar: Vault List -->
+      <aside class="sidebar">
+        <div class="sidebar-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="search-input" placeholder="Search secure notes...">
+        </div>
+        <div class="vault-list" id="vault-list">
+          <!-- Dynamically populated secure items -->
+        </div>
+        <div class="sidebar-footer">
+          <span id="vault-stats">0 encrypted secrets</span>
+          <button id="btn-clear-all" class="text-btn danger" title="Wipe local vault">Purge All</button>
+        </div>
+      </aside>
+
+      <!-- Main Editor / Viewer Pane -->
+      <main class="main-pane">
+        <!-- Welcome State -->
+        <div id="pane-welcome" class="pane-view active">
+          <div class="welcome-card">
+            <div class="welcome-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h2>Zero-Knowledge Client-Side Cryptography</h2>
+            <p>Your notes and credentials are encrypted and decrypted entirely inside your browser using <strong>AES-GCM (256-bit)</strong> and <strong>PBKDF2</strong> key derivation. No plaintext data ever leaves your device.</p>
+            <div class="feature-grid">
+              <div class="feature-item">
+                <strong>AES-GCM 256-bit</strong>
+                <span>Military-grade authenticated encryption</span>
+              </div>
+              <div class="feature-item">
+                <strong>View-Once Simulation</strong>
+                <span>Self-destruct after reading timer</span>
+              </div>
+              <div class="feature-item">
+                <strong>Passphrase Entropy</strong>
+                <span>Real-time brute-force resistance meter</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg" id="btn-welcome-create">
+              Create Your First Secret Note
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor State -->
+        <div id="pane-editor" class="pane-view">
+          <div class="pane-header-bar">
+            <input type="text" id="note-title-input" placeholder="Secret Title (e.g., Server Root Credentials)" class="title-input">
+            <span class="badge" id="editor-mode-badge">New Secret</span>
+          </div>
+
+          <div class="form-group">
+            <label for="note-content-input">Secret Content (Markdown / Plaintext / Passwords)</label>
+            <textarea id="note-content-input" placeholder="Type or paste confidential notes, API keys, seed phrases, or sensitive text here..."></textarea>
+          </div>
+
+          <div class="crypto-box">
+            <h3>Encryption Passphrase</h3>
+            <p class="hint">A strong passphrase protects this secret. If lost, it cannot be recovered.</p>
+            <div class="passphrase-row">
+              <div class="input-with-icon">
+                <input type="password" id="note-passphrase" placeholder="Enter encryption passphrase">
+                <button type="button" id="btn-toggle-pass" title="Show/Hide Passphrase">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+              <button type="button" id="btn-gen-passphrase" class="btn btn-secondary">
+                Generate High-Entropy Pass
+              </button>
+            </div>
+
+            <!-- Entropy Meter -->
+            <div class="entropy-meter-container">
+              <div class="entropy-info">
+                <span>Passphrase Entropy: <strong id="entropy-score-val">0 bits</strong></span>
+                <span id="entropy-strength-label" class="strength-badge weak">Weak</span>
+              </div>
+              <div class="progress-bar">
+                <div id="entropy-progress" class="progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="editor-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="check-self-destruct">
+              <span>Enable Self-Destruct (Delete note immediately upon successful decryption view)</span>
+            </label>
+          </div>
+
+          <div class="pane-actions">
+            <button id="btn-save-secret" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Encrypt & Save to Vault
+            </button>
+            <button id="btn-cancel-editor" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Unlock State -->
+        <div id="pane-unlock" class="pane-view">
+          <div class="unlock-card">
+            <div class="welcome-icon encrypted">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h2 id="unlock-title-display">Encrypted Secret</h2>
+            <p class="hint">This secure note is locked with AES-GCM 256-bit encryption. Enter your passphrase to decrypt it.</p>
+            
+            <div class="unlock-form">
+              <div class="input-with-icon">
+                <input type="password" id="unlock-passphrase-input" placeholder="Enter decryption passphrase">
+                <button type="button" id="btn-toggle-unlock-pass" title="Show/Hide">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+              <button id="btn-decrypt-secret" class="btn btn-primary">
+                Decrypt Secret Note
+              </button>
+            </div>
+            <div id="decrypt-error-msg" class="error-message" style="display: none;"></div>
+
+            <div class="unlock-meta">
+              <span>Created: <strong id="unlock-created-date">-</strong></span>
+              <span id="unlock-destruct-badge" class="destruct-tag" style="display: none;">⚠️ Self-Destruct Active</span>
+            </div>
+
+            <div class="danger-zone-actions">
+              <button id="btn-delete-locked" class="text-btn danger">Delete Secure Note</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decrypted View State -->
+        <div id="pane-decrypted" class="pane-view">
+          <div class="decrypted-header">
+            <div>
+              <span class="badge success">Decrypted Securely</span>
+              <h2 id="decrypted-title-display">Secret Title</h2>
+            </div>
+            <div class="decrypted-actions">
+              <button id="btn-copy-secret" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy Content
+              </button>
+              <button id="btn-show-qr" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                QR Code
+              </button>
+              <button id="btn-lock-again" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Lock Vault
+              </button>
+            </div>
+          </div>
+
+          <div class="content-box">
+            <pre id="decrypted-content-display"></pre>
+          </div>
+
+          <!-- QR Code Modal / Container -->
+          <div id="qr-container" class="qr-modal" style="display: none;">
+            <div class="qr-card">
+              <h3>Encrypted / Plaintext QR Representation</h3>
+              <div id="qr-svg-wrap"></div>
+              <p class="hint">Scan with a trusted reader or keep for offline air-gapped transfer.</p>
+              <button id="btn-close-qr" class="btn btn-secondary">Close QR</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
