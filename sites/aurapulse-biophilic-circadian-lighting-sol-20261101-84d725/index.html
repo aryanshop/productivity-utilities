@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Biophilic Circadian Lighting & Solar Arc Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1>AuraPulse Studio</h1>
+                    <p class="subtitle">Biophilic Circadian Lighting & Solar Arc Architect</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-presets" class="btn secondary">Quick Presets</button>
+                <button id="btn-export" class="btn primary">Export Schedule</button>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Sidebar: Controls -->
+            <section class="panel control-panel" aria-labelledby="controls-heading">
+                <h2 id="controls-heading" class="panel-title">Workspace Parameters</h2>
+                
+                <div class="control-group">
+                    <label for="window-orientation">
+                        <span>Window Orientation</span>
+                        <span class="value-badge" id="val-orientation">South-Facing</span>
+                    </label>
+                    <select id="window-orientation">
+                        <option value="0">North (Diffuse, Cool)</option>
+                        <option value="90">East (Morning Sun)</option>
+                        <option value="180" selected>South (Optimum Direct Light)</option>
+                        <option value="270">West (Evening Warmth)</option>
+                        <option value="360">Omni / Skylight (Maximum Exposure)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="room-depth">
+                        <span>Room Depth from Window</span>
+                        <span class="value-badge" id="val-depth">4.5 m</span>
+                    </label>
+                    <input type="range" id="room-depth" min="1" max="10" step="0.5" value="4.5">
+                </div>
+
+                <div class="control-group">
+                    <label for="glazing-trans">
+                        <span>Glazing Transmission (VT)</span>
+                        <span class="value-badge" id="val-glazing">75%</span>
+                    </label>
+                    <input type="range" id="glazing-trans" min="30" max="95" step="5" value="75">
+                </div>
+
+                <div class="control-group">
+                    <label for="work-start">
+                        <span>Work Day Start</span>
+                    </label>
+                    <input type="time" id="work-start" value="08:00">
+                </div>
+
+                <div class="control-group">
+                    <label for="work-end">
+                        <span>Work Day End</span>
+                    </label>
+                    <input type="time" id="work-end" value="17:00">
+                </div>
+
+                <div class="control-group">
+                    <label for="season-select">
+                        <span>Seasonal Solar Declination</span>
+                    </label>
+                    <select id="season-select">
+                        <option value="summer">Summer Solstice (High Arc, Long Days)</option>
+                        <option value="equinox" selected>Equinox (Moderate Arc)</option>
+                        <option value="winter">Winter Solstice (Low Arc, Short Days)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Center Column: Interactive Visualizer & Timeline -->
+            <div class="center-column">
+                <section class="panel solar-canvas-panel">
+                    <div class="panel-header-inline">
+                        <h2 class="panel-title">Solar Arc & Melanopic Simulation</h2>
+                        <div class="time-scrubber-display">
+                            <span id="current-time-label">12:00 PM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-wrapper">
+                        <canvas id="solarCanvas" width="640" height="300"></canvas>
+                        <div class="sun-metrics-overlay">
+                            <div class="metric-pill">
+                                <span class="label">Kelvin</span>
+                                <span class="val" id="metric-kelvin">5500K</span>
+                            </div>
+                            <div class="metric-pill">
+                                <span class="label">mEDI (Melanopic)</span>
+                                <span class="val" id="metric-edi">240 lux</span>
+                            </div>
+                            <div class="metric-pill">
+                                <span class="label">Alertness Score</span>
+                                <span class="val" id="metric-alert">Optimal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-control-bar">
+                        <button id="btn-play" class="btn icon-btn" aria-label="Play Simulation">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </button>
+                        <input type="range" id="time-scrubber" min="360" max="1260" step="5" value="720">
+                        <span id="scrubber-time-indicator">12:00</span>
+                    </div>
+                </section>
+
+                <section class="panel circadian-rhythm-panel">
+                    <h2 class="panel-title">Circadian Alertness & Melatonin Rhythm Profile</h2>
+                    <div class="chart-container">
+                        <canvas id="rhythmCanvas" width="640" height="140"></canvas>
+                    </div>
+                    <div class="rhythm-legend">
+                        <span class="legend-item"><span class="dot alert-dot"></span> Cognitive Alertness (Cortisol)</span>
+                        <span class="legend-item"><span class="dot relax-dot"></span> Wind-Down (Melatonin Trigger)</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Sidebar: Lighting Prescription & Kelvin Swatches -->
+            <section class="panel prescription-panel" aria-labelledby="prescription-heading">
+                <h2 id="prescription-heading" class="panel-title">Lighting Prescription</h2>
+                
+                <div class="prescription-card" id="current-prescription-card">
+                    <div class="swatch-preview" id="current-swatch"></div>
+                    <div class="prescription-details">
+                        <h3 id="presc-phase-title">Deep Work Phase</h3>
+                        <p id="presc-desc">High blue-enriched white light required to stimulate ipRGC photoreceptors and suppress melatonin.</p>
+                        <ul class="presc-specs">
+                            <li>Target CCT: <strong id="presc-cct">5500K - 6500K</strong></li>
+                            <li>Min. Lux at Desk: <strong id="presc-lux">500 lx</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="sub-panel-title">Daily CCT Color Palette</h3>
+                <div class="palette-list">
+                    <div class="palette-item" data-cct="2200">
+                        <div class="swatch" style="background: #ffaa66;"></div>
+                        <div class="palette-info">
+                            <strong>2200K (Candlelight / Wind-down)</strong>
+                            <span>Promotes evening relaxation & melatonin release.</span>
+                        </div>
+                    </div>
+                    <div class="palette-item" data-cct="3000">
+                        <div class="swatch" style="background: #ffcc99;"></div>
+                        <div class="palette-info">
+                            <strong>3000K (Warm Ambient)</strong>
+                            <span>Relaxed evening focus & reading.</span>
+                        </div>
+                    </div>
+                    <div class="palette-item" data-cct="4000">
+                        <div class="swatch" style="background: #ffeecc;"></div>
+                        <div class="palette-info">
+                            <strong>4000K (Neutral Office)</span>
+                            <span>Balanced administrative tasks.</span>
+                        </div>
+                    </div>
+                    <div class="palette-item" data-cct="6500">
+                        <div class="swatch" style="background: #f0f5ff;"></div>
+                        <div class="palette-info">
+                            <strong>6500K (Peak Daylight)</strong>
+                            <span>Maximum alertness, logic & deep work.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal for Export -->
+        <div id="export-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Circadian Lighting Schedule Export</h2>
+                    <button id="btn-close-modal" class="btn close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Here is your personalized circadian lighting profile based on your workspace orientation and work hours:</p>
+                    <textarea id="export-text" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-copy-export" class="btn primary">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>AuraPulse Studio &bull; Client-Side Biophilic Lighting & Circadian Architecture Lab</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
