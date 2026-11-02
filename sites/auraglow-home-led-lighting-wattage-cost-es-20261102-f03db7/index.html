@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGlow: Home LED Lighting Wattage & Cost Estimator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-badge">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div>
+                <h1>AuraGlow</h1>
+                <p class="subtitle">Precision LED Retrofit, Wattage & Electricity Cost Audit Lab</p>
+            </div>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn btn-secondary" title="Reset all rooms">Reset Data</button>
+                <button id="btn-export" class="btn btn-primary" title="Export audit report JSON">Export JSON</button>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Controls & Room Builder -->
+            <section class="panel controls-panel">
+                <div class="panel-header">
+                    <h2>Lighting Audit Configuration</h2>
+                    <span class="badge" id="room-count-badge">0 Rooms</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="electricity-rate">Electricity Rate ($ / kWh)</label>
+                    <input type="number" id="electricity-rate" value="0.14" min="0.01" max="2.00" step="0.01">
+                    <small class="help-text">Check your local utility bill for cost per kilowatt-hour.</small>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Add or Edit Room Circuit</h3>
+                <form id="room-form">
+                    <div class="form-group">
+                        <label for="room-name">Room / Area Name</label>
+                        <input type="text" id="room-name" placeholder="e.g., Living Room, Kitchen, Office" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fixture-count">Fixture Quantity</label>
+                            <input type="number" id="fixture-count" value="4" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="daily-hours">Daily Usage (Hours)</label>
+                            <input type="number" id="daily-hours" value="3.5" min="0.1" max="24" step="0.5" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="current-type">Current Bulb Type</label>
+                            <select id="current-type">
+                                <option value="incandescent-60">Incandescent 60W (800 lm)</option>
+                                <option value="incandescent-100">Incandescent 100W (1600 lm)</option>
+                                <option value="cfl-15" selected>CFL / Fluorescent 15W (900 lm)</option>
+                                <option value="halogen-50">Halogen 50W (700 lm)</option>
+                                <option value="led-legacy">Older LED 12W (800 lm)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="target-watt">Target LED Wattage</label>
+                            <input type="number" id="target-watt" value="9" min="1" max="100" step="1" required>
+                            <small class="help-text">Typical LED for 800lm is 8W-10W</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="color-temp">Target Color Temperature (Kelvin)</label>
+                        <select id="color-temp">
+                            <option value="2700">2700K - Warm White (Cozy, Living/Bed)</option>
+                            <option value="3000" selected>3000K - Soft White (Balanced)</option>
+                            <option value="4000">4000K - Cool Neutral (Kitchen/Workspace)</option>
+                            <option value="5000">5000K - Daylight (Garage/Studio)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Add / Update Room Circuit</button>
+                </form>
+
+                <div class="preset-section">
+                    <span class="preset-label">Quick Load Sample Home:</span>
+                    <div class="preset-buttons">
+                        <button type="button" class="btn btn-subtle" data-preset="apartment">3-Bed Apartment</button>
+                        <button type="button" class="btn btn-subtle" data-preset="house">Suburban Home</button>
+                        <button type="button" class="btn btn-subtle" data-preset="office">Small Studio / Office</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Dashboard & Room List -->
+            <section class="panel dashboard-panel">
+                <div class="dashboard-metrics">
+                    <div class="metric-card">
+                        <span class="metric-label">Current Annual Cost</span>
+                        <span class="metric-value" id="stat-current-cost">$0.00</span>
+                        <span class="metric-sub" id="stat-current-kwh">0 kWh / yr</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <span class="metric-label">Optimized LED Cost</span>
+                        <span class="metric-value" id="stat-led-cost">$0.00</span>
+                        <span class="metric-sub" id="stat-led-kwh">0 kWh / yr</span>
+                    </div>
+                    <div class="metric-card success">
+                        <span class="metric-label">Annual Net Savings</span>
+                        <span class="metric-value" id="stat-savings">$0.00</span>
+                        <span class="metric-sub" id="stat-percent-saved">0% reduction</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">CO₂ Offset</span>
+                        <span class="metric-value" id="stat-co2">0 lbs</span>
+                        <span class="metric-sub">per year</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Visualization -->
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h3>Annual Cost Comparison by Room</h3>
+                        <div class="canvas-legend">
+                            <span class="legend-dot current"></span> Current
+                            <span class="legend-dot led"></span> LED Retrofit
+                        </div>
+                    </div>
+                    <canvas id="costCanvas" width="650" height="240"></canvas>
+                </div>
+
+                <!-- Room Circuits Table -->
+                <div class="room-list-container">
+                    <div class="table-header">
+                        <h3>Configured Room Circuits</h3>
+                        <span class="subtext">Manage individual spaces</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="room-table">
+                            <thead>
+                                <tr>
+                                    <th>Room Name</th>
+                                    <th>Qty &amp; Hours</th>
+                                    <th>Current (W)</th>
+                                    <th>LED (W)</th>
+                                    <th>Annual Savings</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="room-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="empty-state" class="empty-state hidden">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p>No room circuits added yet. Use the form on the left or load a sample preset to begin your lighting audit.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraGlow Lighting Lab &bull; Client-side precision audit utility &bull; No data transmitted</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
