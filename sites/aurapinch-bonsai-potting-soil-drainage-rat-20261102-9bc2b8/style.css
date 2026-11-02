@@ -1,0 +1,396 @@
+:root {
+    --bg-primary: #121814;
+    --bg-secondary: #1a241e;
+    --bg-card: #222e26;
+    --accent-green: #4ade80;
+    --accent-hover: #22c55e;
+    --text-main: #f0fdf4;
+    --text-muted: #94a3b8;
+    --border-color: #2e3d32;
+    --danger: #f87171;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding: 1.5rem;
+}
+
+.app-header {
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    color: var(--accent-green);
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+h1 span {
+    color: var(--accent-green);
+    font-weight: 400;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+}
+
+.tagline {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+h2 {
+    font-size: 1.2rem;
+    color: var(--accent-green);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+h3 {
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.input-with-unit {
+    display: flex;
+    gap: 0.5rem;
+}
+
+input[type="number"], select {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="number"] {
+    flex: 1;
+}
+
+input[type="number"]:focus, select:focus {
+    border-color: var(--accent-green);
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.slider-group {
+    background-color: var(--bg-card);
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.slider-label span:last-child {
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-green);
+    cursor: pointer;
+}
+
+.slider-group small {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.action-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.btn.primary {
+    background-color: var(--accent-green);
+    color: #052e16;
+}
+
+.btn.primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn.secondary {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn.secondary:hover {
+    background-color: #2b3a30;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.metric-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.metric-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-green);
+}
+
+.metric-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.breakdown-box {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.component-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.component-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.component-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.layering-blueprint {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.blueprint-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.layer {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.layer.top {
+    background-color: #27382d;
+    border: 1px solid #365340;
+}
+
+.layer.middle {
+    background-color: #1e3325;
+    border: 1px solid #284a34;
+}
+
+.layer.bottom {
+    background-color: #17291e;
+    border: 1px solid #213c2a;
+}
+
+.layer-name {
+    font-weight: 600;
+}
+
+.layer-desc {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.saved-recipes {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.recipe-container {
+    max-height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.empty-notice {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.recipe-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.recipe-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.recipe-title {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.recipe-details {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.recipe-delete {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+footer {
+    max-width: 1200px;
+    margin: 2rem auto 0 auto;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}

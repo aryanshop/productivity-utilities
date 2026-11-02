@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPinch: Bonsai Potting Soil & Drainage Ratio Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <h1>AuraPinch <span>Bonsai Soil Lab</span></h1>
+            </div>
+            <p class="tagline">Precision substrate blending, drainage optimization, and particle grading for healthy root systems.</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="panel config-panel">
+            <h2>1. Container & Batch Configuration</h2>
+            <div class="input-group">
+                <label for="pot-volume">Target Batch Volume</label>
+                <div class="input-with-unit">
+                    <input type="number" id="pot-volume" value="5" min="0.5" max="100" step="0.5">
+                    <select id="volume-unit">
+                        <option value="quarts">Quarts (qt)</option>
+                        <option value="liters" selected>Liters (L)</option>
+                        <option value="gallons">Gallons (gal)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="tree-type">Tree / Species Preference</label>
+                <select id="tree-type">
+                    <option value="conifer">Conifer / Pine / Juniper (High Drainage)</option>
+                    <option value="deciduous" selected>Deciduous / Maple / Elm (Balanced Moisture)</option>
+                    <option value="tropical">Tropical / Indoor Bonsai (Higher Retention)</option>
+                    <option value="custom">Custom Blend</option>
+                </select>
+            </div>
+
+            <h2>2. Soil Component Ratios (%)</h2>
+            <p class="hint">Adjust sliders to fine-tune your aggregate blend. Total must equal 100%.</p>
+            
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Akadama (Volcanic Clay)</span>
+                    <span id="val-akadama">40%</span>
+                </div>
+                <input type="range" id="range-akadama" min="0" max="100" value="40">
+                <small>High cation exchange, moisture retention, darkens when dry.</small>
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Pumice (Lightweight Volcanic Glass)</span>
+                    <span id="val-pumice">30%</span>
+                </div>
+                <input type="range" id="range-pumice" min="0" max="100" value="30">
+                <small>Permanent aeration, internal water holding, prevents compaction.</small>
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Lava Rock / Scoria</span>
+                    <span id="val-lava">20%</span>
+                </div>
+                <input type="range" id="range-lava" min="0" max="100" value="20">
+                <small>Aggressive drainage, heavy base weight, coarse drainage layer.</small>
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Organic Compost / Pine Bark</span>
+                    <span id="val-organic">10%</span>
+                </div>
+                <input type="range" id="range-organic" min="0" max="100" value="10">
+                <small>Mycorrhizal fungi food, slow nitrogen release. Keep low for conifers.</small>
+            </div>
+
+            <div class="action-row">
+                <button id="btn-preset" class="btn secondary">Reset to Preset</button>
+                <button id="btn-save" class="btn primary">Save Recipe Locally</button>
+            </div>
+        </section>
+
+        <section class="panel results-panel">
+            <h2>3. Laboratory Analysis & Blueprint</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-title">Aeration Index</span>
+                    <span class="metric-value" id="metric-aeration">--</span>
+                    <span class="metric-desc">Oxygen diffusion potential</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Water Retention</span>
+                    <span class="metric-value" id="metric-retention">--</span>
+                    <span class="metric-desc">Moisture holding capacity</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Est. Dry Weight</span>
+                    <span class="metric-value" id="metric-weight">--</span>
+                    <span class="metric-desc">Approximate pot load</span>
+                </div>
+            </div>
+
+            <div class="breakdown-box">
+                <h3>Exact Component Measurements</h3>
+                <ul id="component-list" class="component-list">
+                    <!-- Dynamic list generated by JS -->
+                </ul>
+            </div>
+
+            <div class="layering-blueprint">
+                <h3>Pot Layering Blueprint</h3>
+                <div class="blueprint-stack">
+                    <div class="layer top">
+                        <span class="layer-name">Top Dress / Moss Layer</span>
+                        <span class="layer-desc">Fine aesthetic finish</span>
+                    </div>
+                    <div class="layer middle">
+                        <span class="layer-name">Main Root Matrix (Mid-Grade)</span>
+                        <span class="layer-desc" id="blueprint-mid">Blend mix (2-4mm)</span>
+                    </div>
+                    <div class="layer bottom">
+                        <span class="layer-name">Drainage Layer (Coarse)</span>
+                        <span class="layer-desc" id="blueprint-bottom">Coarse Lava / Pumice (5-8mm)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="saved-recipes">
+                <h3>Saved Recipes</h3>
+                <div id="recipe-container" class="recipe-container">
+                    <p class="empty-notice">No saved recipes yet. Configure your blend and click 'Save Recipe Locally'.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AuraPinch Bonsai Lab &bull; Client-side utility for precision horticulture.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
