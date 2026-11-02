@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Secure Client-Side Secret Note Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h1>AuraVault</h1>
+            </div>
+            <p class="tagline">Client-Side AES-GCM Encrypted Note & Credential Studio</p>
+            <div class="header-actions">
+                <button id="btn-export" class="btn btn-outline" aria-label="Export Vault Backup">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export Backup
+                </button>
+                <label for="import-file" class="btn btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Import
+                </label>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Sidebar: Vault Index & Search -->
+            <section class="panel sidebar-panel">
+                <div class="sidebar-header">
+                    <h2>Encrypted Vault</h2>
+                    <button id="btn-new-note" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        New Note
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search notes or tags..." aria-label="Search notes">
+                </div>
+                <div class="notes-list-container">
+                    <ul id="notes-list" class="notes-list">
+                        <!-- Populated by script -->
+                    </ul>
+                    <div id="empty-vault-state" class="empty-state hidden">
+                        <p>No notes in vault. Create one to begin.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Editor / Decrypt Studio -->
+            <section class="panel editor-panel">
+                <div id="editor-placeholder" class="editor-placeholder">
+                    <div class="placeholder-content">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <h3>Select a note or create a new secret</h3>
+                        <p>All data is encrypted instantly in your browser using Web Crypto AES-GCM. Nothing ever leaves your device.</p>
+                    </div>
+                </div>
+
+                <div id="editor-container" class="editor-container hidden">
+                    <div class="editor-toolbar">
+                        <div class="note-meta-inputs">
+                            <input type="text" id="note-title" placeholder="Note Title..." aria-label="Note Title">
+                            <input type="text" id="note-tags" placeholder="Tags (comma separated)..." aria-label="Note Tags">
+                        </div>
+                        <div class="editor-actions">
+                            <button id="btn-save-note" class="btn btn-primary">Save Changes</button>
+                            <button id="btn-delete-note" class="btn btn-danger-outline" aria-label="Delete Note">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security & Encryption Configuration -->
+                    <div class="encryption-box">
+                        <div class="enc-status-row">
+                            <span id="enc-badge" class="badge badge-locked">Locked (Encrypted)</span>
+                            <span id="last-modified" class="last-modified"></span>
+                        </div>
+
+                        <div id="decrypt-view" class="auth-view hidden">
+                            <p>This note is securely encrypted. Enter your master passphrase to unlock.</p>
+                            <div class="passphrase-input-group">
+                                <input type="password" id="unlock-passphrase" placeholder="Enter passphrase..." aria-label="Unlock passphrase">
+                                <button id="btn-unlock" class="btn btn-primary">Unlock</button>
+                            </div>
+                            <div id="unlock-error" class="error-msg hidden">Incorrect passphrase or corrupted payload.</div>
+                        </div>
+
+                        <div id="encrypt-view" class="auth-view">
+                            <div class="passphrase-input-group">
+                                <div class="input-wrap">
+                                    <input type="password" id="note-passphrase" placeholder="Master Passphrase for this note..." aria-label="Passphrase">
+                                    <button type="button" id="btn-toggle-pass" class="btn-icon" title="Toggle Password Visibility">👁</button>
+                                </div>
+                                <button id="btn-lock-note" class="btn btn-secondary">Encrypt & Lock</button>
+                            </div>
+                            <div class="entropy-meter-container">
+                                <div class="entropy-bar"><div id="entropy-fill" class="entropy-fill"></div></div>
+                                <span id="entropy-text" class="entropy-text">Entropy: 0 bits (Weak)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plaintext Editor View -->
+                    <div id="content-editor-wrapper" class="content-editor-wrapper">
+                        <div class="textarea-header">
+                            <label for="note-content">Secret Content / Credentials</label>
+                            <div class="content-tools">
+                                <button id="btn-copy-content" class="btn btn-sm btn-outline">Copy Plaintext</button>
+                            </div>
+                        </div>
+                        <textarea id="note-content" placeholder="Type secret notes, passwords, API keys, or private thoughts here..." aria-label="Secret Content"></textarea>
+                    </div>
+
+                    <!-- Encrypted Ciphertext View (Readonly preview when locked) -->
+                    <div id="ciphertext-wrapper" class="ciphertext-wrapper hidden">
+                        <label>Encrypted Payload (Ciphertext)</label>
+                        <textarea id="note-ciphertext" readonly aria-label="Encrypted payload"></textarea>
+                        <p class="cipher-hint">🔒 This note is currently encrypted and securely stored in local storage.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVault &bull; 100% Client-Side Web Crypto AES-GCM &bull; No cookies, no external servers.</p>
+        </footer>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">Action successful</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
