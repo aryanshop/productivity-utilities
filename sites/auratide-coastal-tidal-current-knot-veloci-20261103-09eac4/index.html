@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTide: Coastal Tidal Current & Knot Velocity Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12h20M2 16h20M2 8h20M6 4v16M18 4v16"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1>AuraTide</h1>
+                    <p class="subtitle">Coastal Tidal Current & Knot Velocity Laboratory</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn secondary">Reset Defaults</button>
+                <button id="btn-export" class="btn primary">Export Log</button>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <!-- Control Panel -->
+            <section class="panel parameters-panel">
+                <h2>Navigation Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="max-knot">Peak Current Velocity (Max Knots)</label>
+                    <div class="range-group">
+                        <input type="range" id="max-knot" min="0.5" max="8.0" step="0.1" value="3.5">
+                        <span id="max-knot-val" class="badge">3.5 kt</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tidal-type">Tide Cycle Type</label>
+                    <select id="tidal-type">
+                        <option value="semi-diurnal">Semi-Diurnal (Standard 12h 25m)</option>
+                        <option value="diurnal">Diurnal (Single 24h 50m)</option>
+                        <option value="spring">Spring Tide Amplified (+30%)</option>
+                        <option value="neap">Neap Tide Minimized (-30%)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transit-threshold">Safe Transit Threshold (Max Knot Limit)</label>
+                    <div class="range-group">
+                        <input type="range" id="transit-threshold" min="0.5" max="5.0" step="0.25" value="2.0">
+                        <span id="transit-threshold-val" class="badge">2.0 kt</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vessel-speed">Vessel SOG (Speed Over Ground - Knots)</label>
+                    <input type="number" id="vessel-speed" min="1" max="20" value="6" step="0.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="channel-width">Channel Width (Meters)</label>
+                    <input type="number" id="channel-width" min="50" max="5000" value="450" step="50">
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="enable-wind-assist">
+                        Include Wind & Surface Drift Vector (+0.5 kt)
+                    </label>
+                </div>
+
+                <button id="btn-calculate" class="btn primary full-width">Run Tidal Simulation</button>
+            </section>
+
+            <!-- Visualization & Results Panel -->
+            <section class="panel results-panel">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-curve">Tidal Curve & Vectors</button>
+                    <button class="tab-btn" data-tab="tab-twelth">Rule of Twelfths Breakdown</button>
+                    <button class="tab-btn" data-tab="tab-log">Session Log</button>
+                </div>
+
+                <!-- Tab 1: Curve -->
+                <div id="tab-curve" class="tab-content active">
+                    <div class="canvas-container">
+                        <canvas id="tideCanvas" width="700" height="320"></canvas>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Max Ebb Velocity</span>
+                            <span id="metric-max-ebb" class="metric-val">-3.5 kt</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Max Flood Velocity</span>
+                            <span id="metric-max-flood" class="metric-val">+3.5 kt</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Safe Transit Windows</span>
+                            <span id="metric-windows" class="metric-val">4h 15m</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Effective SOG Range</span>
+                            <span id="metric-sog" class="metric-val">2.5 - 9.5 kt</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Twelfths -->
+                <div id="tab-twelth" class="tab-content">
+                    <h3>Standard Rule of Twelfths Current Progression</h3>
+                    <p class="hint">Estimates hourly fraction of total tidal range or current volume over 6 hours between slack waters.</p>
+                    <div class="table-wrapper">
+                        <table id="twelfths-table">
+                            <thead>
+                                <tr>
+                                    <th>Hour Period</th>
+                                    <th>Fractional Rate</th>
+                                    <th>Hourly Volume / Speed</th>
+                                    <th>Transit Risk Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamically filled -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Session Log -->
+                <div id="tab-log" class="tab-content">
+                    <div class="log-header">
+                        <h3>Saved Simulation Logs</h3>
+                        <button id="btn-save-log" class="btn secondary">Save Current State</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="log-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Max Knot</th>
+                                    <th>Cycle</th>
+                                    <th>Safe Window</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Local storage logs -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraTide Laboratory &mdash; Client-side coastal navigation tool. Always verify with official nautical charts and tide tables.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
