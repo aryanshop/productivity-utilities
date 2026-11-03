@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSplit: Bill Splitting & Custom Gratuity Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M12 11v6"/><path d="M9 14h6"/></svg>
+                </div>
+                <h1>AuraSplit</h1>
+            </div>
+            <p class="tagline">Precision group expense allocation & custom gratuity workstation</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Panel: Configuration & Inputs -->
+            <section class="panel config-panel">
+                <h2>Bill Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="bill-name">Session / Event Name</label>
+                    <input type="text" id="bill-name" value="Friday Dinner with Friends" placeholder="e.g. Weekend Trip, Bistro Dinner">
+                </div>
+
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label for="bill-subtotal">Subtotal ($)</label>
+                        <input type="number" id="bill-subtotal" value="145.50" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="bill-tax">Tax Amount ($)</label>
+                        <input type="number" id="bill-tax" value="13.10" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label for="discount-amount">Discount ($)</label>
+                        <input type="number" id="discount-amount" value="0.00" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="service-fee">Service Fee / Extra ($)</label>
+                        <input type="number" id="service-fee" value="0.00" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Gratuity Strategy</label>
+                    <div class="segmented-control" id="tip-mode-control">
+                        <button type="button" class="seg-btn active" data-mode="percent">Percentage</button>
+                        <button type="button" class="seg-btn" data-mode="flat">Flat Amount</button>
+                        <button type="button" class="seg-btn" data-mode="none">No Tip</button>
+                    </div>
+                </div>
+
+                <div id="tip-percent-wrapper" class="input-group">
+                    <label>Tip Preset (%)</label>
+                    <div class="preset-buttons" id="tip-presets">
+                        <button type="button" class="preset-btn" data-val="15">15%</button>
+                        <button type="button" class="preset-btn" data-val="18">18%</button>
+                        <button type="button" class="preset-btn active" data-val="20">20%</button>
+                        <button type="button" class="preset-btn" data-val="22">22%</button>
+                        <button type="button" class="preset-btn" data-val="25">25%</button>
+                    </div>
+                    <div class="custom-tip-row">
+                        <input type="number" id="bill-tip-percent" value="20" min="0" max="100" step="0.5">
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+
+                <div id="tip-flat-wrapper" class="input-group" style="display: none;">
+                    <label for="bill-tip-flat">Total Tip ($)</label>
+                    <input type="number" id="bill-tip-flat" value="25.00" min="0" step="0.25">
+                </div>
+
+                <div class="input-group">
+                    <label for="tip-calc-basis">Tip Calculated On</label>
+                    <select id="tip-calc-basis">
+                        <option value="subtotal">Subtotal (Before Tax)</option>
+                        <option value="total">Total (After Tax)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="round-mode">Rounding Preference</label>
+                    <select id="round-mode">
+                        <option value="none">Exact Cents ($0.01)</option>
+                        <option value="dollar">Nearest Whole Dollar ($1.00)</option>
+                        <option value="up">Round Up to Next Dollar</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Middle Panel: Participants & Itemized Breakdown -->
+            <section class="panel participants-panel">
+                <div class="panel-header-row">
+                    <h2>Participants & Splits</h2>
+                    <button type="button" id="add-person-btn" class="btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Person
+                    </button>
+                </div>
+
+                <div class="participants-list" id="participants-list">
+                    <!-- Dynamically populated via JS -->
+                </div>
+
+                <div class="quick-add-group">
+                    <button type="button" class="btn-secondary" id="quick-add-2">+ 2 People</button>
+                    <button type="button" class="btn-secondary" id="quick-add-4">+ 4 People</button>
+                    <button type="button" class="btn-secondary" id="reset-defaults">Reset Default</button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Results & Summary -->
+            <section class="panel results-panel">
+                <h2>Settlement Summary</h2>
+                
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <strong id="res-subtotal">$0.00</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax & Fees</span>
+                        <strong id="res-tax">$0.00</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <strong id="res-discount" class="text-success">-$0.00</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Gratuity</span>
+                        <strong id="res-tip">$0.00</strong>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total-row">
+                        <span>Grand Total</span>
+                        <strong id="res-grand-total">$0.00</strong>
+                    </div>
+                </div>
+
+                <div class="individual-breakdown-container">
+                    <h3>Individual Owed Breakdown</h3>
+                    <div id="individual-results-list" class="individual-results-list">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+
+                <div class="action-buttons-row">
+                    <button type="button" id="copy-summary-btn" class="btn-accent">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy Receipt Summary
+                    </button>
+                    <button type="button" id="save-session-btn" class="btn-secondary">
+                        Save Session
+                    </button>
+                </div>
+                <div id="copy-feedback" class="copy-feedback" style="display: none;">Summary copied to clipboard!</div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>AuraSplit &bull; Client-Side Bill Splitting & Gratuity Laboratory. No data stored externally.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
