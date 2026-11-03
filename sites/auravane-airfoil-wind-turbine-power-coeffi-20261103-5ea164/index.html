@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVane: Airfoil & Wind Turbine Power Coefficient Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="brand-logo">AV</div>
+            <div>
+                <h1>AuraVane</h1>
+                <p class="tagline">Wind Turbine & Aerodynamic Power Lab</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="btn-preset-reset" class="btn btn-secondary" title="Reset to Default Parameters">Reset Defaults</button>
+            <button id="btn-export" class="btn btn-primary" title="Export Session JSON">Export Data</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="control-panel">
+            <div class="panel-card">
+                <h2>Environmental Parameters</h2>
+                <div class="input-group">
+                    <label for="windSpeed">Wind Speed (<span id="val-windSpeed">12</span> m/s)</label>
+                    <input type="range" id="windSpeed" min="1" max="30" step="0.5" value="12">
+                </div>
+                <div class="input-group">
+                    <label for="airDensity">Air Density (<span id="val-airDensity">1.225</span> kg/m³)</label>
+                    <input type="range" id="airDensity" min="0.9" max="1.4" step="0.005" value="1.225">
+                </div>
+                <div class="input-group">
+                    <label for="ambientTemp">Ambient Temperature (°C)</label>
+                    <input type="number" id="ambientTemp" value="15" step="1">
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Rotor Geometry</h2>
+                <div class="input-group">
+                    <label for="bladeRadius">Blade Radius (<span id="val-bladeRadius">2.5</span> m)</label>
+                    <input type="range" id="bladeRadius" min="0.5" max="10" step="0.1" value="2.5">
+                </div>
+                <div class="input-group">
+                    <label for="bladeCount">Blade Count</label>
+                    <select id="bladeCount">
+                        <option value="1">1 Blade</option>
+                        <option value="2">2 Blades</option>
+                        <option value="3" selected>3 Blades (Standard)</option>
+                        <option value="4">4 Blades</option>
+                        <option value="5">5+ Multi-Blade</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="pitchAngle">Blade Pitch Angle (<span id="val-pitchAngle">3</span> °)</label>
+                    <input type="range" id="pitchAngle" min="-5" max="30" step="0.5" value="3">
+                </div>
+                <div class="input-group">
+                    <label for="rotorRpm">Rotational Speed (<span id="val-rotorRpm">65</span> RPM)</label>
+                    <input type="range" id="rotorRpm" min="5" max="300" step="1" value="65">
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Generator & Transmission</h2>
+                <div class="input-group">
+                    <label for="generatorEfficiency">Generator Efficiency (<span id="val-generatorEfficiency">85</span> %)</label>
+                    <input type="range" id="generatorEfficiency" min="50" max="98" step="1" value="85">
+                </div>
+                <div class="input-group">
+                    <label for="systemVoltage">Nominal System Voltage (V)</label>
+                    <select id="systemVoltage">
+                        <option value="12">12V DC</option>
+                        <option value="24">24V DC</option>
+                        <option value="48" selected>48V DC</option>
+                        <option value="120">120V AC / DC</option>
+                        <option value="240">240V AC</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="display-panel">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Swept Area</span>
+                    <span class="metric-value" id="out-sweptArea">19.63</span>
+                    <span class="metric-unit">m²</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Wind Power (Available)</span>
+                    <span class="metric-value" id="out-windPower">20,832</span>
+                    <span class="metric-unit">Watts</span>
+                </div>
+                <div class="metric-card highlight">
+                    <span class="metric-label">Electrical Output</span>
+                    <span class="metric-value" id="out-electricalPower">5,120</span>
+                    <span class="metric-unit">Watts</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Tip Speed Ratio (TSR λ)</span>
+                    <span class="metric-value" id="out-tsr">6.82</span>
+                    <span class="metric-unit">dimensionless</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Power Coeff (Cp)</span>
+                    <span class="metric-value" id="out-cp">0.290</span>
+                    <span class="metric-label-sub">Max Betz limit: 0.593</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Current (@ V)</span>
+                    <span class="metric-value" id="out-current">106.7</span>
+                    <span class="metric-unit">Amps</span>
+                </div>
+            </div>
+
+            <div class="visualization-container">
+                <div class="canvas-box">
+                    <div class="canvas-header">
+                        <h3>Rotor Blade & Airflow Vector Studio</h3>
+                        <span class="badge" id="status-badge">Optimal Flow</span>
+                    </div>
+                    <canvas id="turbineCanvas" width="600" height="320"></canvas>
+                    <div class="canvas-footer-note">
+                        <span>Visualizing relative wind vector, tip speed ratio, and rotational wake dynamics.</span>
+                    </div>
+                </div>
+
+                <div class="canvas-box">
+                    <div class="canvas-header">
+                        <h3>Power Output vs. Wind Speed Curve</h3>
+                        <span class="badge">Betz Limit Model</span>
+                    </div>
+                    <canvas id="curveCanvas" width="600" height="320"></canvas>
+                    <div class="canvas-footer-note">
+                        <span>Simulated response curve across 0 to 25 m/s wind speeds for current rotor geometry.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendation-card">
+                <h3>Engineering Diagnostic & Optimization Insights</h3>
+                <ul id="insight-list">
+                    <li>Calculating turbine aerodynamics...</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraVane Laboratory &bull; Client-side physics simulation &bull; No telemetry or external requests.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
