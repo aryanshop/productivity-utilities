@@ -1,0 +1,135 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraWarp: Acoustic Resonance & Standing Wave Room Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">◉</span>
+        <h1>AuraWarp</h1>
+      </div>
+      <p class="tagline">Precision Room Mode Calculator & Acoustic Resonance Laboratory</p>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Control Panel -->
+    <section class="control-panel glass-card">
+      <h2>Room Parameters</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="unitSystem">Unit System</label>
+          <select id="unitSystem">
+            <option value="ft" selected>Feet (ft)</option>
+            <option value="m">Meters (m)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="roomLength">Room Length</label>
+          <input type="number" id="roomLength" value="16.5" step="0.1" min="1">
+        </div>
+
+        <div class="input-group">
+          <label for="roomWidth">Room Width</label>
+          <input type="number" id="roomWidth" value="12.0" step="0.1" min="1">
+        </div>
+
+        <div class="input-group">
+          <label for="roomHeight">Room Height</label>
+          <input type="number" id="roomHeight" value="8.5" step="0.1" min="1">
+        </div>
+
+        <div class="input-group">
+          <label for="wallMaterial">Boundary Construction</label>
+          <select id="wallMaterial">
+            <option value="0.05">Concrete / Masonry (Low Abs.)</option>
+            <option value="0.15" selected>Standard Drywall / Studs</option>
+            <option value="0.35">Wood Panelling / Cavity</option>
+            <option value="0.60">Heavy Acoustic Treatment</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="tempCelsius">Room Temp (°C)</label>
+          <input type="number" id="tempCelsius" value="21" step="1" min="-10" max="50">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="calcBtn" class="btn primary-btn">Calculate Room Modes</button>
+        <button id="resetBtn" class="btn secondary-btn">Reset Defaults</button>
+        <button id="exportBtn" class="btn secondary-btn">Export JSON</button>
+      </div>
+    </section>
+
+    <!-- Visualizer & Summary Dashboard -->
+    <section class="dashboard-grid">
+      <!-- Standing Wave Spectrum Canvas -->
+      <div class="card canvas-card glass-card">
+        <div class="card-header">
+          <h3>Axial Room Mode Frequency Spectrum</h3>
+          <span class="badge" id="modeCountBadge">0 Modes Found</span>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="modeCanvas" width="800" height="320"></canvas>
+        </div>
+        <div class="canvas-legend">
+          <span class="legend-item"><span class="dot axial"></span> Axial (Strongest)</span>
+          <span class="legend-item"><span class="dot tangential"></span> Tangential</span>
+          <span class="legend-item"><span class="dot oblique"></span> Oblique</span>
+          <span class="legend-item warning"><span class="dot bonzai"></span> Bonzai Zone (Clustered)</span>
+        </div>
+      </div>
+
+      <!-- Sweet Spot & Treatment Recommendations -->
+      <div class="card recommendations-card glass-card">
+        <h3>Acoustic Sweet Spot & Treatment</h3>
+        <div class="rec-list" id="recList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Modes Table -->
+    <section class="card table-card glass-card">
+      <div class="card-header">
+        <h3>Eigenmode Breakdown (Axial, Tangential, Oblique up to 300Hz)</h3>
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="axial">Axial</button>
+          <button class="filter-btn" data-filter="tangential">Tangential</button>
+          <button class="filter-btn" data-filter="oblique">Oblique</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table id="modesTable">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Harmonic (nx, ny, nz)</th>
+              <th>Frequency (Hz)</th>
+              <th>Wavelength</th>
+              <th>Acoustic Impact</th>
+            </tr>
+          </thead>
+          <tbody id="modesTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraWarp &bull; Client-Side Acoustical Physics & Room Resonance Suite</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
