@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrit: Abrasive Sandblasting & Media Consumption Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <h1>AuraGrit</h1>
+            </div>
+            <p class="subtitle">Industrial Surface Preparation & Abrasive Media Calculator</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="grid-layout">
+            <!-- Left Column: Inputs -->
+            <section class="panel input-panel">
+                <h2>Project Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="surfaceType">Surface Material</label>
+                    <select id="surfaceType">
+                        <option value="steel" data-hardness="7">Structural Steel (Rust/Mill Scale)</option>
+                        <option value="aluminum" data-hardness="3">Aluminum / Alloy</option>
+                        <option value="hardwood" data-hardness="2">Hardwood Timber / Furniture</option>
+                        <option value="stone" data-hardness="8">Concrete / Stone / Brick</option>
+                        <option value="fiberglass" data-hardness="4">Fiberglass / Composite</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="areaWidth">Width / Length (ft)</label>
+                        <input type="number" id="areaWidth" value="10" min="0.1" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="areaHeight">Height / Span (ft)</label>
+                        <input type="number" id="areaHeight" value="6" min="0.1" step="0.5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="coatingCondition">Coating & Contamination Condition</label>
+                    <select id="coatingCondition">
+                        <option value="1" data-factor="1.0">Light Oxidation / Dirt (Standard pass)</option>
+                        <option value="1.5" data-factor="1.5">Moderate Rust / Single Paint Layer</option>
+                        <option value="2.2" data-factor="2.2">Heavy Scale / Multi-Layer Epoxy / Thick Rust</option>
+                        <option value="3.0" data-factor="3.0">Severe Pitting / Marine Growth / Heavy Mill Scale</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mediaType">Abrasive Blasting Media</label>
+                    <select id="mediaType">
+                        <option value="garnet" data-density="145" data-recycle="5" data-aggression="4">Garnet 30/60 (High Efficiency, Recyclable)</option>
+                        <option value="aluminum_oxide" data-density="120" data-recycle="8" data-aggression="5">Aluminum Oxide (Aggressive, Durable)</option>
+                        <option value="glass_bead" data-density="95" data-recycle="4" data-aggression="2">Glass Bead (Fine Finish, Peening)</option>
+                        <option value="walnut_shell" data-density="45" data-recycle="2" data-aggression="1">Walnut Shell (Soft Strip, Wood/Alum)</option>
+                        <option value="steel_grit" data-density="280" data-recycle="25" data-aggression="5">Steel Grit (Heavy Industrial, Cabinet)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nozzleSize">Nozzle Orifice Size</label>
+                        <select id="nozzleSize">
+                            <option value="3" data-cfm="50" data-diam="3/16">
+3/16" (~50 CFM @ 90 PSI)</option>
+                            <option value="4" data-cfm="85" data-diam="1/4" selected>1/4" (~85 CFM @ 90 PSI)</option>
+                            <option value="5" data-cfm="130" data-diam="5/16">5/16" (~130 CFM @ 90 PSI)</option>
+                            <option value="6" data-cfm="185" data-diam="3/8">3/8" (~185 CFM @ 90 PSI)</option>
+                            <option value="8" data-cfm="340" data-diam="1/2">1/2" (~340 CFM @ 90 PSI)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetPsi">Working Pressure (PSI)</label>
+                        <input type="number" id="targetPsi" value="90" min="40" max="130" step="5">
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="btnCalculate" class="btn btn-primary">Compute Blast Specs</button>
+                    <button id="btnReset" class="btn btn-secondary">Reset Defaults</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Analytics -->
+            <div class="results-column">
+                <section class="panel results-panel">
+                    <h2>Operational Estimates</h2>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Total Surface Area</span>
+                            <span class="metric-value" id="resArea">60.0 sq ft</span>
+                        </div>
+                        <div class="metric-card primary">
+                            <span class="metric-label">Abrasive Consumption</span>
+                            <span class="metric-value" id="resAbrasiveWeight">180 lbs</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Estimated Blast Time</span>
+                            <span class="metric-value" id="resBlastTime">42 mins</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Required Compressor CFM</span>
+                            <span class="metric-value" id="resCfm">85 CFM</span>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-details">
+                        <h3>Equipment & Safety Specs</h3>
+                        <ul>
+                            <li><strong>Media Density:</strong> <span id="detailDensity">145 lbs/cu ft</span></li>
+                            <li><strong>Suggested Media Recycling:</strong> <span id="detailRecycle">Up to 5 cycles</span></li>
+                            <li><strong>Nozzle Exit Velocity Estimate:</strong> <span id="detailVelocity">~720 ft/s</span></li>
+                            <li><strong>Recommended Air Hose I.D.:</strong> <span id="detailHose">3/4 inch minimum</span></li>
+                            <li><strong>Minimum Air Receiver Tank:</strong> <span id="detailTank">120 Gallons</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Abrasive Volume Distribution</h3>
+                        <canvas id="abrasiveChart" width="400" height="120"></canvas>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="btnPrint" class="btn btn-outline">Print Job Specification Sheet</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraGrit Lab &bull; Client-side Industrial Surface Prep & Media Calculator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
