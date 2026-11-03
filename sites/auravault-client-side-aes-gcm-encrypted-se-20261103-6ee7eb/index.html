@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Client-Side AES-GCM Encrypted Secret & Note Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h1>AuraVault</h1>
+                <span class="badge">AES-GCM Local</span>
+            </div>
+            <p class="subtitle">Zero-knowledge, client-side cryptographic secret vault powered by native Web Crypto API.</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Panel: Create / Edit Secret -->
+            <section class="card creator-card">
+                <h2>Create Encrypted Secret</h2>
+                <form id="secretForm">
+                    <div class="form-group">
+                        <label for="secretTitle">Title / Label</label>
+                        <input type="text" id="secretTitle" placeholder="e.g. Server Root Password, Wi-Fi Key" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secretCategory">Category / Tag</label>
+                        <select id="secretCategory">
+                            <option value="Credentials">Credentials</option>
+                            <option value="Secure Notes">Secure Notes</option>
+                            <option value="API Keys">API Keys</option>
+                            <option value="Personal">Personal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secretContent">Secret Data / Note</label>
+                        <textarea id="secretContent" rows="4" placeholder="Enter sensitive text, notes, or credentials to encrypt..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secretPassphrase">Master Passphrase</label>
+                        <div class="passphrase-wrapper">
+                            <input type="password" id="secretPassphrase" placeholder="Enter strong passphrase" required autocomplete="new-password">
+                            <button type="button" id="togglePassBtn" class="icon-btn" aria-label="Toggle Passphrase Visibility">
+                                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <div class="entropy-meter">
+                            <div id="entropyBar" class="entropy-bar"></div>
+                        </div>
+                        <div class="entropy-info">
+                            <span id="entropyText">Entropy: 0 bits</span>
+                            <span id="strengthText" class="strength-badge weak">Weak</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <button type="button" id="generatePassBtn" class="btn secondary">Generate Passphrase</button>
+                        <button type="submit" id="encryptBtn" class="btn primary">Encrypt & Save Vault</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Panel: Vault Inventory & Decryption -->
+            <section class="card vault-card">
+                <div class="vault-header">
+                    <h2>Vault Inventory</h2>
+                    <div class="vault-actions">
+                        <input type="text" id="searchInput" placeholder="Search secrets..." autocomplete="off">
+                        <button type="button" id="exportVaultBtn" class="btn small secondary" title="Export JSON Vault">Export</button>
+                        <label class="btn small secondary file-label" title="Import JSON Vault">
+                            Import <input type="file" id="importVaultInput" accept=".json" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div id="vaultStats" class="vault-stats">
+                    <span>Total Secrets: <strong id="statTotal">0</strong></span>
+                    <span>Storage Used: <strong id="statStorage">0 KB</strong></span>
+                    <button type="button" id="clearVaultBtn" class="btn text-danger small">Clear Vault</button>
+                </div>
+
+                <div id="vaultList" class="vault-list">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                        <p>Your vault is empty. Create your first encrypted secret on the left.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Decrypt Modal -->
+        <div id="decryptModal" class="modal" aria-hidden="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Decrypt Secret</h3>
+                    <button type="button" id="closeModalBtn" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalSecretMeta" class="modal-meta"></p>
+                    <div class="form-group" id="decryptPassGroup">
+                        <label for="decryptPassphrase">Enter Passphrase to Decrypt</label>
+                        <input type="password" id="decryptPassphrase" placeholder="Master passphrase" autocomplete="current-password">
+                    </div>
+                    <div id="decryptError" class="error-msg" style="display: none;">Incorrect passphrase or corrupted payload.</div>
+                    
+                    <div id="decryptedResultContainer" style="display: none;">
+                        <div class="form-group">
+                            <label>Decrypted Secret Content</label>
+                            <textarea id="decryptedContent" rows="5" readonly></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" id="copySecretBtn" class="btn secondary">Copy to Clipboard</button>
+                            <span id="copyFeedback" class="feedback-text" style="display: none;">Copied!</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="confirmDecryptBtn" class="btn primary">Decrypt</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>AuraVault &bull; Client-Side AES-GCM (256-bit) + PBKDF2 (100k iterations). No server transmission.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
