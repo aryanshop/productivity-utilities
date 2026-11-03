@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBrew: Specialty Coffee Extraction & Brew Ratio Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-icon" aria-hidden="true">☕</div>
+                <h1>Aura<span>Brew</span></h1>
+            </div>
+            <p class="tagline">Specialty Coffee Extraction & Brew Ratio Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panel / Setup -->
+        <section class="panel config-panel">
+            <h2>Brew Parameters</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="brew-method">Brew Method</label>
+                    <select id="brew-method">
+                        <option value="v60">V60 Pour-Over (1:16)</option>
+                        <option value="chemex">Chemex (1:16.5)</option>
+                        <option value="aeropress">Aeropress (1:14)</option>
+                        <option value="frenchpress">French Press (1:15)</option>
+                        <option value="espresso">Espresso (1:2)</option>
+                        <option value="coldbrew">Cold Brew (1:8)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="calc-mode">Calculation Basis</label>
+                    <select id="calc-mode">
+                        <option value="dose">Target Dry Coffee Dose (g)</option>
+                        <option value="yield">Target Brewed Liquid (g)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="input-group-dose">
+                    <label for="coffee-dose">Coffee Dose (g)</label>
+                    <input type="number" id="coffee-dose" value="20" min="5" max="200" step="0.5">
+                </div>
+
+                <div class="form-group" id="input-group-yield" style="display:none;">
+                    <label for="brew-yield">Target Liquid (g)</label>
+                    <input type="number" id="brew-yield" value="320" min="50" max="3000" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="ratio-override">Ratio Override (1 : X)</label>
+                    <input type="number" id="ratio-override" value="16" min="2" max="30" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label for="water-temp">Water Temp (°C)</label>
+                    <input type="number" id="water-temp" value="93" min="70" max="100" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="roast-level">Roast Level</label>
+                    <select id="roast-level">
+                        <option value="light">Light Roast (Dense, High Temp)</option>
+                        <option value="medium" selected>Medium Roast (Balanced)</option>
+                        <option value="dark">Dark Roast (Soluble, Lower Temp)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="panel results-panel">
+            <h2>Recipe Breakdown</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Dry Coffee</span>
+                    <span class="metric-value" id="res-dose">20.0g</span>
+                </div>
+                <div class="metric-card highlight">
+                    <span class="metric-label">Total Water</span>
+                    <span class="metric-value" id="res-water">320.0g</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Brew Ratio</span>
+                    <span class="metric-value" id="res-ratio">1 : 16.0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Est. Extraction</span>
+                    <span class="metric-value" id="res-extraction">20.5%</span>
+                </div>
+            </div>
+
+            <div class="recipe-details">
+                <div class="detail-item">
+                    <strong>Recommended Grind Size:</strong> <span id="res-grind">Medium-Fine (table salt)</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Bloom Water (2x dose):</strong> <span id="res-bloom">40g water (30s hold)</span>
+                </div>
+            </div>
+
+            <!-- Pour Schedule Timeline -->
+            <div class="schedule-container">
+                <h3>Pour Schedule & Pacing</h3>
+                <ul id="pour-schedule-list" class="schedule-list">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Interactive Extraction Canvas & Timer Lab -->
+        <div class="dual-grid">
+            <section class="panel canvas-panel">
+                <h2>Extraction Surface Matrix</h2>
+                <p class="panel-desc">Plotting extraction yield (%) vs Total Dissolved Solids (TDS %). The ideal extraction zone is between 18-22% extraction with 1.15-1.45% TDS for filter coffee.</p>
+                <div class="canvas-wrapper">
+                    <canvas id="extraction-canvas" width="400" height="300"></canvas>
+                </div>
+                <div class="canvas-controls">
+                    <div class="form-group">
+                        <label for="measured-tds">Measured TDS %</label>
+                        <input type="number" id="measured-tds" value="1.35" min="0.2" max="3.0" step="0.05">
+                    </div>
+                    <div class="form-group">
+                        <label for="measured-yield">Measured Ext. %</label>
+                        <input type="number" id="measured-yield" value="20.2" min="10" max="30" step="0.1">
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel timer-panel">
+                <h2>Brew Timer & Audio Pacer</h2>
+                <div class="timer-display">
+                    <span id="timer-clock">00:00</span>
+                    <span id="timer-status" class="status-pill">Ready</span>
+                </div>
+                <div class="timer-actions">
+                    <button id="btn-start-timer" class="btn btn-primary">Start Brew Timer</button>
+                    <button id="btn-pause-timer" class="btn btn-secondary" disabled>Pause</button>
+                    <button id="btn-reset-timer" class="btn btn-secondary">Reset</button>
+                </div>
+                <div class="audio-toggle-wrap">
+                    <label><input type="checkbox" id="audio-cues" checked> Enable Web Audio chime cues on pour steps</label>
+                </div>
+
+                <div class="log-save-section">
+                    <button id="btn-save-log" class="btn btn-accent">Save Brew to Local Log</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Brew Log Archive -->
+        <section class="panel log-panel">
+            <div class="panel-header-flex">
+                <h2>Saved Brew Archive</h2>
+                <button id="btn-clear-logs" class="btn btn-small btn-danger">Clear Archive</button>
+            </div>
+            <div class="table-responsive">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Method</th>
+                            <th>Dose</th>
+                            <th>Water</th>
+                            <th>Ratio</th>
+                            <th>Temp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-table-body">
+                        <tr>
+                            <td colspan="7" class="empty-row">No saved brews recorded yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>AuraBrew Specialty Laboratory &bull; Client-side vanilla web app &bull; No external data tracking</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
