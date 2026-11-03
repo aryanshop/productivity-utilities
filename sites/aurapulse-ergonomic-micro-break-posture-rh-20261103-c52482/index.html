@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Ergonomic Micro-Break & Posture Rhythm Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="pulse-dot"></div>
+                <h1>AuraPulse</h1>
+            </div>
+            <p class="tagline">Ergonomic Rhythm & Posture Architect</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left Column: Timer & Controls -->
+            <section class="card timer-card">
+                <div class="mode-tabs">
+                    <button class="tab-btn active" data-mode="work">Deep Work</button>
+                    <button class="tab-btn" data-mode="stretch">Somatic Break</button>
+                    <button class="tab-btn" data-mode="eyes">Eye Relief</button>
+                </div>
+
+                <div class="timer-display-container">
+                    <svg class="progress-ring" width="260" height="260">
+                        <circle class="progress-ring__bg" cx="130" cy="130" r="115"></circle>
+                        <circle class="progress-ring__circle" cx="130" cy="130" r="115"></circle>
+                    </svg>
+                    <div class="timer-text">
+                        <span id="time-remaining">25:00</span>
+                        <span id="timer-label">Ready to Focus</span>
+                    </div>
+                </div>
+
+                <div class="timer-controls">
+                    <button id="start-btn" class="btn btn-primary">Start Session</button>
+                    <button id="pause-btn" class="btn btn-secondary" disabled>Pause</button>
+                    <button id="skip-btn" class="btn btn-ghost">Skip</button>
+                </div>
+
+                <div class="rhythm-presets">
+                    <span>Preset:</span>
+                    <button class="preset-btn active" data-work="25" data-break="5">25 / 5 Pomodoro</button>
+                    <button class="preset-btn" data-work="50" data-break="10">50 / 10 Ultradian</button>
+                    <button class="preset-btn" data-work="20" data-break="4">20 / 4 Micro-Flow</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Stretches & Analytics -->
+            <div class="side-column">
+                <!-- Somatic Activity Guide -->
+                <section class="card activity-card">
+                    <h2>Current Session Guide</h2>
+                    <div id="activity-content" class="activity-content">
+                        <div class="activity-icon">🧘</div>
+                        <h3 id="activity-title">Seated Spinal Twist & Chest Opener</h3>
+                        <p id="activity-desc">Sit tall in your chair. Place your right hand on your left knee and gently twist your torso to the left. Hold for 15 seconds while breathing deeply into your diaphragm. Switch sides.</p>
+                        <div class="activity-tags">
+                            <span class="tag">Neck & Spine</span>
+                            <span class="tag">Tension Release</span>
+                        </div>
+                    </div>
+                    <button id="next-activity-btn" class="btn btn-sm btn-outline">Shuffle Exercise</button>
+                </section>
+
+                <!-- Streak & Session Stats -->
+                <section class="card stats-card">
+                    <h2>Today's Movement Log</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-num" id="stat-sessions">0</span>
+                            <span class="stat-label">Completed Blocks</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="stat-minutes">0</span>
+                            <span class="stat-label">Focus Minutes</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="stat-streak">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </div>
+                    <div class="log-actions">
+                        <button id="clear-log-btn" class="btn btn-xs btn-ghost">Reset Today's Log</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraPulse &bull; Client-side Ergonomic Rhythm Planner with Web Audio Chimes. Zero tracking.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
