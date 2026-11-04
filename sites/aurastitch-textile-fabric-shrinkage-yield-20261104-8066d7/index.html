@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraStitch: Textile Fabric Shrinkage & Yield Estimator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"/></svg>
+      </div>
+      <div>
+        <h1>AuraStitch</h1>
+        <p class="subtitle">Precision Textile Shrinkage, Yardage & Yield Estimator</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn btn-secondary" title="Reset to Defaults">Reset Defaults</button>
+      <button id="btn-save" class="btn btn-primary" title="Save Project to Local Storage">Save Project</button>
+    </div>
+  </header>
+
+  <main class="app-grid">
+    <!-- Left Column: Inputs & Configuration -->
+    <section class="panel input-panel">
+      <h2><span class="step-num">1</span> Fabric & Project Specifications</h2>
+      
+      <div class="form-group">
+        <label for="fabric-name">Project / Fabric Name</label>
+        <input type="text" id="fabric-name" value="Linen Summer Dress & Lining" placeholder="e.g. Cotton Twill, Silk Charmeuse">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fabric-width">Fabric Bolt Width</label>
+          <select id="fabric-width">
+            <option value="44">44" / 45" (Standard US)</option>
+            <option value="54" selected>54" / 55" (Standard Wide / Apparel)</option>
+            <option value="60">60" (Extra Wide / Home Dec)</option>
+            <option value="108">108" (Quilt Backing)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fabric-cost">Cost per Yard ($)</label>
+          <input type="number" id="fabric-cost" min="0" step="0.25" value="14.50">
+        </div>
+      </div>
+
+      <h3><span class="step-num">2</span> Pre-Treatment Shrinkage</h3>
+      <p class="section-hint">Account for fiber relaxation during pre-wash & dry.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="shrink-warp">Warp Shrinkage (Length %) <span id="val-warp">6</span>%</label>
+          <input type="range" id="shrink-warp" min="0" max="20" step="0.5" value="6">
+        </div>
+        <div class="form-group">
+          <label for="shrink-weft">Weft Shrinkage (Width %) <span id="val-weft">3</span>%</label>
+          <input type="range" id="shrink-weft" min="0" max="20" step="0.5" value="3">
+        </div>
+      </div>
+
+      <h3><span class="step-num">3</span> Garment Pattern Inventory</h3>
+      <p class="section-hint">Add individual garment pieces to compute total area and yield.</p>
+      
+      <div class="piece-adder">
+        <div class="form-group">
+          <label for="new-piece-name">Piece Description</label>
+          <input type="text" id="new-piece-name" placeholder="e.g. Front Bodice (Cut 2)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-piece-length">Length (in)</label>
+            <input type="number" id="new-piece-length" min="1" value="24">
+          </div>
+          <div class="form-group">
+            <label for="new-piece-width">Width (in)</label>
+            <input type="number" id="new-piece-width" min="1" value="18">
+          </div>
+          <div class="form-group">
+            <label for="new-piece-qty">Quantity</label>
+            <input type="number" id="new-piece-qty" min="1" value="2">
+          </div>
+        </div>
+        <button id="btn-add-piece" class="btn btn-accent">+ Add Pattern Piece</button>
+      </div>
+
+      <div class="pieces-table-container">
+        <table id="pieces-table">
+          <thead>
+            <tr>
+              <th>Piece Name</th>
+              <th>Dimensions</th>
+              <th>Qty</th>
+              <th>Area (sq in)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pieces-tbody">
+            <!-- Dynamic Rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <h3><span class="step-num">4</span> Waste & Layout Factors</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pattern-matching">Pattern Matching / Nap</label>
+          <select id="pattern-matching">
+            <option value="1.0">None / Directionless (0% waste)</option>
+            <option value="1.10" selected>Standard Layout / Slight Nap (+10%)</option>
+            <option value="1.20">Large Plaid / Stripe Match (+20%)</option>
+            <option value="1.30">Complex Multi-Way Motif (+30%)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="seam-allowance">Seam & Cutting Buffer</label>
+          <select id="seam-allowance">
+            <option value="1.05">Minimal Buffer (+5%)</option>
+            <option value="1.10" selected>Standard Tailoring (+10%)</option>
+            <option value="1.15">Generous Couture (+15%)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Outputs, Visualizer & Cost Breakdown -->
+    <section class="panel output-panel">
+      <h2><span class="step-num">★</span> Yield & Cost Analysis</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-card highlight">
+          <span class="metric-label">Recommended Yardage</span>
+          <span class="metric-value" id="res-yards">3.75</span>
+          <span class="metric-unit">yards (rounded up to 1/8 yd)</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Fabric Cost</span>
+          <span class="metric-value" id="res-cost">$54.38</span>
+          <span class="metric-unit">@ $<span id="res-unit-cost">14.50</span> / yd</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Post-Shrinkage Buffer</span>
+          <span class="metric-value" id="res-shrink-add">+12.4</span><span class="metric-unit">% area</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Piece Area</span>
+          <span class="metric-value" id="res-area">1,420</span><span class="metric-unit">sq in</span>
+        </div>
+      </div>
+
+      <div class="visualizer-container">
+        <div class="visualizer-header">
+          <h3>Simulated Bolt Layout & Grainline Map</h3>
+          <span class="bolt-info">Bolt Width: <strong id="viz-width-label">54"</strong></span>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="bolt-canvas" width="600" height="220"></canvas>
+        </div>
+        <p class="canvas-caption">Visual representation of cut pieces arranged along the grainline. Shaded zones indicate shrinkage and matching waste margins.</p>
+      </div>
+
+      <div class="export-section">
+        <h3>Summary & Cutting Instructions</h3>
+        <div id="summary-text" class="summary-box">
+          <!-- Dynamic text summary -->
+        </div>
+        <div class="export-actions">
+          <button id="btn-print" class="btn btn-secondary">Print / Export Spec Sheet</button>
+          <button id="btn-copy" class="btn btn-secondary">Copy Summary to Clipboard</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraStitch Textile Studio &bull; Local-first client utility &bull; No cookies or cloud uploads.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
