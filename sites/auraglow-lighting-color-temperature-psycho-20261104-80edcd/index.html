@@ -1,0 +1,163 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraGlow: Lighting Color Temperature & Psychological Mood Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon" aria-hidden="true">💡</span>
+        <h1>AuraGlow</h1>
+      </div>
+      <p class="tagline">Lighting Color Temperature & Psychological Mood Lab</p>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="control-panel">
+      <div class="card">
+        <h2>Room & Activity Parameters</h2>
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="roomType">Room Type</label>
+            <select id="roomType">
+              <option value="office">Home Office / Studio</option>
+              <option value="bedroom">Bedroom / Sleep Sanctuary</option>
+              <option value="living">Living Room / Lounge</option>
+              <option value="kitchen">Kitchen / Culinary Prep</option>
+              <option value="reading">Reading Nook</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="activityGoal">Primary Activity Goal</label>
+            <select id="activityGoal">
+              <option value="focus">Deep Focus & Productivity</option>
+              <option value="creative">Creative Brainstorming</option>
+              <option value="relax">Relaxation & Wind-down</option>
+              <option value="social">Social Gathering & Dining</option>
+              <option value="precision">Precision Detail Work</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="roomArea">Room Floor Area (sq ft)</label>
+            <input type="number" id="roomArea" value="150" min="20" max="2000" step="5">
+          </div>
+
+          <div class="input-group">
+            <label for="ceilingHeight">Ceiling Height (ft)</label>
+            <input type="number" id="ceilingHeight" value="9" min="7" max="25" step="0.5">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Fixture & Spectrum Tuning</h2>
+        <div class="form-grid">
+          <div class="input-group slider-group">
+            <div class="slider-header">
+              <label for="kelvinSlider">Color Temperature (Kelvin)</label>
+              <span id="kelvinVal" class="badge">4000K</span>
+            </div>
+            <input type="range" id="kelvinSlider" min="1800" max="6500" step="100" value="4000">
+            <div class="slider-markers">
+              <span>1800K (Warm)</span>
+              <span>4000K (Neutral)</span>
+              <span>6500K (Cool)</span>
+            </div>
+          </div>
+
+          <div class="input-group slider-group">
+            <div class="slider-header">
+              <label for="lumenSlider">Total Fixture Output (Lumens)</label>
+              <span id="lumenVal" class="badge">3000 lm</span>
+            </div>
+            <input type="range" id="lumenSlider" min="200" max="12000" step="100" value="3000">
+          </div>
+
+          <div class="input-group slider-group">
+            <div class="slider-header">
+              <label for="criSlider">Color Rendering Index (CRI Ra)</label>
+              <span id="criVal" class="badge">90 Ra</span>
+            </div>
+            <input type="range" id="criSlider" min="70" max="99" step="1" value="90">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="display-panel">
+      <div class="card preview-card">
+        <h2>Visual Spectrum Simulation</h2>
+        <div class="canvas-container">
+          <canvas id="spectrumCanvas" width="600" height="220"></canvas>
+          <div id="colorSwatch" class="ambient-glow-overlay" aria-hidden="true"></div>
+        </div>
+        <div class="spectrum-stats">
+          <div class="stat-box">
+            <span class="stat-label">Hex Approximation</span>
+            <span id="resHex" class="stat-value">#ffeedd</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Light Quality</span>
+            <span id="resQuality" class="stat-value">High Fidelity</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Circadian Impact</span>
+            <span id="resCircadian" class="stat-value">Alertness Support</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card metrics-card">
+        <h2>Environmental & Psychological Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <div class="metric-title">Calculated Average Lux</div>
+            <div id="metricLux" class="metric-val">32.3 lx</div>
+            <div id="metricLuxStatus" class="metric-desc">Optimal for ambient living</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-title">Melanopic EDI (mEDI)</div>
+            <div id="metricMedi" class="metric-val">145 mEDI</div>
+            <div id="metricMediStatus" class="metric-desc">Moderate circadian stimulus</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-title">Psychological Mood Index</div>
+            <div id="metricMood" class="metric-val">Balanced & Calm</div>
+            <div id="metricMoodDesc" class="metric-desc">Encourages focused serenity</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-title">Estimated Power Load</div>
+            <div id="metricPower" class="metric-val">27.3 W</div>
+            <div id="metricPowerDesc" class="metric-desc">Based on ~110 lm/W LED efficiency</div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button id="btnSavePreset" class="btn btn-primary">Save Lighting Setup</button>
+          <button id="btnExportJson" class="btn btn-secondary">Export Backup JSON</button>
+        </div>
+      </div>
+
+      <div class="card saved-card">
+        <h2>Saved Lighting Presets</h2>
+        <div id="presetList" class="preset-list">
+          <p class="empty-msg">No saved configurations yet. Configure your ideal lighting and click "Save Lighting Setup".</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>AuraGlow Lab &mdash; Client-side lighting simulation and design workspace. No data transmitted.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
