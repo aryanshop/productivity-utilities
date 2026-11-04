@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStride: Running Biomechanics & Cadence Metronome Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 16v-2.38C4 11.5 5.5 10 7.5 10H10l2-4 2 2h3.5C17.5 8 19 9.5 19 11.62V16"></path>
+                        <circle cx="12" cy="4" r="2"></circle>
+                        <path d="M6 20l3-5 3 2 3-4 3 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1>AuraStride</h1>
+                    <p class="subtitle">Running Biomechanics & Cadence Metronome Lab</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="toggle-metronome-overlay" class="btn btn-primary">
+                    <span class="pulse-dot"></span> Metronome Studio
+                </button>
+                <button id="reset-defaults" class="btn btn-outline" title="Reset to Defaults">Reset</button>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Inputs & Metrics -->
+            <section class="panel input-panel">
+                <h2>Runner Profile & Pace</h2>
+                
+                <div class="input-group">
+                    <label for="runner-height">Height (<span class="unit-label-height">cm</span>)</label>
+                    <div class="input-row">
+                        <input type="range" id="runner-height" min="140" max="210" value="175" step="1">
+                        <input type="number" id="runner-height-num" min="140" max="210" value="175">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="runner-weight">Weight (<span class="unit-label-weight">kg</span>)</label>
+                    <div class="input-row">
+                        <input type="range" id="runner-weight" min="40" max="130" value="70" step="1">
+                        <input type="number" id="runner-weight-num" min="40" max="130" value="70">
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="input-group">
+                    <label for="run-speed">Target Pace / Speed</label>
+                    <div class="speed-inputs">
+                        <div class="sub-input">
+                            <label for="speed-kmh">km/h</label>
+                            <input type="number" id="speed-kmh" min="6" max="25" value="12.0" step="0.1">
+                        </div>
+                        <div class="sub-input">
+                            <label for="pace-min">Pace (min/km)</label>
+                            <div class="pace-picker">
+                                <input type="number" id="pace-min" min="2" max="10" value="5">
+                                <span>:</span>
+                                <input type="number" id="pace-sec" min="0" max="59" value="0" style="width: 60px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="target-cadence">Target Cadence (SPM - Steps Per Minute)</label>
+                    <div class="input-row">
+                        <input type="range" id="target-cadence" min="140" max="220" value="180" step="1">
+                        <input type="number" id="target-cadence-num" min="140" max="220" value="180">
+                    </div>
+                    <span class="hint">Optimal endurance running efficiency typically sits between 170-185 SPM.</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="unit-system">Unit System</label>
+                    <select id="unit-system">
+                        <option value="metric">Metric (cm, kg, km/h, min/km)</option>
+                        <option value="imperial">Imperial (in, lbs, mph, min/mi)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Biomechanics Analysis -->
+            <div class="analysis-column">
+                <!-- Key Metrics Cards -->
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Calculated Stride Length</span>
+                        <div class="metric-value" id="res-stride-length">1.11 m</div>
+                        <span class="metric-sub" id="res-stride-length-ratio">0.63x of height</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Est. Ground Contact Time</span>
+                        <div class="metric-value" id="res-gct">215 ms</div>
+                        <span class="metric-sub" id="res-gct-quality">Optimal range (&lt;250ms)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Vertical Oscillation</span>
+                        <div class="metric-value" id="res-oscillation">7.8 cm</div>
+                        <span class="metric-sub" id="res-oscillation-quality">Good vertical efficiency</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Est. Energy Burn</span>
+                        <div class="metric-value" id="res-calories">742 kcal/hr</div>
+                        <span class="metric-sub" id="res-calories-km">61.8 kcal / km</span>
+                    </div>
+                </section>
+
+                <!-- Interactive Metronome & Visualizer Panel -->
+                <section class="panel metronome-panel">
+                    <div class="panel-header">
+                        <h2>Cadence Metronome & Pacer</h2>
+                        <div class="metronome-status">
+                            <span id="metro-status-badge" class="badge badge-stopped">Stopped</span>
+                        </div>
+                    </div>
+
+                    <div class="metronome-controls-wrapper">
+                        <div class="visual-metronome">
+                            <div class="pendulum-track">
+                                <div id="pendulum-bob" class="pendulum-bob"></div>
+                            </div>
+                            <div class="beat-pulse-ring" id="beat-pulse-ring"></div>
+                        </div>
+
+                        <div class="metronome-buttons">
+                            <button id="btn-start-metro" class="btn btn-success btn-lg">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                Start Metronome
+                            </button>
+                            <button id="btn-tap-tempo" class="btn btn-secondary">
+                                Tap Tempo
+                            </button>
+                            <select id="audio-sound-type" class="sound-select">
+                                <option value="beep">Digital Beep</option>
+                                <option value="woodblock">Woodblock</option>
+                                <option value="click">Mechanical Click</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Workout Splits & Interval Calculator -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>Distance Split Predictor</h2>
+                        <button id="btn-log-session" class="btn btn-sm btn-outline">Save Session to Log</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="splits-table">
+                            <thead>
+                                <tr>
+                                    <th>Distance</th>
+                                    <th>Estimated Time</th>
+                                    <th>Pace / km</th>
+                                    <th>Cumulative Beats</th>
+                                </tr>
+                            </thead>
+                            <tbody id="splits-tbody">
+                                <!-- Dynamic Splits -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Session History Drawer / Section -->
+        <section class="panel session-log-panel">
+            <div class="panel-header">
+                <h2>Saved Training Sessions</h2>
+                <button id="btn-clear-logs" class="btn btn-sm btn-danger">Clear History</button>
+            </div>
+            <div id="session-log-container">
+                <p class="empty-log-text">No saved sessions yet. Configure your metrics and click "Save Session to Log" to record your workout blueprint.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraStride Lab &bull; Client-side Biomechanics & Pacing Utility &bull; Zero external requests</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
