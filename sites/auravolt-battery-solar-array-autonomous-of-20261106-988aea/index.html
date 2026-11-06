@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVolt: Battery Solar Array & Autonomous Off-Grid Energy Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">⚡</span>
+        <h1>AuraVolt</h1>
+      </div>
+      <p class="tagline">Precision Off-Grid Energy & Solar Array Sizing Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-preset-van" class="btn btn-secondary">Van Life Preset</button>
+      <button id="btn-preset-cabin" class="btn btn-secondary">Off-Grid Cabin</button>
+      <button id="btn-reset" class="btn btn-danger">Reset</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Panel: Configuration Controls -->
+    <section class="config-panel card">
+      <h2>System Parameters</h2>
+      
+      <!-- Solar Environment -->
+      <div class="control-group">
+        <h3>1. Solar & Environment</h3>
+        <div class="input-row">
+          <label for="peak-sun-hours">
+            Peak Sun Hours / Day
+            <span class="tooltip-hint" title="Average daily equivalent peak sunlight hours">?</span>
+          </label>
+          <div class="range-val-wrap">
+            <input type="range" id="peak-sun-hours" min="2" max="8" step="0.5" value="4.5">
+            <span id="val-peak-sun-hours" class="badge">4.5 hrs</span>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <label for="panel-efficiency">
+            Solar Panel Derate / Efficiency
+            <span class="tooltip-hint" title="Real-world losses from heat, dust, wiring, and controller">?</span>
+          </label>
+          <div class="range-val-wrap">
+            <input type="range" id="panel-efficiency" min="70" max="95" step="1" value="80">
+            <span id="val-panel-efficiency" class="badge">80%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battery & Voltage -->
+      <div class="control-group">
+        <h3>2. Battery & System Voltage</h3>
+        <div class="input-row">
+          <label for="system-voltage">System DC Voltage</label>
+          <select id="system-voltage" class="select-input">
+            <option value="12">12 Volts</option>
+            <option value="24" selected>24 Volts</option>
+            <option value="48">48 Volts</option>
+          </select>
+        </div>
+
+        <div class="input-row">
+          <label for="battery-chemistry">Battery Chemistry</label>
+          <select id="battery-chemistry" class="select-input">
+            <option value="lifepo4" selected>LiFePO4 Lithium (80% - 90% DoD)</option>
+            <option value="agm">AGM / Gel (50% DoD)</option>
+            <option value="flooded">Deep Cycle Flooded Lead-Acid (50% DoD)</option>
+          </select>
+        </div>
+
+        <div class="input-row">
+          <label for="dod-slider">
+            Max Depth of Discharge (DoD)
+          </label>
+          <div class="range-val-wrap">
+            <input type="range" id="dod-slider" min="30" max="90" step="5" value="80">
+            <span id="val-dod" class="badge">80%</span>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <label for="autonomy-days">
+            Cloudy Days of Autonomy
+          </label>
+          <div class="range-val-wrap">
+            <input type="range" id="autonomy-days" min="1" max="5" step="1" value="2">
+            <span id="val-autonomy" class="badge">2 Days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inverter & Losses -->
+      <div class="control-group">
+        <h3>3. Inverter & DC Losses</h3>
+        <div class="input-row">
+          <label for="inverter-eff">
+            Inverter Efficiency
+          </label>
+          <div class="range-val-wrap">
+            <input type="range" id="inverter-eff" min="80" max="98" step="1" value="90">
+            <span id="val-inverter-eff" class="badge">90%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Middle Panel: Appliances & Loads -->
+    <section class="loads-panel card">
+      <div class="panel-header">
+        <h2>Appliance Energy Inventory</h2>
+        <button id="btn-add-appliance" class="btn btn-primary">+ Add Appliance</button>
+      </div>
+      <p class="section-desc">List your daily electrical loads to calculate total energy consumption (Watt-hours).</p>
+
+      <div class="table-responsive">
+        <table id="appliances-table" class="data-table">
+          <thead>
+            <tr>
+              <th>Appliance Name</th>
+              <th>Watts (W)</th>
+              <th>Hours/Day</th>
+              <th>AC/DC</th>
+              <th>Daily Wh</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="appliances-tbody">
+            <!-- Dynamic rows inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Add Bar -->
+      <div class="quick-add-bar">
+        <input type="text" id="new-name" placeholder="Appliance (e.g. Fridge, Laptop)" class="text-input">
+        <input type="number" id="new-watts" placeholder="Watts" min="1" max="5000" class="num-input">
+        <input type="number" id="new-hours" placeholder="Hours/Day" min="0.1" max="24" step="0.5" class="num-input">
+        <select id="new-type" class="select-input">
+          <option value="AC">AC (Inverter)</option>
+          <option value="DC">DC Direct</option>
+        </select>
+        <button id="btn-confirm-add" class="btn btn-success">Add</button>
+      </div>
+    </section>
+
+    <!-- Right Panel: Results & Analytics -->
+    <section class="results-panel card">
+      <h2>System Sizing Results</h2>
+      
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-label">Total Daily Energy</span>
+          <span id="res-total-wh" class="metric-value">0 <small>Wh/day</small></span>
+          <span id="res-total-kwh" class="metric-sub">0.00 kWh</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Required Solar Array</span>
+          <span id="res-solar-watts" class="metric-value accent">0 <small>W</small></span>
+          <span id="res-solar-panels" class="metric-sub">0 panels @ 300W</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Minimum Battery Bank</span>
+          <span id="res-battery-ah" class="metric-value">0 <small>Ah</small></span>
+          <span id="res-battery-wh" class="metric-sub">0 Wh capacity</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Recommended Inverter</span>
+          <span id="res-inverter-w" class="metric-value">0 <small>W</small></span>
+          <span id="res-surge-w" class="metric-sub">Surge: 0 W</span>
+        </div>
+      </div>
+
+      <!-- Canvas Simulation Chart -->
+      <div class="chart-container">
+        <h3>24-Hour Energy Production vs Consumption Balance</h3>
+        <canvas id="energy-canvas" width="500" height="220"></canvas>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="dot solar"></span> Solar Generation</span>
+          <span class="legend-item"><span class="dot load"></span> Cumulative Load</span>
+          <span class="legend-item"><span class="dot battery"></span> Battery State of Charge (%)</span>
+        </div>
+      </div>
+
+      <!-- Export & Summary -->
+      <div class="export-area">
+        <button id="btn-export-json" class="btn btn-secondary">Export System JSON</button>
+        <button id="btn-print-summary" class="btn btn-secondary">Print Summary</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>AuraVolt Energy Lab &bull; Client-side Offline Renewable Energy Calculation Workbench</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
