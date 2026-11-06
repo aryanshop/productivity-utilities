@@ -1,0 +1,236 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraType: WPM Speed & Ergonomic Finger Fatigue Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
+          </svg>
+        </div>
+        <h1>AuraType <span class="badge">Lab</span></h1>
+      </div>
+      <p class="subtitle">Ergonomic Keystroke Distribution & Finger Fatigue Analyzer</p>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="tab-nav" aria-label="Workspace Navigation">
+      <button class="tab-btn active" data-tab="test">Typing Test & Live Heatmap</button>
+      <button class="tab-btn" data-tab="ergonomics">Finger Load & Fatigue Matrix</button>
+      <button class="tab-btn" data-tab="drills">Weak Finger Drill Generator</button>
+      <button class="tab-btn" data-tab="history">Session Logs & Analytics</button>
+    </nav>
+
+    <!-- Tab 1: Testing & Live Heatmap -->
+    <main id="tab-test" class="tab-content active">
+      <div class="control-bar">
+        <div class="control-group">
+          <label for="testMode">Text Category:</label>
+          <select id="testMode">
+            <option value="prose">Classic Prose & Literature</option>
+            <option value="code">JavaScript & Syntax Code</option>
+            <option value="symbols">Heavy Symbols & Punctuation</option>
+            <option value="custom">Custom Snippet</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="timeLimit">Duration:</label>
+          <select id="timeLimit">
+            <option value="30">30 Seconds</option>
+            <option value="60" selected>60 Seconds</option>
+            <option value="120">120 Seconds</option>
+            <option value="0">Unlimited / Full Text</option>
+          </select>
+        </div>
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.73-5.73" />
+          </svg>
+          Reset Test
+        </button>
+      </div>
+
+      <!-- Live Metrics Display -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">WPM</span>
+          <span id="statWpm" class="metric-value">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Accuracy</span>
+          <span id="statAcc" class="metric-value">100%</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Time Left</span>
+          <span id="statTime" class="metric-value">60s</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Ergonomic Score</span>
+          <span id="statErgo" class="metric-value">--</span>
+        </div>
+      </div>
+
+      <!-- Typing Box -->
+      <div class="typing-workbench">
+        <div id="textDisplay" class="text-display" tabindex="0" aria-label="Typing prompt area. Click or focus here to start typing.">
+          <!-- Dynamically populated character spans -->
+        </div>
+        <div id="focusOverlay" class="focus-overlay">
+          <div class="focus-msg">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M12 8v8M8 12h8" />
+            </svg>
+            <span>Click here or press any key to focus & start typing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Visual Keyboard Heatmap -->
+      <section class="section-block">
+        <h3>Live Keystroke Heatmap</h3>
+        <div class="keyboard-container">
+          <div class="virtual-keyboard" id="virtualKeyboard">
+            <!-- Rendered via JS -->
+          </div>
+          <div class="keyboard-legend">
+            <span class="legend-item"><i class="legend-color l-none"></i> Idle</span>
+            <span class="legend-item"><i class="legend-color l-low"></i> Low Load</span>
+            <span class="legend-item"><i class="legend-color l-med"></i> Moderate</span>
+            <span class="legend-item"><i class="legend-color l-high"></i> Heavy Stress</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tab 2: Finger Load & Fatigue Matrix -->
+    <main id="tab-ergonomics" class="tab-content">
+      <div class="section-header">
+        <h2>Ergonomic Finger Distribution & Fatigue Index</h2>
+        <p>Analyze how your typing style distributes workload across individual fingers and hands.</p>
+      </div>
+
+      <div class="split-layout">
+        <div class="card">
+          <h3>Finger Workload Distribution</h3>
+          <div id="fingerBars" class="finger-bars">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        <div class="card">
+          <h3>Hand Balance & Fatigue Metrics</h3>
+          <div class="fatigue-stats-list">
+            <div class="f-stat-row">
+              <span>Left Hand Ratio:</span>
+              <strong id="leftHandRatio">50%</strong>
+            </div>
+            <div class="f-stat-row">
+              <span>Right Hand Ratio:</span>
+              <strong id="rightHandRatio">50%</strong>
+            </div>
+            <div class="f-stat-row">
+              <span>Home Row Usage:</span>
+              <strong id="homeRowRatio">0%</strong>
+            </div>
+            <div class="f-stat-row">
+              <span>Row Stretch Frequency:</span>
+              <strong id="stretchRatio">0%</strong>
+            </div>
+            <div class="f-stat-row">
+              <span>Estimated Fatigue Index:</span>
+              <strong id="fatigueIndex">Optimal</strong>
+            </div>
+          </div>
+          <div class="ergonomic-tips" id="ergonomicTips">
+            <h4>Ergonomic Recommendations</h4>
+            <p>Complete a typing test to generate personalized postural and pacing insights.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tab 3: Weak Finger Drill Generator -->
+    <main id="tab-drills" class="tab-content">
+      <div class="section-header">
+        <h2>Targeted Finger Drill Generator</h2>
+        <p>Generate customized training sequences focusing on your weakest fingers and awkward character transitions.</p>
+      </div>
+
+      <div class="card">
+        <div class="drill-controls">
+          <div class="control-group">
+            <label for="targetFinger">Select Target Focus:</label>
+            <select id="targetFinger">
+              <option value="pinkies">Pinkies (A, ;, Q, P, Z, /)</option>
+              <option value="rings">Ring Fingers (W, O, L, .)</option>
+              <option value="middles">Middle Fingers (E, I, K, ,)</option>
+              <option value="symbols">Programming Symbols ({ } [ ] ( ) ; :)</option>
+              <option value="alternation">Hand Alternation Drills</option>
+            </select>
+          </div>
+          <button id="generateDrillBtn" class="btn btn-primary">Generate Custom Drill</button>
+        </div>
+
+        <div class="drill-workspace">
+          <div id="drillDisplay" class="drill-display">
+            Select a target focus and generate a drill to practice.
+          </div>
+          <div class="drill-input-area">
+            <input type="text" id="drillInput" placeholder="Type drill sequence here..." autocomplete="off" spellcheck="false">
+          </div>
+          <div class="drill-feedback" id="drillFeedback"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tab 4: Session Logs & Analytics -->
+    <main id="tab-history" class="tab-content">
+      <div class="section-header">
+        <h2>Session History & Performance Logs</h2>
+        <p>Review past typing sessions stored locally in your browser session.</p>
+      </div>
+
+      <div class="history-actions">
+        <button id="clearHistoryBtn" class="btn btn-secondary">Clear History</button>
+        <button id="exportJsonBtn" class="btn btn-secondary">Export JSON Backup</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Mode</th>
+              <th>WPM</th>
+              <th>Accuracy</th>
+              <th>Ergo Score</th>
+              <th>Fatigue Rating</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="6" class="empty-row">No typing sessions recorded yet. Complete a test!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>AuraType Lab &bull; Client-side Ergonomic & Speed Analytics</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
