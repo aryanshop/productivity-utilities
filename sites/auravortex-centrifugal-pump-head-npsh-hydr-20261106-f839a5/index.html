@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVortex: Centrifugal Pump Head & NPSH Hydraulic Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    <path d="M2 12h20"/>
+                </svg>
+                <h1>AuraVortex</h1>
+            </div>
+            <p class="subtitle">Centrifugal Pump Head, Friction Loss & NPSH Cavitation Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panels -->
+        <section class="workbench-grid">
+            <!-- Fluid & Flow Configuration -->
+            <div class="card">
+                <h2>1. Fluid & Flow Parameters</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="fluidType">Fluid Medium</label>
+                        <select id="fluidType">
+                            <option value="water20" selected>Water (20°C / 68°F)</option>
+                            <option value="water60">Water (60°C / 140°F)</option>
+                            <option value="glycol30">30% Ethylene Glycol</option>
+                            <option value="oilLight">Light Hydraulic Oil</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="flowRate">Target Flow Rate (<span id="unitFlowLabel">GPM</span>)</label>
+                        <div class="range-with-value">
+                            <input type="range" id="flowRate" min="5" max="250" step="5" value="50">
+                            <span id="flowRateVal" class="badge">50 GPM</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="unitSystem">Unit System</label>
+                        <select id="unitSystem">
+                            <option value="us" selected>US Customary (GPM, ft, psi)</option>
+                            <option value="metric">Metric (L/min, m, kPa)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Piping & Geometry -->
+            <div class="card">
+                <h2>2. Pipe Geometry & Layout</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="pipeDiameter">Nominal Pipe Diameter</label>
+                        <select id="pipeDiameter">
+                            <option value="0.75">3/4 inch (0.824" ID)</option>
+                            <option value="1.0" selected>1.0 inch (1.049" ID)</option>
+                            <option value="1.25">1-1/4 inch (1.380" ID)</option>
+                            <option value="1.5">1-1/2 inch (1.610" ID)</option>
+                            <option value="2.0">2.0 inch (2.067" ID)</option>
+                            <option value="3.0">3.0 inch (3.068" ID)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="pipeMaterial">Pipe Roughness (Material)</label>
+                        <select id="pipeMaterial">
+                            <option value="pvc" selected>PVC / Plastic (Smooth - 0.005 mm)</option>
+                            <option value="copper">Copper / Brass (0.0015 mm)</option>
+                            <option value="steel">Commercial Steel (0.045 mm)</option>
+                            <option value="castiron">Cast Iron (0.26 mm)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="pipeLength">Total Equivalent Pipe Length (<span id="unitLengthLabel">ft</span>)</label>
+                        <div class="range-with-value">
+                            <input type="range" id="pipeLength" min="10" max="500" step="10" value="120">
+                            <span id="pipeLengthVal" class="badge">120 ft</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elevation & Fittings -->
+            <div class="card">
+                <h2>3. Elevation & Suction Conditions</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="staticLift">Static Elevation Lift (<span id="unitLiftLabel">ft</span>)</label>
+                        <div class="range-with-value">
+                            <input type="range" id="staticLift" min="-20" max="80" step="2" value="15">
+                            <span id="staticLiftVal" class="badge">15 ft</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="suctionHead">Suction Head / Lift (<span id="unitSuctionLabel">ft</span>)</label>
+                        <div class="range-with-value">
+                            <input type="range" id="suctionHead" min="-15" max="20" step="1" value="-5">
+                            <span id="suctionHeadVal" class="badge">-5 ft (Flooded)</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="fittingsCount">Valves & 90° Elbow Count</label>
+                        <div class="range-with-value">
+                            <input type="range" id="fittingsCount" min="0" max="20" step="1" value="6">
+                            <span id="fittingsCountVal" class="badge">6 fittings</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="results-dashboard">
+            <h2>Hydraulic Performance Analysis</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Total Dynamic Head (TDH)</span>
+                    <span class="metric-value" id="resTDH">--</span>
+                    <span class="metric-sub" id="resTDHSub">Static + Friction</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Friction Head Loss</span>
+                    <span class="metric-value" id="resFriction">--</span>
+                    <span class="metric-sub" id="resFrictionSub">Darcy-Weisbach</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">NPSH Available (NPSHa)</span>
+                    <span class="metric-value" id="resNPSHa">--</span>
+                    <span class="metric-sub" id="resNPSHaSub">Cavitation Margin</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Hydraulic Power</span>
+                    <span class="metric-value" id="resPower">--</span>
+                    <span class="metric-sub" id="resPowerSub">Water Horsepower</span>
+                </div>
+            </div>
+
+            <!-- Cavitation Safety Alert Box -->
+            <div id="cavitationAlert" class="alert-box">
+                <div class="alert-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="alert-content">
+                    <h3 id="alertTitle">NPSH Safety Status: Optimal</h3>
+                    <p id="alertDesc">Sufficient margin between NPSHa and vapor pressure. Low risk of destructive impeller cavitation.</p>
+                </div>
+            </div>
+
+            <!-- Canvas System Curve Visualization -->
+            <div class="card canvas-card">
+                <div class="canvas-header">
+                    <h3>System Head vs. Pump Characteristic Curve</h3>
+                    <div class="canvas-actions">
+                        <button id="btnExportData" class="btn-secondary">Export Summary JSON</button>
+                        <button id="btnResetDefaults" class="btn-secondary">Reset Defaults</button>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="systemCurveCanvas" width="800" height="380"></canvas>
+                </div>
+                <p class="canvas-caption">The operating point is determined by the intersection of the quadratic system resistance curve and the centrifugal pump head curve.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraVortex Fluid Dynamics &bull; Client-side Engineering Workbench &bull; No External Dependencies</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
