@@ -1,0 +1,156 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVibe: Acoustic Room Response & Speaker Placement Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>AuraVibe <span class="badge">Acoustics Lab</span></h1>
+      <p>Precision room response simulator, speaker placement calculator & acoustic interference analyzer.</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-save-preset" class="btn btn-primary" title="Save current room setup to local storage">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        Save Preset
+      </button>
+      <button id="btn-reset" class="btn btn-secondary" title="Reset to default room dimensions">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Sidebar Controls -->
+    <aside class="control-panel">
+      <section class="panel-section">
+        <h2>Room Dimensions</h2>
+        <div class="input-group">
+          <label for="room-length">Room Length (ft)</label>
+          <input type="number" id="room-length" value="18.0" min="6" max="50" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="room-width">Room Width (ft)</label>
+          <input type="number" id="room-width" value="14.0" min="6" max="40" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="room-height">Ceiling Height (ft)</label>
+          <input type="number" id="room-height" value="8.5" min="6" max="20" step="0.25">
+        </div>
+        <div class="input-group">
+          <label for="unit-system">Measurement Unit</label>
+          <select id="unit-system">
+            <option value="ft" selected>Feet (ft)</option>
+            <option value="m">Meters (m)</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Boundary Construction</h2>
+        <div class="input-group">
+          <label for="wall-type">Primary Wall Material</label>
+          <select id="wall-type">
+            <option value="drywall" selected>Standard Drywall on Studs (Absorption ~0.10)</option>
+            <option value="concrete">Concrete / Masonry (Reflection ~0.95)</option>
+            <option value="brick">Exposed Brick (Absorption ~0.15)</option>
+            <option value="glass">Large Glass Windows (Low-freq loss)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="floor-type">Floor Surface</label>
+          <select id="floor-type">
+            <option value="carpet" selected>Heavy Carpet with Pad</option>
+            <option value="hardwood">Hardwood / Tile / Laminate</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Speaker & Listening Position</h2>
+        <div class="input-group">
+          <label for="speaker-toe">Speaker Toe-in Angle (Degrees)</label>
+          <input type="range" id="speaker-toe" value="20" min="0" max="45" step="1">
+          <span class="range-val" id="val-toe">20°</span>
+        </div>
+        <div class="input-group">
+          <label for="listener-dist">Listening Distance Scale (%)</label>
+          <input type="range" id="listener-dist" value="80" min="50" max="95" step="1">
+          <span class="range-val" id="val-dist">80% from front wall</span>
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="chk-rule-thirds" checked>
+            Apply 38% Rule Placement Guide
+          </label>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Saved Presets</h2>
+        <div id="preset-list" class="preset-list">
+          <p class="placeholder-text">No saved presets yet.</p>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Main Visualizer & Metrics -->
+    <section class="workspace">
+      <div class="card canvas-card">
+        <div class="card-header">
+          <h3>Interactive Room Map (Top-Down View)</h3>
+          <div class="canvas-legend">
+            <span class="legend-item"><span class="dot speaker-dot"></span> Speakers</span>
+            <span class="legend-item"><span class="dot listener-dot"></span> Listener</span>
+            <span class="legend-item"><span class="dot node-dot"></span> SBIR Nodes</span>
+          </div>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="roomCanvas" width="700" height="500"></canvas>
+        </div>
+        <p class="canvas-tip">Tip: The green triangle represents the optimal equilateral stereo sweet spot. Red dashed lines indicate boundary interference zones.</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h4>Axial Room Modes (F1)</h4>
+          <div class="metric-value" id="res-mode-l">--</div>
+          <p class="metric-desc">Length-wise fundamental resonance frequency.</p>
+        </div>
+        <div class="metric-card">
+          <h4>SBIR Cancellation Dip</h4>
+          <div class="metric-value" id="res-sbir">--</div>
+          <p class="metric-desc">Estimated front-wall cancellation notch.</p>
+        </div>
+        <div class="metric-card">
+          <h4>Equilateral Base Width</h4>
+          <div class="metric-value" id="res-base">--</div>
+          <p class="metric-desc">Recommended distance between L & R speakers.</p>
+        </div>
+        <div class="metric-card">
+          <h4>RT60 Reverberation Est.</h4>
+          <div class="metric-value" id="res-rt60">--</div>
+          <p class="metric-desc">Estimated mid-frequency decay time.</p>
+        </div>
+      </div>
+
+      <div class="card report-card">
+        <h3>Acoustic Analysis & Placement Recommendations</h3>
+        <div id="report-content" class="report-content">
+          <p>Adjust room dimensions and material properties to generate custom acoustic treatment guidelines and speaker positioning tips.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraVibe Acoustic Lab &bull; Client-side architectural math & canvas rendering. No external audio or data collection.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
