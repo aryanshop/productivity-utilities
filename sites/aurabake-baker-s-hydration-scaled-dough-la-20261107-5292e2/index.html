@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBake: Baker's Hydration & Scaled Dough Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-badge">🍞</div>
+                <div>
+                    <h1>AuraBake</h1>
+                    <p>Baker's Percentage & Dough Formulation Laboratory</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-presets" class="btn secondary">Recipe Presets</button>
+                <button id="btn-save" class="btn primary">Save Recipe</button>
+                <button id="btn-export" class="btn secondary">Export MD</button>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Controls & Formula Inputs -->
+            <section class="panel input-panel">
+                <h2>Formula Configuration</h2>
+                
+                <div class="control-group">
+                    <label for="recipe-name">Recipe Title</label>
+                    <input type="text" id="recipe-name" value="Artisan Country Sourdough" />
+                </div>
+
+                <div class="control-row">
+                    <div class="control-group">
+                        <label for="total-flour">Total Flour Base (g)</label>
+                        <input type="number" id="total-flour" value="1000" min="50" max="10000" step="50" />
+                    </div>
+                    <div class="control-group">
+                        <label for="unit-mode">Unit Display</label>
+                        <select id="unit-mode">
+                            <option value="g">Grams (g)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="oz">Ounces (oz)</option>
+                            <option value="lb">Pounds (lb)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                
+                <div class="subheader-row">
+                    <h3>Ingredients & Baker's %</h3>
+                    <button id="btn-add-ingredient" class="btn small">+ Add Ingredient</button>
+                </div>
+
+                <div id="ingredients-list" class="ingredients-list">
+                    <!-- Dynamically populated via script -->
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3>Desired Dough Temp (DDT) Calculator</h3>
+                <div class="ddt-grid">
+                    <div class="control-group">
+                        <label for="target-dt">Target Dough Temp (°C)</label>
+                        <input type="number" id="target-dt" value="24" step="0.5" />
+                    </div>
+                    <div class="control-group">
+                        <label for="room-t">Room Temp (°C)</label>
+                        <input type="number" id="room-t" value="21" step="0.5" />
+                    </div>
+                    <div class="control-group">
+                        <label for="flour-t">Flour Temp (°C)</label>
+                        <input type="number" id="flour-t" value="20" step="0.5" />
+                    </div>
+                    <div class="control-group">
+                        <label for="friction-factor">Friction Factor (°C)</label>
+                        <input type="number" id="friction-factor" value="3" step="0.5" />
+                    </div>
+                </div>
+                <div id="water-temp-result" class="calc-badge">
+                    Calculated Water Temperature: <strong id="computed-water-temp">--</strong>
+                </div>
+            </section>
+
+            <!-- Right Column: Outputs, Summary & Visualizer -->
+            <div class="right-column">
+                <section class="panel summary-panel">
+                    <h2>Batch Summary</h2>
+                    <div class="summary-kpi-grid">
+                        <div class="kpi-card">
+                            <span class="kpi-label">Total Dough Weight</span>
+                            <span class="kpi-value" id="kpi-total-weight">0 g</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Total Hydration</span>
+                            <span class="kpi-value" id="kpi-hydration">0%</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Total Inclusions</span>
+                            <span class="kpi-value" id="kpi-inclusions">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="dough-canvas" width="500" height="120"></canvas>
+                    </div>
+                </section>
+
+                <section class="panel schedule-panel">
+                    <h2>Estimated Timeline & Phases</h2>
+                    <div class="timeline-list" id="timeline-list">
+                        <!-- Populated by script -->
+                    </div>
+                </section>
+
+                <section class="panel saved-panel">
+                    <div class="subheader-row">
+                        <h2>Saved Vault Recipes</h2>
+                        <button id="btn-clear-vault" class="btn small danger">Clear All</button>
+                    </div>
+                    <div id="vault-list" class="vault-list">
+                        <p class="empty-text">No saved recipes yet. Click 'Save Recipe' to store in local vault.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Presets Modal -->
+        <div id="preset-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Select Classic Bread Preset</h3>
+                    <button id="btn-close-modal" class="btn-close">&times;</button>
+                </div>
+                <div class="preset-grid" id="preset-grid">
+                    <!-- Populated by script -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>AuraBake Laboratory &bull; Client-side artisan baking precision tool with zero network requests.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
