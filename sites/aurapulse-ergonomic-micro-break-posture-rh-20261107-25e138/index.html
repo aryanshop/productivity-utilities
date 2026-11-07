@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse: Ergonomic Micro-Break & Posture Rhythm Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">⚡</div>
+                <h1>AuraPulse</h1>
+                <span class="version">v2.4</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="timer-view">
+                    <span class="icon">⏱️</span> Focus & Rhythm
+                </button>
+                <button class="nav-btn" data-tab="stretches-view">
+                    <span class="icon">🧘</span> Somatic Stretches
+                </button>
+                <button class="nav-btn" data-tab="analytics-view">
+                    <span class="icon">📊</span> Movement Log
+                </button>
+                <button class="nav-btn" data-tab="settings-view">
+                    <span class="icon">⚙️</span> Rhythms & Audio
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="streak-badge">
+                    <span class="streak-icon">🔥</span>
+                    <div>
+                        <strong id="sidebar-streak">0 Days</strong>
+                        <small>Movement Streak</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="current-mode-indicator">
+                    <span id="mode-badge" class="badge work">Deep Work Session</span>
+                    <h2 id="mode-title">Concentration & Flow</h2>
+                </div>
+                <div class="header-actions">
+                    <button id="quick-mute-btn" class="icon-btn" title="Toggle Chime Audio">🔔</button>
+                    <button id="quick-reset-btn" class="secondary-btn">Reset Timer</button>
+                </div>
+            </header>
+
+            <!-- VIEW 1: TIMER & RHYTHM -->
+            <section id="timer-view" class="view-section active">
+                <div class="timer-grid">
+                    <div class="timer-card">
+                        <div class="timer-display-container">
+                            <svg class="progress-ring" width="280" height="280">
+                                <circle class="progress-ring__bg" cx="140" cy="140" r="120" />
+                                <circle id="progress-ring-circle" class="progress-ring__bar" cx="140" cy="140" r="120" />
+                            </svg>
+                            <div class="timer-time-box">
+                                <span id="timer-countdown">25:00</span>
+                                <span id="timer-label" class="sub-label">Work Interval</span>
+                            </div>
+                        </div>
+
+                        <div class="timer-controls">
+                            <button id="timer-start-btn" class="primary-btn lg">Start Session</button>
+                            <button id="timer-skip-btn" class="secondary-btn lg">Skip to Break</button>
+                        </div>
+
+                        <div class="rhythm-presets">
+                            <button class="preset-btn active" data-work="25" data-break="5">Pomodoro (25/5)</button>
+                            <button class="preset-btn" data-work="50" data-break="10">Ultradian (50/10)</button>
+                            <button class="preset-btn" data-work="20" data-break="4">Quick Reset (20/4)</button>
+                        </div>
+                    </div>
+
+                    <div class="active-guidance-card">
+                        <h3>Current Protocol Focus</h3>
+                        <div id="protocol-instruction" class="instruction-box">
+                            <p>Maintain neutral spine alignment, shoulders relaxed away from ears. Every 20 minutes, gaze 20 feet away for 20 seconds.</p>
+                        </div>
+
+                        <div class="checklist-box">
+                            <h4>Posture Check</h4>
+                            <label class="check-item">
+                                <input type="checkbox" id="check-feet"> Feet flat on floor or footrest
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" id="check-wrists"> Wrists neutral, elbows at 90°
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" id="check-screen"> Monitor top edge at eye level
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: SOMATIC STRETCHES -->
+            <section id="stretches-view" class="view-section">
+                <div class="section-header">
+                    <h2>Micro-Break Somatic Library</h2>
+                    <p>Select a guided somatic movement or eye relief drill for your upcoming break.</p>
+                </div>
+
+                <div class="filter-chips">
+                    <button class="chip active" data-filter="all">All Exercises</button>
+                    <button class="chip" data-filter="neck">Neck & Shoulders</button>
+                    <button class="chip" data-filter="wrists">Wrists & Hands</button>
+                    <button class="chip" data-filter="eyes">Eye Strain Relief</button>
+                    <button class="chip" data-filter="spine">Spine & Posture</button>
+                </div>
+
+                <div class="exercise-grid" id="exercise-grid">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </section>
+
+            <!-- VIEW 3: MOVEMENT LOG & ANALYTICS -->
+            <section id="analytics-view" class="view-section">
+                <div class="section-header">
+                    <h2>Movement & Rhythm Analytics</h2>
+                    <p>Review your daily consistency, completed focus sessions, and micro-break adherence.</p>
+                </div>
+
+                <div class="stats-overview-grid">
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-total-sessions">0</span>
+                        <span class="stat-label">Completed Focus Blocks</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-total-minutes">0</span>
+                        <span class="stat-label">Total Focus Minutes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-streak-days">0</span>
+                        <span class="stat-label">Current Streak (Days)</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-breaks-taken">0</span>
+                        <span class="stat-label">Stretches Completed</span>
+                    </div>
+                </div>
+
+                <div class="history-card">
+                    <div class="history-header">
+                        <h3>Recent Session Logs</h3>
+                        <button id="clear-logs-btn" class="danger-btn sm">Clear History</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Type</th>
+                                    <th>Duration</th>
+                                    <th>Notes / Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-table-body">
+                                <tr>
+                                    <td colspan="4" class="empty-row">No sessions recorded yet today. Start your first focus timer!</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 4: SETTINGS & AUDIO -->
+            <section id="settings-view" class="view-section">
+                <div class="section-header">
+                    <h2>Rhythm Customization & Audio</h2>
+                    <p>Fine-tune work durations, break lengths, and Web Audio API chime parameters.</p>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <h3>Timer Durations (Minutes)</h3>
+                        <div class="input-group">
+                            <label for="setting-work-duration">Work Interval Duration</label>
+                            <input type="number" id="setting-work-duration" min="1" max="120" value="25">
+                        </div>
+                        <div class="input-group">
+                            <label for="setting-break-duration">Break Interval Duration</label>
+                            <input type="number" id="setting-break-duration" min="1" max="60" value="5">
+                        </div>
+                        <button id="save-durations-btn" class="primary-btn">Save Durations</button>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>Web Audio Chime Settings</h3>
+                        <div class="input-group">
+                            <label for="setting-chime-freq">Chime Pitch (Hz)</label>
+                            <input type="range" id="setting-chime-freq" min="200" max="880" value="440">
+                            <span id="freq-val">440 Hz</span>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" id="setting-sound-enabled" checked> Enable Audio Chime on Timer Completion
+                            </label>
+                        </div>
+                        <button id="test-chime-btn" class="secondary-btn">Test Chime Sound</button>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>Data Management</h3>
+                        <p class="desc">All session logs and streak data are stored locally in your browser using localStorage.</p>
+                        <div class="button-group">
+                            <button id="export-json-btn" class="secondary-btn">Export Data (JSON)</button>
+                            <button id="import-json-btn" class="secondary-btn">Import Data</button>
+                            <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Interactive Break Modal -->
+    <div id="break-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">🌿</div>
+            <h2 id="modal-title">Time for a Micro-Break!</h2>
+            <p id="modal-desc">You've completed your focus session. Step away, stretch, and reset your posture.</p>
+            
+            <div id="modal-exercise-spotlight" class="spotlight-box">
+                <!-- Loaded via JS -->
+            </div>
+
+            <div class="modal-actions">
+                <button id="modal-complete-break" class="primary-btn">Complete & Resume Work</button>
+                <button id="modal-snooze-break" class="secondary-btn">Snooze (+2 mins)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
