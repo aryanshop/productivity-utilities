@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVelo: Bicycle Gear Ratio & Drivetrain Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none">
+                    <circle cx="5" cy="17" r="3"></circle>
+                    <circle cx="19" cy="17" r="3"></circle>
+                    <polyline points="9 17 11 12 15 12 17 17"></polyline>
+                    <line x1="12" y1="12" x2="12" y2="7"></line>
+                    <path d="M9 7h6"></path>
+                </svg>
+                <h1>AuraVelo</h1>
+            </div>
+            <p class="tagline">Precision Drivetrain, Speed & Gear Ratio Laboratory</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="control-panel">
+            <div class="panel-section">
+                <h2>Drivetrain Setup</h2>
+                <div class="input-group">
+                    <label for="bike-type">Riding Discipline</label>
+                    <select id="bike-type">
+                        <option value="road">Road / Endurance (700c)</option>
+                        <option value="gravel">Gravel / Adventure (700c)</option>
+                        <option value="mtb">Mountain / Trail (29")</option>
+                        <option value="commuter">City / Commuter (700c)</option>
+                        <option value="custom">Custom Setup</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="chainrings">Chainring Teeth (comma separated)</label>
+                    <input type="text" id="chainrings" value="50, 34" placeholder="e.g. 50, 34 or 38">
+                    <span class="hint">Front crankset teeth counts</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="cassette">Cassette Cog Teeth (comma separated)</label>
+                    <input type="text" id="cassette" value="11, 12, 13, 15, 17, 19, 21, 24, 28, 32, 34" placeholder="e.g. 11, 13, 15...">
+                    <span class="hint">Rear sprocket teeth counts (small to large)</span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2>Wheel & Pedaling Specs</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="wheel-size">Wheel ISO / Tire</label>
+                        <select id="wheel-size">
+                            <option value="2136">700 x 25c (2136 mm)</option>
+                            <option value="2170">700 x 28c (2170 mm)</option>
+                            <option value="2224">700 x 38c (2224 mm)</option>
+                            <option value="2288">29 x 2.1" MTB (2288 mm)</option>
+                            <option value="2070">27.5 x 2.1" (2070 mm)</option>
+                            <option value="2099">26 x 1.95" (2099 mm)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="wheel-circ">Circumference (mm)</label>
+                        <input type="number" id="wheel-circ" value="2170" min="1000" max="3000">
+                    </div>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="cadence">Cadence (RPM)</label>
+                        <input type="number" id="cadence" value="90" min="40" max="150">
+                    </div>
+                    <div class="input-group">
+                        <label for="speed-unit">Speed Unit</label>
+                        <select id="speed-unit">
+                            <option value="kmh">km/h</option>
+                            <option value="mph">mph</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="btn-recalculate" class="btn primary">Update Calculations</button>
+                <button id="btn-reset" class="btn secondary">Reset Defaults</button>
+            </div>
+        </section>
+
+        <section class="results-dashboard">
+            <div class="summary-cards">
+                <div class="card">
+                    <span class="card-label">Total Ratios</span>
+                    <span class="card-value" id="stat-total-combos">0</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Gear Range</span>
+                    <span class="card-value" id="stat-gear-range">0%</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Lowest Speed (Min Cadence)</span>
+                    <span class="card-value" id="stat-min-speed">0.0</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Highest Speed (Max Cadence)</span>
+                    <span class="card-value" id="stat-max-speed">0.0</span>
+                </div>
+            </div>
+
+            <div class="visualization-card">
+                <div class="card-header">
+                    <h3>Gear Inches & Development Visualizer</h3>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot ring-1"></span> Ring 1</span>
+                        <span class="legend-item"><span class="dot ring-2"></span> Ring 2</span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="gearCanvas"></canvas>
+                </div>
+                <p class="chart-caption">Comparison of Gear Inches across all cassette cogs per chainring.</p>
+            </div>
+
+            <div class="table-card">
+                <h3>Comprehensive Gear Matrix</h3>
+                <div class="table-responsive">
+                    <table id="gear-matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Chainring</th>
+                                <th>Cog</th>
+                                <th>Ratio</th>
+                                <th>Gear Inches</th>
+                                <th>Development (m)</th>
+                                <th id="speed-header">Speed (km/h)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gear-table-body">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer-bar">
+        <p>AuraVelo Drivetrain Lab &bull; Client-side engineering calculator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
