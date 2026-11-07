@@ -1,0 +1,442 @@
+:root {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #cbd5e1;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --accent-q1: #ef4444;
+    --accent-q2: #3b82f6;
+    --accent-q3: #f59e0b;
+    --accent-q4: #64748b;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px;
+}
+
+.app-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: var(--card-bg);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.brand h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.brand h1 span {
+    color: var(--primary);
+}
+
+.tagline {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn.secondary {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn.secondary:hover {
+    background-color: #e2e8f0;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* Timer Card */
+.timer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.timer-modes {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    background: #f1f5f9;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.mode-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.timer-display-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.progress-ring {
+    position: absolute;
+    transform: rotate(-90deg);
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.35s;
+    stroke-dasharray: 628;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+}
+
+.time-text {
+    font-size: 2.75rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.active-task-display {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.active-task-display strong {
+    color: var(--text-primary);
+}
+
+/* Habits Card */
+.inline-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.inline-form input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: inherit;
+}
+
+.habits-list-container {
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.item-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-info input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.item-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.item-title.completed {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.streak-badge {
+    font-size: 0.75rem;
+    background: #e0e7ff;
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.delete-btn:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+/* Matrix Section */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.matrix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.task-input-form {
+    display: flex;
+    gap: 8px;
+}
+
+.task-input-form input,
+.task-input-form select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: inherit;
+}
+
+.task-input-form input {
+    width: 240px;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.quadrant {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+}
+
+.quadrant-header {
+    padding: 12px 16px;
+    border-top-left-radius: calc(var(--radius) - 1px);
+    border-top-right-radius: calc(var(--radius) - 1px);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.quadrant-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.quadrant-header span {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.q1-head { background-color: var(--accent-q1); }
+.q2-head { background-color: var(--accent-q2); }
+.q3-head { background-color: var(--accent-q3); }
+.q4-head { background-color: var(--accent-q4); }
+
+.quadrant-tasks {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.matrix-task {
+    background: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.matrix-task-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.matrix-task-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.matrix-task-title.done {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.matrix-task-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.focus-btn {
+    background: #e0e7ff;
+    color: var(--primary);
+    border: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.focus-btn:hover {
+    background: #c7d2fe;
+}
+
+.app-footer {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .matrix-grid {
+        grid-template-columns: 1fr;
+    }
+    .task-input-form {
+        flex-direction: column;
+        width: 100%;
+    }
+    .task-input-form input {
+        width: 100%;
+    }
+    .app-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    .header-actions {
+        justify-content: flex-end;
+    }
+}
