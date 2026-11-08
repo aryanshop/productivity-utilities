@@ -1,0 +1,454 @@
+:root {
+    --bg-color: #0f172a;
+    --panel-bg: #1e293b;
+    --panel-border: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-green: #10b981;
+    --accent-hover: #059669;
+    --accent-blue: #38bdf8;
+    --accent-glow: rgba(16, 185, 129, 0.2);
+    --card-bg: #0f172a;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 20px;
+}
+
+.app-header {
+    max-width: 1200px;
+    margin: 0 auto 24px auto;
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+}
+
+.app-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #10b981, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.workbench-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 8px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+input[type="number"], select {
+    background-color: var(--bg-color);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-green);
+}
+
+.input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.input-row input {
+    flex: 2;
+}
+
+.input-row select {
+    flex: 1;
+}
+
+.help-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.range-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-green);
+}
+
+#strength-val {
+    font-weight: 600;
+    min-width: 45px;
+    text-align: right;
+}
+
+.action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+button {
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.primary-btn {
+    flex: 2;
+    background-color: var(--accent-green);
+    color: #ffffff;
+    border: none;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.secondary-btn {
+    flex: 1;
+    background-color: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+}
+
+.secondary-btn:hover {
+    background-color: var(--panel-border);
+}
+
+.results-section {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 12px;
+}
+
+.results-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.badge {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.metric-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.metric-unit {
+    font-size: 0.75rem;
+    color: var(--accent-blue);
+}
+
+.analysis-split {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+}
+
+@media(max-width: 850px) {
+    .analysis-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dosage-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dosage-box h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.dosage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dosage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--panel-bg);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+}
+
+.dosage-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dosage-amount {
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
+.mixing-tips {
+    margin-top: 8px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.mixing-tips h4 {
+    font-size: 0.8rem;
+    color: var(--warning);
+    margin-bottom: 4px;
+}
+
+.mixing-tips p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.canvas-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.canvas-box h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    align-self: flex-start;
+}
+
+canvas {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+}
+
+.presets-section {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.presets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.presets-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.small-btn {
+    background-color: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+.small-btn:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.presets-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.empty-msg {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-style: italic;
+    text-align: center;
+    padding: 16px;
+}
+
+.preset-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    border: 1px solid var(--panel-border);
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.preset-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.preset-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.preset-delete {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+}
+
+.app-footer {
+    max-width: 1200px;
+    margin: 24px auto 0 auto;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraYield: Hydroponic Nutrient PPM & EC Mixing Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">🌱</span>
+                <h1>AuraYield</h1>
+            </div>
+            <p class="tagline">Precision Hydroponic Nutrient EC/PPM & Reservoir Mixing Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panels Grid -->
+        <div class="workbench-grid">
+            
+            <!-- Panel 1: Reservoir & Source Water -->
+            <section class="panel">
+                <h2>💧 Reservoir & Source Water</h2>
+                <div class="form-group">
+                    <label for="reservoir-vol">Reservoir Volume</label>
+                    <div class="input-row">
+                        <input type="number" id="reservoir-vol" value="50" min="1" max="1000" step="1">
+                        <select id="vol-unit">
+                            <option value="gal">Gallons (US)</option>
+                            <option value="L">Liters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="source-ec">Source Water EC (mS/cm)</label>
+                    <input type="number" id="source-ec" value="0.2" min="0" max="3.0" step="0.05">
+                    <small class="help-text">Tap or RO baseline conductivity</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="ppm-scale">PPM Conversion Scale</label>
+                    <select id="ppm-scale">
+                        <option value="500">EC × 500 (US / 0.5)</option>
+                        <option value="700">EC × 700 (Brisbane / 0.7)</option>
+                        <option value="640">EC × 640 (European / 0.64)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Panel 2: Target Crop & Profile -->
+            <section class="panel">
+                <h2>🌿 Crop & Growth Target</h2>
+                <div class="form-group">
+                    <label for="crop-select">Crop / Plant Type</label>
+                    <select id="crop-select">
+                        <option value="lettuce">Leafy Greens & Lettuce (Low)</option>
+                        <option value="tomatoes">Fruiting Tomatoes / Peppers (Med-High)</option>
+                        <option value="cannabis">Cannabis / Heavy Bloom (High)</option>
+                        <option value="herbs">Culinary Herbs & Basil (Med)</option>
+                        <option value="strawberries">Strawberries & Berries (Med)</option>
+                        <option value="custom">Custom Target EC</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="growth-stage">Growth Stage</label>
+                    <select id="growth-stage">
+                        <option value="seedling">Seedling / Clone (0.4 - 0.8 EC)</option>
+                        <option value="veg">Early Vegetative (0.8 - 1.4 EC)</option>
+                        <option value="lush-veg">Lush Vegetative (1.4 - 1.8 EC)</option>
+                        <option value="bloom">Early Bloom / Transition (1.6 - 2.2 EC)</option>
+                        <option value="heavy-bloom">Heavy Bloom / Ripening (2.0 - 2.6 EC)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="custom-ec-group" style="display: none;">
+                    <label for="target-ec-input">Target EC (mS/cm)</label>
+                    <input type="number" id="target-ec-input" value="1.8" min="0.2" max="4.0" step="0.1">
+                </div>
+            </section>
+
+            <!-- Panel 3: Nutrient Line Selection -->
+            <section class="panel">
+                <h2>🧪 Nutrient Formulation Line</h2>
+                <div class="form-group">
+                    <label for="nutrient-line">Nutrient Recipe System</label>
+                    <select id="nutrient-line">
+                        <option value="general-hydroponics">General Hydroponics FloraSeries (3-Part)</option>
+                        <option value="advanced-nutrients">Advanced Nutrients Sensi (2-Part)</option>
+                        <option value="masterblend">Masterblend 4-18-38 (Tomato Formula)</option>
+                        <option value="canna-aqua">Canna Aqua Vega/Flores</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Concentration Strength Multiplier</label>
+                    <div class="range-wrap">
+                        <input type="range" id="strength-slider" min="0.2" max="1.5" step="0.05" value="1.0">
+                        <span id="strength-val">100%</span>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="calc-btn" class="primary-btn">Calculate Doses</button>
+                    <button id="save-preset-btn" class="secondary-btn">Save Recipe</button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Results Dashboard -->
+        <section class="results-section" id="results-area">
+            <div class="results-header">
+                <h2>📊 Mixing & Solution Analysis</h2>
+                <div class="badge-group">
+                    <span class="badge" id="status-badge">Optimal EC</span>
+                </div>
+            </div>
+
+            <!-- KPI Metric Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Target EC</span>
+                    <span class="metric-value" id="res-target-ec">1.80</span>
+                    <span class="metric-unit">mS/cm</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Calculated EC</span>
+                    <span class="metric-value" id="res-calc-ec">1.82</span>
+                    <span class="metric-unit">mS/cm</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total PPM</span>
+                    <span class="metric-value" id="res-ppm">910</span>
+                    <span class="metric-unit" id="res-ppm-label">PPM (500 scale)</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Est. pH Shift</span>
+                    <span class="metric-value" id="res-ph">-0.6</span>
+                    <span class="metric-unit">units (Acidic)</span>
+                </div>
+            </div>
+
+            <!-- Detailed Dosage Breakdown & Canvas -->
+            <div class="analysis-split">
+                <div class="dosage-box">
+                    <h3>Required Bottle Additions</h3>
+                    <div id="dosage-list" class="dosage-list">
+                        <!-- Injected via JS -->
+                    </div>
+                    <div class="mixing-tips">
+                        <h4>⚠️ Mixing Protocol Warning:</h4>
+                        <p id="mixing-protocol-text">Always add Micro to water first, mix thoroughly, then add Grow, and finally Bloom to prevent nutrient lockout and precipitation.</p>
+                    </div>
+                </div>
+
+                <div class="canvas-box">
+                    <h3>Nutrient Ratio Balance</h3>
+                    <canvas id="ratio-canvas" width="340" height="220"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Saved Presets Section -->
+        <section class="presets-section">
+            <div class="presets-header">
+                <h3>Saved Custom Recipes & Logs</h3>
+                <button id="clear-presets-btn" class="small-btn">Clear All</button>
+            </div>
+            <div id="presets-container" class="presets-container">
+                <p class="empty-msg">No saved recipes yet. Calculate a mix and click 'Save Recipe' to store it locally.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraYield Hydroponic Laboratory &bull; Client-Side Precision Growing Utility</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
