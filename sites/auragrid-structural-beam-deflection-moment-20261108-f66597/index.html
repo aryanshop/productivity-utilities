@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrid: Structural Beam Deflection & Moment Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="2">
+                    <path d="M2 12h20M2 6h20M2 18h20M6 2v20M18 2v20"/>
+                </svg>
+                <h1>AuraGrid</h1>
+            </div>
+            <p class="tagline">Structural Beam Deflection, Bending Stress & Moment Laboratory</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Control & Configuration Sidebar -->
+        <aside class="control-panel">
+            <section class="panel-section">
+                <h2>Beam Geometry & Support</h2>
+                <div class="input-group">
+                    <label for="supportType">Support Condition</label>
+                    <select id="supportType">
+                        <option value="simply-supported">Simply Supported</option>
+                        <option value="cantilever">Cantilever (Fixed-Free)</option>
+                        <option value="fixed-fixed">Fixed - Fixed</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="beamSpan">Span Length (<span class="unit-label">m</span>)</label>
+                    <input type="number" id="beamSpan" value="4.0" min="0.5" max="50" step="0.1">
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h2>Cross-Section Profile</h2>
+                <div class="input-group">
+                    <label for="profileType">Profile Geometry</label>
+                    <select id="profileType">
+                        <option value="rectangular">Rectangular Solid</option>
+                        <option value="i-beam">I-Beam (Flange / Web)</option>
+                        <option value="hollow-tube">Hollow Rectangular Tube</option>
+                        <option value="circular">Solid Circular</option>
+                    </select>
+                </div>
+                <div id="profileDimensionsContainer">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h2>Material Properties</h2>
+                <div class="input-group">
+                    <label for="materialSelect">Preset Material</label>
+                    <select id="materialSelect">
+                        <option value="structural-steel">Structural Steel (A36)</option>
+                        <option value="aluminum">Aluminum (6061-T6)</option>
+                        <option value="douglas-fir">Douglas Fir Timber</option>
+                        <option value="concrete">Reinforced Concrete</option>
+                        <option value="custom">Custom Modulus</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="elasticModulus">Elastic Modulus (E) [GPa]</label>
+                    <input type="number" id="elasticModulus" value="200" min="1" max="500" step="1">
+                </div>
+                <div class="input-group">
+                    <label for="allowableStress">Allowable Yield Stress [MPa]</label>
+                    <input type="number" id="allowableStress" value="250" min="5" max="2000" step="5">
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h2>Applied Loads</h2>
+                <div class="input-group">
+                    <label for="loadType">Load Type</label>
+                    <select id="loadType">
+                        <option value="udl">Uniform Distributed Load (q)</option>
+                        <option value="point-center">Center Point Load (P)</option>
+                        <option value="point-arbitrary">Arbitrary Point Load (P)</option>
+                    </select>
+                </div>
+                <div class="input-group" id="loadMagnitudeGroup">
+                    <label for="loadMagnitude">Load Intensity (<span id="loadUnitLabel">kN/m</span>)</label>
+                    <input type="number" id="loadMagnitude" value="12.5" min="0.1" max="1000" step="0.5">
+                </div>
+                <div class="input-group" id="loadPositionGroup" style="display: none;">
+                    <label for="loadPosition">Load Position from Left (<span class="unit-label">m</span>)</label>
+                    <input type="number" id="loadPosition" value="2.0" min="0.1" max="40" step="0.1">
+                </div>
+            </section>
+
+            <div class="action-buttons">
+                <button id="btnCalculate" class="btn primary">Compute Analysis</button>
+                <button id="btnSavePreset" class="btn secondary">Save Preset</button>
+            </div>
+        </aside>
+
+        <!-- Visualization & Results Workspace -->
+        <section class="workspace">
+            <!-- Summary Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-title">Max Deflection (δ_max)</span>
+                    <span class="metric-value" id="resDeflection">0.00 mm</span>
+                    <span class="metric-sub" id="resDeflectionRatio">Span / 0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Max Bending Stress (σ_max)</span>
+                    <span class="metric-value" id="resStress">0.00 MPa</span>
+                    <span class="metric-sub" id="resSafetyFactor">FS: 0.0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Max Bending Moment (M_max)</span>
+                    <span class="metric-value" id="resMoment">0.00 kN·m</span>
+                    <span class="metric-sub">At critical section</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Moment of Inertia (I)</span>
+                    <span class="metric-value" id="resInertia">0.00 cm^4</span>
+                    <span class="metric-sub" id="resArea">Area: 0 cm^2</span>
+                </div>
+            </div>
+
+            <!-- Interactive Canvas Visualizer -->
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <h3>Beam Deflection & Diagram Visualizer</h3>
+                    <div class="canvas-tabs">
+                        <button class="tab-btn active" data-view="deflection">Deformation</button>
+                        <button class="tab-btn" data-view="moment">Bending Moment (M)</button>
+                        <button class="tab-btn" data-view="shear">Shear Force (V)</button>
+                    </div>
+                </div>
+                <canvas id="beamCanvas" width="800" height="360"></canvas>
+                <div class="canvas-legend">
+                    <span class="legend-item"><span class="dot neutral"></span> Undeformed Axis</span>
+                    <span class="legend-item"><span class="dot active"></span> Deflected Profile (Exaggerated)</span>
+                </div>
+            </div>
+
+            <!-- Saved Presets Bar -->
+            <div class="presets-section">
+                <h3>Saved Session Presets</h3>
+                <div id="presetsContainer" class="presets-list">
+                    <p class="empty-presets">No saved presets yet. Configure a beam and click 'Save Preset'.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraGrid Structural Laboratory &bull; Client-side engineering calculator. Verify all calculations with licensed structural engineers before construction.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
