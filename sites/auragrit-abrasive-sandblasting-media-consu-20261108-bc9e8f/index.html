@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrit: Abrasive Sandblasting & Media Consumption Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">⚡</span>
+                <h1>AuraGrit</h1>
+            </div>
+            <p class="tagline">Precision Industrial Sandblasting & Abrasive Media Efficiency Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Configuration Panel -->
+        <section class="panel config-panel">
+            <h2>Surface & Blasting Parameters</h2>
+            
+            <div class="form-group">
+                <label for="surfaceArea">Surface Area (sq. ft / m²)</label>
+                <div class="input-row">
+                    <input type="number" id="surfaceArea" value="120" min="1" max="10000" step="1">
+                    <select id="areaUnit">
+                        <option value="sqft">Sq. Feet</option>
+                        <option value="sqm">Sq. Meters</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="substrateType">Substrate Material</label>
+                <select id="substrateType">
+                    <option value="steel">Structural Steel (Carbon Steel)</option>
+                    <option value="aluminum">Aluminum & Alloys</option>
+                    <option value="hardwood">Hardwood / Timber</option>
+                    <option value="stone">Stone, Brick & Masonry</option>
+                    <option value="fiberglass">Fiberglass / Composites</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="coatingCondition">Coating & Rust Condition</label>
+                <select id="coatingCondition">
+                    <option value="light">Light Mill Scale / Surface Rust (Sa 1)</option>
+                    <option value="medium" selected>Moderate Paint / Heavy Rust (Sa 2.5)</option>
+                    <option value="heavy">Thick Epoxy, Multiple Coats, Deep Pitting (Sa 3)</option>
+                    <option value="sensitive">Light Oxidation / Gentle Deburring</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="mediaType">Blasting Media Selection</label>
+                <select id="mediaType">
+                    <option value="glassBead">Glass Bead (Fine/Medium - Honing & Soft Metals)</option>
+                    <option value="aluminumOxide" selected>Aluminum Oxide (Aggressive Cutting & Etching)</option>
+                    <option value="garnet">Garnet (High Efficiency, Low Dust)</option>
+                    <option value="walnutShell">Walnut Shell (Gentle Stripping / Wood / Auto Bodies)</option>
+                    <option value="steelShot">Steel Shot / Grit (Heavy Industrial & Descaling)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nozzleSize">Nozzle Orifice Size</label>
+                <select id="nozzleSize">
+                    <option value="nozzle2">#2 (1/8" - 3.2 mm)</option>
+                    <option value="nozzle3">#3 (3/16" - 4.8 mm)</option>
+                    <option value="nozzle4" selected>#4 (1/4" - 6.4 mm)</option>
+                    <option value="nozzle5">#5 (5/16" - 7.9 mm)</option>
+                    <option value="nozzle6">#6 (3/8" - 9.5 mm)</option>
+                    <option value="nozzle8">#8 (1/2" - 12.7 mm)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="operatingPsi">Target Operating Pressure (PSI / Bar)</label>
+                <div class="input-row">
+                    <input type="number" id="operatingPsi" value="90" min="40" max="150" step="5">
+                    <span class="unit-label">PSI</span>
+                </div>
+            </div>
+
+            <button id="calculateBtn" class="primary-btn">Compute Blast Efficiency Profile</button>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="panel results-panel">
+            <h2>Laboratory Analysis</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Abrasive Weight</span>
+                    <span class="metric-value" id="resAbrasiveWeight">--</span>
+                    <span class="metric-sub" id="resAbrasiveKg">--</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Required Compressor CFM</span>
+                    <span class="metric-value" id="resCfm">--</span>
+                    <span class="metric-sub">At target working pressure</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Blast Duration</span>
+                    <span class="metric-value" id="resTime">--</span>
+                    <span class="metric-sub">Continuous nozzle time</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Media Recycling Count</span>
+                    <span class="metric-value" id="resRecycle">--</span>
+                    <span class="metric-sub">Typical reuse cycles</span>
+                </div>
+            </div>
+
+            <div class="specs-breakdown">
+                <h3>Operational Specifications</h3>
+                <ul>
+                    <li><strong>Nozzle Velocity:</strong> <span id="resVelocity">--</span></li>
+                    <li><strong>Material Hardness Index:</strong> <span id="resHardness">--</span></li>
+                    <li><strong>Recommended Blast Helmet:</strong> <span id="resHelmet">Type CE Continuous Flow</span></li>
+                    <li><strong>Dust Suppression Factor:</strong> <span id="resDust">--</span></li>
+                </ul>
+            </div>
+
+            <div class="action-row">
+                <button id="saveLogBtn" class="secondary-btn">Save Session to Log</button>
+                <button id="resetBtn" class="text-btn">Reset Defaults</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Session Logs -->
+    <section class="log-container">
+        <div class="log-header">
+            <h3>Saved Lab Calculations</h3>
+            <button id="clearLogBtn" class="text-btn">Clear History</button>
+        </div>
+        <div id="logList" class="log-list">
+            <p class="empty-log">No saved runs yet. Configure parameters and click Save Session.</p>
+        </div>
+    </section>
+
+    <footer class="app-footer">
+        <p>AuraGrit Lab &copy; 2025 &bull; Client-Side Surface Preparation Calculator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
