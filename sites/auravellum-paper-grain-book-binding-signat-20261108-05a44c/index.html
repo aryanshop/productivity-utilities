@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVellum: Paper Grain & Book Binding Signature Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-content">
+      <div class="logo-area">
+        <span class="logo-icon">📖</span>
+        <h1>AuraVellum</h1>
+      </div>
+      <p class="tagline">Precision Bookbinding, Grain Orientation & Signature Imposition Lab</p>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <!-- Configuration Panel -->
+    <section class="card config-panel">
+      <h2>⚙️ Book & Paper Specifications</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="bookWidth">Finished Page Width (mm)</label>
+          <input type="number" id="bookWidth" value="148" min="50" max="500" step="1">
+        </div>
+
+        <div class="form-group">
+          <label for="bookHeight">Finished Page Height (mm)</label>
+          <input type="number" id="bookHeight" value="210" min="50" max="600" step="1">
+        </div>
+
+        <div class="form-group">
+          <label for="pageCount">Total Page Count</label>
+          <input type="number" id="pageCount" value="96" min="4" max="1000" step="4">
+          <small class="hint">Must be divisible by 4 for standard signatures.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bindingStyle">Binding Style</label>
+          <select id="bindingStyle">
+            <option value="case">Case Binding (Smyth Sewn Signatures)</option>
+            <option value="coptic">Coptic Stitch (Exposed Open Signatures)</option>
+            <option value="saddle">Saddle Stitch (Pamphlet)</option>
+            <option value="stab">Japanese Stab Binding (Single Sheets)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="paperStock">Paper Stock & Weight</label>
+          <select id="paperStock">
+            <option value="80">80 GSM Text (Standard Book Paper - 0.10mm)</option>
+            <option value="100">100 GSM Text (Heavy Smooth - 0.13mm)</option>
+            <option value="120" selected>120 GSM Offset (Archival Journal - 0.16mm)</option>
+            <option value="160">160 GSM Heavyweight (Sketchbook - 0.22mm)</option>
+            <option value="300">300 GSM Cover Stock (Heavy Card - 0.40mm)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="parentSheet">Parent Sheet Size</label>
+          <select id="parentSheet">
+            <option value="a3">A3 (420 × 297 mm)</option>
+            <option value="a4" selected>A4 (297 × 210 mm)</option>
+            <option value="letter">US Letter (216 × 279 mm / 8.5 × 11 in)</option>
+            <option value="tabloid">US Tabloid / Ledger (279 × 432 mm)</option>
+            <option value="custom_large">Large Press Sheet (700 × 1000 mm)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="grainPref">Desired Grain Direction</label>
+          <select id="grainPref">
+            <option value="parallel">Grain Parallel to Spine (Recommended)</option>
+            <option value="perpendicular">Grain Perpendicular to Spine (Risk of Buckling)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="pagesPerSig">Pages per Signature (Folio count)</label>
+          <select id="pagesPerSig">
+            <option value="16" selected>16 Pages (4 sheets folded)</option>
+            <option value="8">8 Pages (2 sheets folded)</option>
+            <option value="4">4 Pages (1 sheet folded / 1 bifolio)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="calcBtn" class="btn primary">🔍 Compute Binding Blueprint</button>
+        <button id="savePresetBtn" class="btn secondary">💾 Save Project Preset</button>
+      </div>
+    </section>
+
+    <!-- Results & Visualization Dashboard -->
+    <section class="dashboard-grid">
+      
+      <!-- Key Metrics Cards -->
+      <div class="card metrics-card">
+        <h3>📊 Structural Blueprint</h3>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Signatures Required</span>
+            <span id="resSignatures" class="metric-value">--</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Total Parent Sheets</span>
+            <span id="resSheets" class="metric-value">--</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Estimated Spine Bulk</span>
+            <span id="resSpineThickness" class="metric-value">--</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Grain Compliance</span>
+            <span id="resGrainStatus" class="metric-value">--</span>
+          </div>
+        </div>
+
+        <div id="grainWarningBox" class="warning-box hidden">
+          <strong>⚠️ Grain Warning:</strong> <span id="grainWarningText"></span>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Imposition Map -->
+      <div class="card canvas-card">
+        <div class="canvas-header">
+          <h3>🗘️ Signature Imposition & Folding Preview</h3>
+          <div class="canvas-controls">
+            <button id="prevSigBtn" class="btn-sm">◀ Prev Signature</button>
+            <span id="sigIndicator" class="sig-indicator">Signature 1 of 6</span>
+            <button id="nextSigBtn" class="btn-sm">Next Sig ▶</button>
+          </div>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="impositionCanvas" width="600" height="350"></canvas>
+        </div>
+        <p class="canvas-caption">Visualizing page layout on parent sheet with center grain direction indicators (Long/Short grain).</p>
+      </div>
+
+      <!-- Detailed Breakdown & Guidelines -->
+      <div class="card details-card">
+        <h3>📋 Bindery & Tooling Specifications</h3>
+        <ul id="specList" class="spec-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <!-- Saved Presets Section -->
+      <div class="card presets-card">
+        <h3>🗂️ Saved Project Presets</h3>
+        <div id="presetsContainer" class="presets-container">
+          <p class="empty-notice">No saved projects yet. Configure specs and click 'Save Project Preset'.</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AuraVellum Studio &bull; Client-side Paper Grain & Bookbinding Laboratory &bull; No data transmitted</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
