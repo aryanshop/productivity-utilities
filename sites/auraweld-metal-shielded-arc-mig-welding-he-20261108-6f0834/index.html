@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraWeld: Metal Shielded Arc & MIG Welding Heat Input Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div>
+                    <h1>AuraWeld</h1>
+                    <p class="subtitle">Welding Heat Input & HAZ Metallurgy Laboratory</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn secondary" title="Reset Parameters">Reset Defaults</button>
+                <button id="btn-export" class="btn primary" title="Export Session JSON">Export Report</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="control-panel">
+            <div class="panel-card">
+                <h2>1. Process & Shielding Gas</h2>
+                <div class="input-group">
+                    <label for="weld-process">Welding Process</label>
+                    <select id="weld-process">
+                        <option value="GMAW">GMAW (MIG/MAG)</option>
+                        <option value="GTAW">GTAW (TIG)</option>
+                        <option value="SMAW">SMAW (Stick)</option>
+                        <option value="FCAW">FCAW (Flux-Cored)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="shield-gas">Shielding Gas</label>
+                    <select id="shield-gas">
+                        <option value="100Ar">100% Argon</option>
+                        <option value="75Ar25CO2" selected>75% Ar / 25% CO2</option>
+                        <option value="90Ar10CO2">90% Ar / 10% CO2</option>
+                        <option value="100CO2">100% CO2</option>
+                        <option value="None">None (Self-Shielded / GTAW)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="thermal-efficiency">Thermal Efficiency Factor (&eta;)</label>
+                    <input type="number" id="thermal-efficiency" value="0.80" step="0.05" min="0.50" max="1.00">
+                    <span class="hint">GMAW ~0.80 | GTAW ~0.60 | SMAW ~0.90</span>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>2. Electrical Parameters</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="arc-amps">Welding Current (Amps)</label>
+                        <input type="number" id="arc-amps" value="180" min="10" max="600">
+                    </div>
+                    <div class="input-group">
+                        <label for="arc-volts">Arc Voltage (Volts)</label>
+                        <input type="number" id="arc-volts" value="24.0" step="0.5" min="5" max="60">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="travel-speed">Travel Speed (in/min)</label>
+                    <input type="number" id="travel-speed" value="8.0" step="0.5" min="1" max="50">
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>3. Base Material & Joint Geometry</h2>
+                <div class="input-group">
+                    <label for="steel-grade">Steel Grade & Carbon Equivalent</label>
+                    <select id="steel-grade">
+                        <option value="A36">ASTM A36 (CE ~ 0.26%)</option>
+                        <option value="A572">ASTM A572 Gr. 50 (CE ~ 0.38%)</option>
+                        <option value="4140">AISI 4140 Alloy (CE ~ 0.72%)</option>
+                        <option value="Stainless304">AISI 304 Stainless</option>
+                    </select>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="plate-thickness">Plate Thickness (in)</label>
+                        <input type="number" id="plate-thickness" value="0.375" step="0.0625" min="0.0625" max="3.0">
+                    </div>
+                    <div class="input-group">
+                        <label for="joint-type">Joint Type</label>
+                        <select id="joint-type">
+                            <option value="Fillet">Fillet Weld</option>
+                            <option value="GrooveButt">V-Groove Butt Joint</option>
+                            <option value="Lap">Lap Joint</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="interpass-temp">Max Interpass Temp (&deg;F)</label>
+                    <input type="number" id="interpass-temp" value="350" step="25" min="70" max="800">
+                </div>
+            </div>
+        </section>
+
+        <section class="results-panel">
+            <div class="metric-banner">
+                <div class="metric-box">
+                    <span class="metric-label">Calculated Heat Input</span>
+                    <span class="metric-value" id="res-heat-input">32.4</span>
+                    <span class="metric-unit">kJ/in</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Arc Energy</span>
+                    <span class="metric-value" id="res-arc-energy">40.5</span>
+                    <span class="metric-unit">kJ/in</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Est. Cooling (t8/5)</span>
+                    <span class="metric-value" id="res-cooling">14.2</span>
+                    <span class="metric-unit">sec</span>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <h3>Heat-Affected Zone (HAZ) & Weld Cross-Section Simulation</h3>
+                    <span id="haz-status" class="badge optimal">Optimal Heat Range</span>
+                </div>
+                <canvas id="hazCanvas" width="640" height="300"></canvas>
+                <div class="canvas-legend">
+                    <span><i class="dot weld-metal"></i> Weld Deposit</span>
+                    <span><i class="dot haz-zone"></i> Heat-Affected Zone (HAZ)</span>
+                    <span><i class="dot base-metal"></i> Unaffected Base Metal</span>
+                </div>
+            </div>
+
+            <div class="insights-card">
+                <h3>Metallurgical & Code Advisory</h3>
+                <ul id="advisory-list">
+                    <li>Calculating parameters...</li>
+                </ul>
+            </div>
+
+            <div class="history-section">
+                <div class="history-header">
+                    <h3>Saved Run Log</h3>
+                    <button id="btn-log-run" class="btn primary sm">Log Current Run</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="log-table">
+                        <thead>
+                            <tr>
+                                <th>Process</th>
+                                <th>Amps / Volts</th>
+                                <th>Speed</th>
+                                <th>Heat Input</th>
+                                <th>Cooling (t8/5)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-tbody">
+                            <tr class="empty-row"><td colspan="6">No runs logged yet. Click 'Log Current Run' to record.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AuraWeld Engineering Workbench &bull; Client-side interactive welding calculation laboratory.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
