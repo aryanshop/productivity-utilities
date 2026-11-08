@@ -1,0 +1,254 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraFrost: Refrigeration & Thermal Heat Load Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <span class="brand-icon">❄️</span>
+        <h1>AuraFrost</h1>
+        <span class="badge">Thermal & Refrigeration Lab</span>
+      </div>
+      <p class="tagline">Precision heat gain calculation, compressor sizing, and thermal load analysis for cold rooms & HVAC.</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-presets" class="btn btn-secondary" aria-label="Load preset scenarios">📂 Presets</button>
+      <button id="btn-reset" class="btn btn-secondary" aria-label="Reset all values">↺ Reset</button>
+      <button id="btn-export" class="btn btn-primary" aria-label="Export report summary">📥 Export Report</button>
+    </div>
+  </header>
+
+  <main class="app-grid">
+    <!-- Left Column: Input Configurations -->
+    <section class="panel input-panel" aria-labelledby="config-heading">
+      <h2 id="config-heading" class="panel-title">🛠️ Cold Room & Load Parameters</h2>
+      
+      <!-- Tabs for Parameters -->
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" aria-controls="tab-dimensions" id="tab-btn-dimensions" class="tab-btn active">Dimensions</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-thermal" id="tab-btn-thermal" class="tab-btn">Thermal & Ambient</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-product" id="tab-btn-product" class="tab-btn">Product & Internal</button>
+      </div>
+
+      <!-- Tab 1: Dimensions -->
+      <div id="tab-dimensions" role="tabpanel" aria-labelledby="tab-btn-dimensions" class="tab-content active">
+        <div class="form-group">
+          <label for="room-length">Room Length (ft / m):</label>
+          <div class="input-unit-group">
+            <input type="number" id="room-length" value="12" min="1" max="200" step="0.5">
+            <select id="unit-length">
+              <option value="ft" selected>Feet</option>
+              <option value="m">Meters</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="room-width">Room Width (ft / m):</label>
+          <input type="number" id="room-width" value="10" min="1" max="200" step="0.5">
+        </div>
+
+        <div class="form-group">
+          <label for="room-height">Room Height (ft / m):</label>
+          <input type="number" id="room-height" value="8" min="1" max="50" step="0.5">
+        </div>
+
+        <div class="form-group">
+          <label for="unit-system">Measurement System:</label>
+          <select id="unit-system">
+            <option value="imperial" selected>Imperial (BTU/hr, °F)</option>
+            <option value="metric">Metric (kW, °C)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tab 2: Thermal & Ambient -->
+      <div id="tab-thermal" role="tabpanel" aria-labelledby="tab-btn-thermal" class="tab-content">
+        <div class="form-group">
+          <label for="temp-internal">Target Internal Temp (°F / °C):</label>
+          <input type="number" id="temp-internal" value="35" min="-40" max="80" step="1">
+          <span class="help-text">e.g., 35°F for produce storage, 0°F for freezer.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="temp-ambient">Peak Ambient Temp (°F / °C):</label>
+          <input type="number" id="temp-ambient" value="90" min="-10" max="130" step="1">
+        </div>
+
+        <div class="form-group">
+          <label for="insulation-r">Wall Insulation R-Value (h·ft²·°F/BTU) or Select Type:</label>
+          <select id="insulation-preset">
+            <option value="custom">Custom R-Value</option>
+            <option value="15" selected>Standard Polyurethane Foam 2" (R-15)</option>
+            <option value="28">Thick Polyurethane Foam 4" (R-28)</option>
+            <option value="40">Heavy Freezer Foam 6" (R-40)</option>
+            <option value="7">Fiberglass Batt Standard (R-7)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="insulation-r-val">Effective R-Value (R):</label>
+          <input type="number" id="insulation-r-val" value="15" min="1" max="120" step="1">
+        </div>
+
+        <div class="form-group">
+          <label for="sun-exposure">Solar Radiation Exposure:</label>
+          <select id="sun-exposure">
+            <option value="1.0" selected>Normal / Shaded Walls</option>
+            <option value="1.2">Moderate Sun (East/West)</option>
+            <option value="1.4">Heavy Sun (Flat Roof / Direct South)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tab 3: Product & Internal -->
+      <div id="tab-product" role="tabpanel" aria-labelledby="tab-btn-product" class="tab-content">
+        <div class="form-group">
+          <label for="product-type">Stored Product Category:</label>
+          <select id="product-type">
+            <option value="produce" selected>Fresh Produce / Vegetables (Respiration Heat)</option>
+            <option value="meat">Pre-chilled Meat / Poultry</option>
+            <option value="dairy">Dairy & Bottled Beverages</option>
+            <option value="frozen">Already Frozen Goods</option>
+            <option value="none">No Product / Empty Room</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="product-mass">Daily Product Turnover (lbs/day or kg/day):</label>
+          <input type="number" id="product-mass" value="500" min="0" max="50000" step="50">
+        </div>
+
+        <div class="form-group">
+          <label for="door-openings">Door Openings per Day:</label>
+          <input type="number" id="door-openings" value="25" min="0" max="500" step="1">
+        </div>
+
+        <div class="form-group">
+          <label for="internal-watts">Internal Lighting & Equipment (Watts):</label>
+          <input type="number" id="internal-watts" value="150" min="0" max="5000" step="10">
+        </div>
+
+        <div class="form-group">
+          <label for="occupancy">Personnel Working Inside (Hours/Day):</label>
+          <input type="number" id="occupancy" value="2" min="0" max="24" step="0.5">
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Results & Analytics Dashboard -->
+    <section class="panel results-panel" aria-labelledby="results-heading">
+      <h2 id="results-heading" class="panel-title">📊 Thermal Load Summary & Compressor Sizing</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-card highlight">
+          <span class="metric-label">Total Peak Heat Gain</span>
+          <span id="metric-total-load" class="metric-value">0</span>
+          <span id="metric-total-unit" class="metric-unit">BTU/hr</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Recommended Compressor</span>
+          <span id="metric-hp" class="metric-value">0.0</span>
+          <span class="metric-unit">Horsepower (HP)</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Cooling Capacity</span>
+          <span id="metric-tons" class="metric-value">0.00</span>
+          <span class="metric-unit">Tons of Refrigeration (TR)</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Sensible-to-Latent Ratio</span>
+          <span id="metric-shr" class="metric-value">0.0</span>
+          <span class="metric-unit">SHR %</span>
+        </div>
+      </div>
+
+      <!-- Canvas Breakdown Chart -->
+      <div class="chart-container">
+        <h3>Heat Gain Component Breakdown</h3>
+        <canvas id="load-chart" width="500" height="220" aria-label="Heat load breakdown chart"></canvas>
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <div class="breakdown-table-wrapper">
+        <h3>Load Component Analysis</h3>
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Description</th>
+              <th class="text-right">Heat Load</th>
+              <th class="text-right">Share (%)</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-tbody">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Engineering Recommendations Note -->
+      <div class="recommendations-box">
+        <h3>💡 Engineering Recommendations & Safety Margin</h3>
+        <ul id="recommendation-list">
+          <li>Calculations include standard 10% safety contingency factor.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Presets Modal -->
+  <div id="preset-modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Select Cold Room Preset Scenario</h3>
+        <button id="btn-close-modal" class="btn-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="preset-card" data-preset="walkin">
+          <h4>🧊 Restaurant Walk-In Cooler</h4>
+          <p>Standard 12x10x8 ft produce/dairy cooler at 35°F with 90°F ambient, R-15 insulation, and moderate daily product loading.</p>
+        </div>
+        <div class="preset-card" data-preset="freezer">
+          <h4>🐧 Commercial Freezer Room</h4>
+          <p>Compact 8x8x8 ft low-temp freezer at -10°F with 90°F ambient, R-40 heavy insulation, and frozen goods storage.</p>
+        </div>
+        <div class="preset-card" data-preset="florist">
+          <h4>🌼 Florist Cold Display Room</h4>
+          <p>Large 15x12x9 ft floral preservation room at 38°F with glass door infiltration and high humidity cooling requirements.</p>
+        </div>
+        <div class="preset-card" data-preset="brewery">
+          <h4>🍺 Craft Brewery Fermentation Cellar</h4>
+          <p>Spacious 20x15x10 ft cellar at 50°F for active yeast fermentation heat dissipation and heavy vessel loads.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Report Modal -->
+  <div id="export-modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="export-title">
+    <div class="modal-content export-content">
+      <div class="modal-header">
+        <h3 id="export-title">📄 Thermal Load Engineering Summary</h3>
+        <button id="btn-close-export" class="btn-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="export-report-text"></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-copy-report" class="btn btn-primary">📋 Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
