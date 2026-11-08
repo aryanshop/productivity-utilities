@@ -1,0 +1,210 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraStow: Container Packing & Cargo Weight Distribution Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <span class="badge-icon">📦</span>
+        <h1>AuraStow</h1>
+      </div>
+      <p class="subtitle">Precision Cargo Stowage, Volume Optimization & Center of Gravity Balance Lab</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-load-preset" class="btn secondary">Load Sample Trip</button>
+      <button id="btn-reset" class="btn danger-outline">Clear All</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Sidebar: Container Specs & Add Gear Form -->
+    <aside class="sidebar-panel">
+      <section class="card">
+        <h2>📏 Container Specifications</h2>
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="container-type">Vehicle / Box Type</label>
+            <select id="container-type">
+              <option value="van">Campervan / Sprinter</option>
+              <option value="trailer">Cargo / Utility Trailer</option>
+              <option value="suv">SUV / Trunk</option>
+              <option value="roofbox">Roof Cargo Box</option>
+            </select>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="container-length">Length (cm)</label>
+              <input type="number" id="container-length" value="240" min="50" max="800">
+            </div>
+            <div class="input-group">
+              <label for="container-width">Width (cm)</label>
+              <input type="number" id="container-width" value="140" min="40" max="300">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="container-height">Height (cm)</label>
+              <input type="number" id="container-height" value="120" min="30" max="250">
+            </div>
+            <div class="input-group">
+              <label for="max-payload">Max Payload (kg)</label>
+              <input type="number" id="max-payload" value="650" min="50" max="5000">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>➕ Add Gear Item</h2>
+        <form id="gear-form">
+          <div class="input-group">
+            <label for="gear-name">Item Name</label>
+            <input type="text" id="gear-name" placeholder="e.g., Water Tank, Cooler" required>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="gear-weight">Weight (kg)</label>
+              <input type="number" id="gear-weight" step="0.5" min="0.1" value="15" required>
+            </div>
+            <div class="input-group">
+              <label for="gear-category">Category</label>
+              <select id="gear-category">
+                <option value="heavy">Heavy / Water / Power</option>
+                <option value="gear">Camping & Gear</option>
+                <option value="kitchen">Kitchen & Food</option>
+                <option value="clothing">Clothing & Sleep</option>
+                <option value="safety">Safety & Tools</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="gear-l">Length (cm)</label>
+              <input type="number" id="gear-l" min="5" value="40" required>
+            </div>
+            <div class="input-group">
+              <label for="gear-w">Width (cm)</label>
+              <input type="number" id="gear-w" min="5" value="30" required>
+            </div>
+            <div class="input-group">
+              <label for="gear-h">Height (cm)</label>
+              <input type="number" id="gear-h" min="5" value="30" required>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="gear-priority">Access Priority</label>
+              <select id="gear-priority">
+                <option value="low">Deep Stow (Rarely Needed)</option>
+                <option value="medium">Standard</option>
+                <option value="high">Easy Reach (Daily Access)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="gear-fragile">
+                <input type="checkbox" id="gear-fragile"> Fragile / Top Only
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn primary full-width">Add to Stowage List</button>
+        </form>
+      </section>
+    </aside>
+
+    <!-- Right Dashboard Area -->
+    <section class="dashboard-panel">
+      <!-- Top Metrics Bar -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Payload Capacity</span>
+          <div class="metric-value-row">
+            <span id="stat-weight" class="metric-num">0 kg</span>
+            <span id="stat-weight-pct" class="metric-sub">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="progress-weight" class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Volume Utilization</span>
+          <div class="metric-value-row">
+            <span id="stat-volume" class="metric-num">0 L</span>
+            <span id="stat-volume-pct" class="metric-sub">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="progress-volume" class="progress-fill blue" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">Center of Gravity Balance</span>
+          <div class="metric-value-row">
+            <span id="stat-cg-status" class="metric-num badge-ok">Balanced</span>
+          </div>
+          <span id="stat-cg-desc" class="metric-sub">Longitudinal & Lateral equilibrium normal</span>
+        </div>
+      </div>
+
+      <!-- Interactive Visualizer -->
+      <div class="card visualizer-card">
+        <div class="card-header-row">
+          <h2>🗺️ Cargo Bay Stowage Map</h2>
+          <div class="view-toggles">
+            <button class="btn-view active" data-view="top">Top-Down (Plan)</button>
+            <button class="btn-view" data-view="profile">Side Profile</button>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="stowage-canvas" width="700" height="350"></canvas>
+        </div>
+        <div class="canvas-legend">
+          <span class="legend-item"><span class="dot heavy"></span> Heavy / Water</span>
+          <span class="legend-item"><span class="dot gear"></span> Gear</span>
+          <span class="legend-item"><span class="dot kitchen"></span> Kitchen</span>
+          <span class="legend-item"><span class="dot clothing"></span> Sleep / Clothing</span>
+          <span class="legend-item"><span class="dot safety"></span> Safety</span>
+        </div>
+      </div>
+
+      <!-- Packed Inventory List -->
+      <div class="card">
+        <div class="card-header-row">
+          <h2>📦 Packed Inventory (<span id="item-count">0</span> items)</h2>
+          <span class="hint-text">Click item to inspect or remove</span>
+        </div>
+        <div class="table-responsive">
+          <table id="inventory-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Dimensions (cm)</th>
+                <th>Weight</th>
+                <th>Priority</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody">
+              <tr class="empty-row">
+                <td colspan="6">No items added yet. Fill out the form or load sample trip.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraStow Cargo Stowage & Weight Lab • Client-side local calculation tool</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
