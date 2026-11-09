@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraKnit: Knitting Gauge & Yarn Yardage Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <span class="logo-icon">🧶</span>
+        <h1>AuraKnit</h1>
+      </div>
+      <p class="tagline">Precision Knitting Gauge, Yarn Yardage & Garment Sizing Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-new-project" class="btn btn-primary">+ New Project</button>
+      <button id="btn-export" class="btn btn-secondary">Export Vault</button>
+      <label for="import-file" class="btn btn-secondary upload-label">Import</label>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Sidebar / Project Selector -->
+    <aside class="sidebar card">
+      <h2>Saved Projects</h2>
+      <div id="project-list" class="project-list">
+        <!-- Injected via script -->
+      </div>
+    </aside>
+
+    <!-- Main Calculator Studio -->
+    <section class="studio-workspace">
+      <div class="card studio-card">
+        <div class="card-header">
+          <h2 id="active-project-title">Project: Default Sweater</h2>
+          <input type="text" id="project-name-input" class="project-name-edit" value="Default Sweater" aria-label="Project Name">
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="gauge">1. Gauge & Swatch</button>
+          <button class="tab-btn" data-tab="yarn">2. Yarn & Yardage</button>
+          <button class="tab-btn" data-tab="sizing">3. Garment Sizing</button>
+          <button class="tab-btn" data-tab="visualizer">4. Swatch Visualizer</button>
+        </div>
+
+        <!-- Tab 1: Gauge & Swatch -->
+        <div id="tab-gauge" class="tab-content active">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="swatch-unit">Measurement Unit</label>
+              <select id="swatch-unit">
+                <option value="inches">Inches (4x4 in swatch)</option>
+                <option value="cm">Centimeters (10x10 cm swatch)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="swatch-measured-width">Swatch Measured Width (<span class="unit-label">in</span>)</label>
+              <input type="number" id="swatch-measured-width" value="4" min="1" step="0.5">
+            </div>
+
+            <div class="input-group">
+              <label for="swatch-measured-height">Swatch Measured Height (<span class="unit-label">in</span>)</label>
+              <input type="number" id="swatch-measured-height" value="4" min="1" step="0.5">
+            </div>
+
+            <div class="input-group">
+              <label for="swatch-stitches">Stitches Count in Swatch</label>
+              <input type="number" id="swatch-stitches" value="20" min="1" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="swatch-rows">Rows Count in Swatch</label>
+              <input type="number" id="swatch-rows" value="28" min="1" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="target-stitches-per">Target Gauge Stitch Basis</label>
+              <select id="target-stitches-per">
+                <option value="1">Per 1 Unit (1 in / 1 cm)</option>
+                <option value="4" selected>Per 4 Units (4 in / 10 cm)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="results-box">
+            <h3>Calculated Gauge Density</h3>
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-val" id="res-stitch-density">5.00</span>
+                <span class="stat-lbl">Stitches per Unit</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-row-density">7.00</span>
+                <span class="stat-lbl">Rows per Unit</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-aspect-ratio">1.40</span>
+                <span class="stat-lbl">Stitch/Row Ratio</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Yarn & Yardage -->
+        <div id="tab-yarn" class="tab-content">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="yarn-weight-category">Yarn Weight Category</label>
+              <select id="yarn-weight-category">
+                <option value="lace">0 - Lace (fingering light)</option>
+                <option value="fingering">1 - Fingering / Sock</option>
+                <option value="sport">2 - Sport / Baby</option>
+                <option value="dk" selected>3 - DK / Light Worsted</option>
+                <option value="worsted">4 - Worsted / Aran</option>
+                <option value="bulky">5 - Bulky / Chunky</option>
+                <option value="super-bulky">6 - Super Bulky</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="skein-yardage">Skein Yardage (yards per skein)</label>
+              <input type="number" id="skein-yardage" value="250" min="1" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="skein-weight-grams">Skein Weight (grams)</label>
+              <input type="number" id="skein-weight-grams" value="100" min="1" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="project-target-yardage">Target Project Yardage (yards)</label>
+              <input type="number" id="project-target-yardage" value="1400" min="1" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="safety-buffer">Yardage Safety Buffer (%)</label>
+              <input type="number" id="safety-buffer" value="10" min="0" max="50" step="1">
+            </div>
+
+            <div class="input-group">
+              <label for="fiber-content">Fiber Composition</label>
+              <input type="text" id="fiber-content" value="100% Peruvian Wool">
+            </div>
+          </div>
+
+          <div class="results-box">
+            <h3>Yarn Requirements & Estimates</h3>
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-val" id="res-total-yardage">1,540</span>
+                <span class="stat-lbl">Total Yards (incl. buffer)</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-skeins-needed">7</span>
+                <span class="stat-lbl">Skeins to Purchase</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-total-weight">700g</span>
+                <span class="stat-lbl">Estimated Project Weight</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Garment Sizing -->
+        <div id="tab-sizing" class="tab-content">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="garment-type">Garment Construction Type</label>
+              <select id="garment-type">
+                <option value="sweater" selected>Pullover Sweater (Bottom-Up / Top-Down)</option>
+                <option value="cardigan">Cardigan (Open Front)</option>
+                <option value="scarf">Scarf / Wrap</option>
+                <option value="hat">Beanie / Hat (Circular)</option>
+                <option value="socks">Socks (In-the-Round)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="target-bust">Target Circumference / Bust (<span class="unit-label">in</span>)</label>
+              <input type="number" id="target-bust" value="40" min="1" step="0.5">
+            </div>
+
+            <div class="input-group">
+              <label for="positive-ease">Desired Positive Ease (<span class="unit-label">in</span>)</label>
+              <input type="number" id="positive-ease" value="4" min="-5" max="20" step="0.5">
+            </div>
+
+            <div class="input-group">
+              <label for="garment-length">Target Length from Underarm (<span class="unit-label">in</span>)</label>
+              <input type="number" id="garment-length" value="16" min="1" step="0.5">
+            </div>
+          </div>
+
+          <div class="results-box">
+            <h3>Cast-On & Stitch Calculations</h3>
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-val" id="res-total-circumference">44.0</span>
+                <span class="stat-lbl">Total Circumference (incl. ease)</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-cast-on-stitches">220</span>
+                <span class="stat-lbl">Required Cast-On Stitches</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-val" id="res-total-rows">112</span>
+                <span class="stat-lbl">Required Vertical Rows</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Swatch Visualizer -->
+        <div id="tab-visualizer" class="tab-content">
+          <div class="visualizer-controls">
+            <p class="hint">Visual representation of stitch texture grid based on current gauge ratio.</p>
+            <div class="swatch-toolbar">
+              <button id="btn-regenerate-swatch" class="btn btn-secondary">Redraw Swatch</button>
+              <span id="swatch-dimensions-badge">Grid: 20 st x 28 rows</span>
+            </div>
+          </div>
+          <div class="canvas-container">
+            <canvas id="swatch-canvas" width="600" height="350"></canvas>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button id="btn-save-project" class="btn btn-primary">Save Changes to Project</button>
+          <span id="save-status" class="save-status">All changes saved locally</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraKnit Laboratory &bull; Client-Side Fiber Arts Workbench &bull; No Data Transmitted</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
