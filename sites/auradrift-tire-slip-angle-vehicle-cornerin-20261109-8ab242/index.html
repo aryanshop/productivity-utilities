@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraDrift: Tire Slip Angle & Vehicle Cornering Physics Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">⚡</span>
+                <h1>AuraDrift</h1>
+            </div>
+            <p class="tagline">Vehicle Dynamics, Tire Slip Angle & Cornering Physics Laboratory</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Control Panel -->
+            <section class="panel controls-panel">
+                <h2>Vehicle & Corner Parameters</h2>
+                
+                <div class="preset-bar">
+                    <label for="presetSelect">Vehicle Presets:</label>
+                    <select id="presetSelect">
+                        <option value="custom">Custom Setup</option>
+                        <option value="sportcar">Lightweight Sportscar (FR)</option>
+                        <option value="sedan">Family Sedan (FF)</option>
+                        <option value="formula">Formula Track Car (MR)</option>
+                        <option value="suv">Heavy SUV (AWD)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Vehicle Mass (kg): <span id="valMass">1350</span></label>
+                    <input type="range" id="mass" min="800" max="3000" step="25" value="1350">
+                </div>
+
+                <div class="control-group">
+                    <label>Weight Distribution Front (%): <span id="valDist">55</span>%</label>
+                    <input type="range" id="weightDist" min="40" max="70" step="1" value="55">
+                </div>
+
+                <div class="control-group">
+                    <label>Wheelbase (m): <span id="valWheelbase">2.5</span></label>
+                    <input type="range" id="wheelbase" min="2.0" max="3.5" step="0.05" value="2.5">
+                </div>
+
+                <div class="control-group">
+                    <label>Corner Radius (m): <span id="valRadius">30</span></label>
+                    <input type="range" id="radius" min="10" max="200" step="5" value="30">
+                </div>
+
+                <div class="control-group">
+                    <label>Vehicle Speed (km/h): <span id="valSpeed">70</span></label>
+                    <input type="range" id="speed" min="20" max="180" step="2" value="70">
+                </div>
+
+                <div class="control-group">
+                    <label>Front Tire Cornering Stiffness (N/deg): <span id="valCf">1200</span></label>
+                    <input type="range" id="cf" min="500" max="3000" step="50" value="1200">
+                </div>
+
+                <div class="control-group">
+                    <label>Rear Tire Cornering Stiffness (N/deg): <span id="valCr">1100</span></label>
+                    <input type="range" id="cr" min="500" max="3000" step="50" value="1100">
+                </div>
+
+                <div class="actions-bar">
+                    <button id="btnReset" class="btn secondary">Reset Defaults</button>
+                    <button id="btnSavePreset" class="btn primary">Save Setup to Local</button>
+                </div>
+            </section>
+
+            <!-- Results & Visualizer Panel -->
+            <section class="panel display-panel">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Lateral Accel</span>
+                        <span class="metric-value" id="resGForce">0.00</span>
+                        <span class="metric-unit">g</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Handling State</span>
+                        <span class="metric-value status-badge" id="resHandling">Neutral</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Front Slip Angle</span>
+                        <span class="metric-value" id="resAlphaF">0.0</span>
+                        <span class="metric-unit">°</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Rear Slip Angle</span>
+                        <span class="metric-value" id="resAlphaR">0.0</span>
+                        <span class="metric-unit">°</span>
+                    </div>
+                </div>
+
+                <div class="canvas-container">
+                    <h3>Top-Down Cornering & Slip Trajectory Simulation</h3>
+                    <canvas id="simCanvas" width="600" height="350"></canvas>
+                    <div class="canvas-legend">
+                        <span class="legend-item"><span class="dot front-tire"></span> Front Slip</span>
+                        <span class="legend-item"><span class="dot rear-tire"></span> Rear Slip</span>
+                        <span class="legend-item"><span class="dot path-line"></span> Ideal Radius</span>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <h4>Engineering Insights & Balance Analysis</h4>
+                    <p id="insightsText">Adjust speed, radius, or tire stiffness to analyze understeer and oversteer tendencies in real time.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraDrift Physics Laboratory • Local-First Client-Side Vehicle Dynamics Analyzer</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
