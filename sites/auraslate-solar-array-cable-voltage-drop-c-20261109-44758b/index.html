@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Solar Array & Cable Voltage Drop Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                </div>
+                <h1>AuraSlate <span>Voltage Drop & Wire Sizing Lab</span></h1>
+            </div>
+            <p class="subtitle">Precision DC cable engineering for solar arrays, RV conversions, and battery banks.</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Inputs -->
+            <section class="card input-card">
+                <h2>Circuit Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="systemVoltage">System DC Voltage</label>
+                    <select id="systemVoltage">
+                        <option value="12">12V DC (Standard Automotive / Small RV)</option>
+                        <option value="24">24V DC (Mid-size Solar / Van)</option>
+                        <option value="48" selected>48V DC (Large Off-Grid / Home Battery)</option>
+                        <option value="120">120V DC (High Voltage String)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wireLength">One-Way Distance</label>
+                        <input type="number" id="wireLength" value="25" min="1" max="1000" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="lengthUnit">Unit</label>
+                        <select id="lengthUnit">
+                            <option value="feet" selected>Feet</option>
+                            <option value="meters">Meters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="currentAmps">Maximum Amperage (Current)</label>
+                    <input type="number" id="currentAmps" value="40" min="0.1" max="1000" step="0.1">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="conductorMaterial">Conductor Material</label>
+                        <select id="conductorMaterial">
+                            <option value="copper" selected>Copper (Standard)</option>
+                            <option value="aluminum">Aluminum (Economy / Heavy Gauge)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetDrop">Target Max Drop (%)</label>
+                        <select id="targetDrop">
+                            <option value="1">1% (Sensitive Electronics)</option>
+                            <option value="2" selected>2% (Recommended Solar)</option>
+                            <option value="3">3% (NEC General Standard)</option>
+                            <option value="5">5% (Non-critical Loads)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="wireGauge">Selected Wire Gauge (AWG)</label>
+                    <select id="wireGauge">
+                        <option value="14">14 AWG</option>
+                        <option value="12">12 AWG</option>
+                        <option value="10">10 AWG</option>
+                        <option value="8">8 AWG</option>
+                        <option value="6" selected>6 AWG</option>
+                        <option value="4">4 AWG</option>
+                        <option value="2">2 AWG</option>
+                        <option value="1">1 AWG</option>
+                        <option value="1/0">1/0 AWG</option>
+                        <option value="2/0">2/0 AWG</option>
+                        <option value="4/0">4/0 AWG</option>
+                    </select>
+                </div>
+
+                <div class="action-row">
+                    <button id="btnSavePreset" class="btn secondary">Save Preset</button>
+                    <button id="btnAutoSelect" class="btn primary">Recommend Min Gauge</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Analytics -->
+            <div class="results-column">
+                <section class="card results-card">
+                    <h2>Engineering Analysis</h2>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">Voltage Drop</span>
+                            <span class="metric-value" id="resDropVolts">0.00 V</span>
+                            <span class="metric-sub" id="resDropPercent">(0.0%)</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Delivered Voltage</span>
+                            <span class="metric-value" id="resDeliveredVoltage">0.00 V</span>
+                            <span class="metric-sub">At load terminals</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Power Loss</span>
+                            <span class="metric-value" id="resPowerLoss">0.0 W</span>
+                            <span class="metric-sub" id="resEnergyWaste">0 kWh / yr (est)</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Round-Trip Resistance</span>
+                            <span class="metric-value" id="resResistance">0.000 Ω</span>
+                            <span class="metric-sub" id="resRecGauge">Min Gauge: 10 AWG</span>
+                        </div>
+                    </div>
+
+                    <div class="status-banner" id="statusBanner">
+                        <div class="status-dot"></div>
+                        <span id="statusText">Evaluating circuit parameters...</span>
+                    </div>
+                </section>
+
+                <!-- Canvas Visualization -->
+                <section class="card chart-card">
+                    <div class="chart-header">
+                        <h3>Voltage Drop Across AWG Sizes</h3>
+                        <span class="chart-note">Target limit marked in red</span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="dropCanvas" width="600" height="220"></canvas>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Saved Presets / Session Log -->
+        <section class="card log-card">
+            <div class="log-header">
+                <h3>Saved Circuit Presets</h3>
+                <button id="btnClearPresets" class="btn text-btn">Clear Log</button>
+            </div>
+            <div class="table-responsive">
+                <table id="presetTable">
+                    <thead>
+                        <tr>
+                            <th>Name / Description</th>
+                            <th>System</th>
+                            <th>Run</th>
+                            <th>Amps</th>
+                            <th>Gauge</th>
+                            <th>Drop %</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="presetTableBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>AuraSlate Solar Laboratory &bull; Local-First Client Engineering Tool &bull; No Data Transmitted</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

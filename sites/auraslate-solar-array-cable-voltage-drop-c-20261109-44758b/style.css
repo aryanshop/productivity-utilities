@@ -1,0 +1,341 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #263548;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --border: #334155;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.app-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.brand-icon {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+h1 span {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+h2, h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+input, select {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.action-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn.primary {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+}
+
+.btn.primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn.secondary {
+    background-color: var(--border);
+    color: var(--text-primary);
+}
+
+.btn.secondary:hover {
+    background-color: #475569;
+}
+
+.btn.text-btn {
+    background: none;
+    color: var(--text-secondary);
+    flex: none;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.btn.text-btn:hover {
+    color: var(--danger);
+}
+
+.results-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 500px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.metric-box {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.status-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--warning);
+}
+
+.status-dot.success {
+    background-color: var(--success);
+}
+
+.status-dot.danger {
+    background-color: var(--danger);
+}
+
+#statusText {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.chart-card {
+    gap: 0.75rem;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chart-note {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.canvas-container {
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+td {
+    color: var(--text-primary);
+}
+
+tr:hover td {
+    background-color: var(--bg-card-hover);
+}
+
+.app-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 1rem 0;
+}
