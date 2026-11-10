@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVane: Architectural Wind Pressure & Aerodynamic Drag Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19 12H2"/>
+                    </svg>
+                </div>
+                <h1>Aura<span>Vane</span></h1>
+            </div>
+            <p class="tagline">Architectural Wind Pressure & Aerodynamic Drag Laboratory</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left Panel: Controls -->
+            <section class="control-panel">
+                <h2>Building & Wind Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="windSpeed">Basic Wind Speed (<span id="speedUnitLabel">mph</span>)</label>
+                    <div class="slider-row">
+                        <input type="range" id="windSpeed" min="40" max="200" value="90" step="1">
+                        <input type="number" id="windSpeedVal" value="90" min="40" max="200">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="buildingHeight">Building Height (<span id="dimUnitLabel">ft</span>)</label>
+                        <input type="number" id="buildingHeight" value="35" min="5" max="500" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="buildingWidth">Building Width</label>
+                        <input type="number" id="buildingWidth" value="40" min="10" max="300" step="1">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="buildingLength">Building Length</label>
+                        <input type="number" id="buildingLength" value="60" min="10" max="500" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="roofPitch">Roof Pitch (Degrees)</label>
+                        <input type="number" id="roofPitch" value="25" min="0" max="60" step="1">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="terrainCategory">Terrain Exposure Category</label>
+                    <select id="terrainCategory">
+                        <option value="B">Category B (Urban, Suburban, Wooded)</option>
+                        <option value="C" selected>Category C (Open Terrain, Grasslands)</option>
+                        <option value="D">Category D (Flat, Unobstructed Coastal/Water)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="topoFactor">Topographic Factor (Kzt)</label>
+                    <div class="slider-row">
+                        <input type="range" id="topoFactor" min="1.0" max="2.5" value="1.0" step="0.05">
+                        <span id="topoFactorVal">1.00</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="importanceClass">Building Importance Class</label>
+                    <select id="importanceClass">
+                        <option value="I">Class I (Low Hazard - Agricultural/Storage)</option>
+                        <option value="II" selected>Class II (Standard - Residential/Commercial)</option>
+                        <option value="III">Class III (Substantial - Schools, Assembly)</option>
+                        <option value="IV">Class IV (Essential - Hospitals, Emergency)</option>
+                    </select>
+                </div>
+
+                <div class="action-row">
+                    <button id="resetBtn" class="secondary-btn">Reset Defaults</button>
+                    <button id="saveLogBtn" class="primary-btn">Save Simulation</button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Results & Visualizer -->
+            <section class="results-panel">
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Velocity Pressure (qz)</span>
+                        <span class="metric-value" id="resVelocityPressure">0.00</span>
+                        <span class="metric-unit" id="pressureUnitLabel">psf</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Design Wind Pressure</span>
+                        <span class="metric-value" id="resDesignPressure">0.00</span>
+                        <span class="metric-unit" id="designPressureUnitLabel">psf</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Total Drag Force</span>
+                        <span class="metric-value" id="resDragForce">0</span>
+                        <span class="metric-unit" id="forceUnitLabel">lbs</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Overturning Moment</span>
+                        <span class="metric-value" id="resOverturningMoment">0</span>
+                        <span class="metric-unit" id="momentUnitLabel">ft-lbs</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Visualizer -->
+                <div class="visualizer-container">
+                    <div class="visualizer-header">
+                        <h3>Wind Pressure Profile & Building Flow</h3>
+                        <div class="unit-toggle">
+                            <button class="unit-btn active" data-unit="imperial">Imperial (US)</button>
+                            <button class="unit-btn" data-unit="metric">Metric (SI)</button>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="windCanvas" width="640" height="320"></canvas>
+                    </div>
+                    <div class="legend-bar">
+                        <span class="legend-item"><span class="dot positive"></span>Positive Pressure (Windward)</span>
+                        <span class="legend-item"><span class="dot negative"></span>Suction / Negative Pressure (Leeward/Roof)</span>
+                    </div>
+                </div>
+
+                <!-- Saved Simulations Log -->
+                <div class="log-container">
+                    <div class="log-header">
+                        <h3>Saved Simulation Log</h3>
+                        <button id="clearLogBtn" class="text-btn">Clear Log</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="logTable">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Wind Speed</th>
+                                    <th>Height / Size</th>
+                                    <th>Terrain</th>
+                                    <th>Design Pressure</th>
+                                    <th>Total Drag</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <tr class="empty-row">
+                                    <td colspan="6">No saved simulations yet. Click 'Save Simulation' to record current results.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AuraVane Laboratory &bull; Client-Side Structural & Aerodynamic Estimator</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
