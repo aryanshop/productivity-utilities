@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraFlow: Pipe Friction & Fluid Head Loss Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </span>
+        <h1>AuraFlow</h1>
+      </div>
+      <p class="tagline">Precision Fluid Dynamics & Pipe Friction Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-presets" class="btn secondary">Load Preset</button>
+      <button id="btn-export" class="btn secondary">Export Log</button>
+      <button id="btn-reset" class="btn ghost">Reset</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="grid-dashboard">
+      <!-- Input Control Panel -->
+      <section class="card input-panel">
+        <h2>System Parameters</h2>
+        
+        <div class="form-group">
+          <label for="fluid-select">Fluid Type</label>
+          <select id="fluid-select">
+            <option value="water-20">Water (20°C / 68°F)</option>
+            <option value="water-60">Water (60°C / 140°F)</option>
+            <option value="glycol-30">Ethylene Glycol (30%)</option>
+            <option value="seawater">Seawater (15°C)</option>
+            <option value="oil-olive">Olive Oil (20°C)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="flow-rate">Flow Rate</label>
+            <input type="number" id="flow-rate" value="25" min="0.1" max="10000" step="0.1">
+          </div>
+          <div class="form-group">
+            <label for="flow-unit">Unit</label>
+            <select id="flow-unit">
+              <option value="gpm">GPM (US)</option>
+              <option value="lpm">L/min</option>
+              <option value="m3h">m³/h</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pipe-material">Pipe Material</label>
+          <select id="pipe-material">
+            <option value="0.000005">PVC / Plastic (ε = 0.005 mm)</option>
+            <option value="0.0000015">Copper / Drawn Brass (ε = 0.0015 mm)</option>
+            <option value="0.045">Commercial Steel / Schedule 40 (ε = 0.045 mm)</option>
+            <option value="0.26">Cast Iron - New (ε = 0.26 mm)</option>
+            <option value="1.5">Concrete / Corroded Iron (ε = 1.5 mm)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pipe-size">Nominal Size / ID</label>
+            <select id="pipe-size">
+              <option value="0.5">1/2" (ID: 0.622 in / 15.8 mm)</option>
+              <option value="0.75">3/4" (ID: 0.824 in / 20.9 mm)</option>
+              <option value="1.0" selected>1" (ID: 1.049 in / 26.6 mm)</option>
+              <option value="1.25">1-1/4" (ID: 1.380 in / 35.1 mm)</option>
+              <option value="1.5">1-1/2" (ID: 1.610 in / 40.9 mm)</option>
+              <option value="2.0">2" (ID: 2.067 in / 52.5 mm)</option>
+              <option value="3.0">3" (ID: 3.068 in / 77.9 mm)</option>
+              <option value="4.0">4" (ID: 4.026 in / 102.3 mm)</option>
+              <option value="custom">Custom Diameter...</option>
+            </select>
+          </div>
+          <div class="form-group" id="custom-dia-wrapper" style="display: none;">
+            <label for="custom-dia">Custom ID (mm)</label>
+            <input type="number" id="custom-dia" value="25" min="1" max="2000" step="0.5">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pipe-length">Pipe Length (m)</label>
+            <input type="number" id="pipe-length" value="30" min="0.1" max="10000" step="1">
+          </div>
+          <div class="form-group">
+            <label for="elevation-drop">Elevation Change (m)</label>
+            <input type="number" id="elevation-drop" value="0" min="-500" max="500" step="0.5">
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <h3>Fittings & Valves Equivalent Lengths</h3>
+        <div class="fittings-grid">
+          <div class="fitting-item">
+            <label for="fit-elbow-90">90° Elbows</label>
+            <input type="number" id="fit-elbow-90" value="2" min="0" max="100">
+          </div>
+          <div class="fitting-item">
+            <label for="fit-elbow-45">45° Elbows</label>
+            <input type="number" id="fit-elbow-45" value="0" min="0" max="100">
+          </div>
+          <div class="fitting-item">
+            <label for="fit-valve-gate">Gate Valves</label>
+            <input type="number" id="fit-valve-gate" value="1" min="0" max="100">
+          </div>
+          <div class="fitting-item">
+            <label for="fit-tee-run">Tee (Branch)</label>
+            <input type="number" id="fit-tee-run" value="0" min="0" max="100">
+          </div>
+        </div>
+
+        <button id="btn-calculate" class="btn primary full-width">Calculate System Hydraulics</button>
+      </section>
+
+      <!-- Results & Visualization Panel -->
+      <div class="results-column">
+        <section class="card metrics-card">
+          <h2>Hydraulic Performance Output</h2>
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <span class="metric-label">Total Head Loss</span>
+              <span class="metric-value" id="out-head-loss">0.00</span>
+              <span class="metric-unit" id="unit-head-loss">meters</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Pressure Drop</span>
+              <span class="metric-value" id="out-pressure-drop">0.00</span>
+              <span class="metric-unit" id="unit-pressure-drop">bar / psi</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Velocity</span>
+              <span class="metric-value" id="out-velocity">0.00</span>
+              <span class="metric-unit">m/s</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Reynolds Number</span>
+              <span class="metric-value" id="out-reynolds">0</span>
+              <span class="metric-badge" id="out-regime">Laminar</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card canvas-card">
+          <h2>Interactive System Schematic & Flow Profile</h2>
+          <div class="canvas-container">
+            <canvas id="flowCanvas" width="640" height="220"></canvas>
+          </div>
+          <div class="canvas-legend">
+            <span class="legend-item"><span class="dot laminar"></span> Laminar (Re &lt; 2,300)</span>
+            <span class="legend-item"><span class="dot transition"></span> Transitional</span>
+            <span class="legend-item"><span class="dot turbulent"></span> Turbulent (Re &gt; 4,000)</span>
+          </div>
+        </section>
+
+        <section class="card log-card">
+          <div class="card-header-flex">
+            <h2>Session Calculation Log</h2>
+            <button id="btn-clear-log" class="btn ghost small">Clear Log</button>
+          </div>
+          <div class="table-wrapper">
+            <table id="log-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Fluid</th>
+                  <th>Flow</th>
+                  <th>Size</th>
+                  <th>Length</th>
+                  <th>Head Loss</th>
+                  <th>Velocity</th>
+                </tr>
+              </thead>
+              <tbody id="log-tbody">
+                <tr class="empty-row">
+                  <td colspan="7">No calculations logged yet. Click 'Calculate System Hydraulics' to add entries.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Preset Modal -->
+  <div id="preset-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Load System Scenario Preset</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="preset-list">
+        <button class="preset-btn" data-preset="irrigation">
+          <strong>Garden Irrigation Loop</strong>
+          <span>1" PVC, 50m length, 20 GPM flow, standard sprinkler fittings.</span>
+        </button>
+        <button class="preset-btn" data-preset="domestic">
+          <strong>Domestic Home Supply</strong>
+          <span>3/4" Copper, 15m length, 8 GPM flow, multi-story feed.</span>
+        </button>
+        <button class="preset-btn" data-preset="industrial">
+          <strong>Industrial Chilled Water Line</strong>
+          <span>3" Steel, 120m length, 250 GPM flow, high velocity loop.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>AuraFlow Fluid Laboratory &bull; Built with pure HTML5, CSS3, and Vanilla JavaScript &bull; Local-first storage.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
