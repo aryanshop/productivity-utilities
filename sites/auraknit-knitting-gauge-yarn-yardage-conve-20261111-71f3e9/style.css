@@ -1,0 +1,352 @@
+:root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent: #0f766e;
+    --accent-hover: #115e59;
+    --accent-light: #ccfbf1;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --radius: 12px;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding-bottom: 3rem;
+}
+
+.app-header {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 2rem;
+    margin-bottom: 2rem;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.logo-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--accent);
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.card h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1rem 0 0.75rem 0;
+    color: var(--text-primary);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.85rem;
+    flex: 1;
+}
+
+.row-inputs {
+    display: flex;
+    gap: 1rem;
+}
+
+label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+input, select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background-color: #fff;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 1.25rem 0;
+}
+
+.action-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+.btn {
+    padding: 0.7rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+    flex: 1;
+}
+
+.primary-btn {
+    background-color: var(--accent);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.secondary-btn {
+    background-color: var(--accent-light);
+    color: var(--accent);
+}
+
+.secondary-btn:hover {
+    background-color: #99f6e4;
+}
+
+.text-btn {
+    background: none;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    flex: unset;
+    font-size: 0.8rem;
+}
+
+.text-btn:hover {
+    color: #ef4444;
+}
+
+.results-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.metric-box {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-value.highlight {
+    color: var(--accent);
+}
+
+.breakdown-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.breakdown-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.breakdown-list li strong {
+    color: var(--text-primary);
+}
+
+.hint-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.sub-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sub-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-main);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.presets-section {
+    margin-top: 0.5rem;
+}
+
+.presets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.presets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.empty-state {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.preset-card {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.preset-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.preset-details {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.preset-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.preset-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-secondary);
+}
+
+.preset-btn.load {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: transparent;
+}
+
+.preset-btn.delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.app-footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraKnit: Knitting Gauge & Yarn Yardage Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 3v18M18 3v18M3 6h18M3 18h18M6 12h12"/>
+                </svg>
+                <span>AuraKnit Studio</span>
+            </div>
+            <p class="subtitle">Precision Gauge, Yardage & Substitution Calculator for Fiber Artists</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Control Panels Grid -->
+        <div class="workspace-grid">
+            <!-- Left Column: Inputs & Swatch Calculator -->
+            <section class="card input-section">
+                <h2>1. Garment & Swatch Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" id="projectName" value="Cozy Oversized Pullover" placeholder="e.g., Autumn Raglan Cardigan">
+                </div>
+
+                <div class="row-inputs">
+                    <div class="input-group">
+                        <label for="targetWidth">Target Width / Chest (in)</label>
+                        <input type="number" id="targetWidth" value="40" min="5" max="100" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="targetHeight">Target Length (in)</label>
+                        <input type="number" id="targetHeight" value="24" min="5" max="100" step="0.5">
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3>Swatch & Gauge (per 4" / 10cm)</h3>
+                <div class="row-inputs">
+                    <div class="input-group">
+                        <label for="swatchStitches">Swatch Stitches (4")</label>
+                        <input type="number" id="swatchStitches" value="20" min="5" max="80" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="swatchRows">Swatch Rows (4")</label>
+                        <input type="number" id="swatchRows" value="28" min="5" max="100" step="1">
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3>Yarn Specifications</h3>
+                <div class="row-inputs">
+                    <div class="input-group">
+                        <label for="yarnWeight">Yarn Category</label>
+                        <select id="yarnWeight">
+                            <option value="lace">Lace (0)</option>
+                            <option value="fingering">Fingering / Sock (1)</option>
+                            <option value="sport">Sport / Baby (2)</option>
+                            <option value="dk">DK / Light Worsted (3)</option>
+                            <option value="worsted" selected>Worsted / Aran (4)</option>
+                            <option value="bulky">Bulky / Chunky (5)</option>
+                            <option value="superbulky">Super Bulky (6)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="bufferPercent">Safety & Swatch Buffer (%)</label>
+                        <input type="number" id="bufferPercent" value="12" min="0" max="30" step="1">
+                    </div>
+                </div>
+
+                <div class="row-inputs">
+                    <div class="input-group">
+                        <label for="skeinYards">Yards per Skein</label>
+                        <input type="number" id="skeinYards" value="220" min="20" max="1000" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label for="skeinGrams">Grams per Skein (g)</label>
+                        <input type="number" id="skeinGrams" value="100" min="10" max="500" step="5">
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="btnCalculate" class="btn primary-btn">Calculate Project Specs</button>
+                    <button id="btnSavePreset" class="btn secondary-btn">Save to Local Presets</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Analytics Dashboard -->
+            <div class="results-column">
+                <!-- Metrics Summary Cards -->
+                <section class="card metrics-card">
+                    <h2>Project Calculation Results</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">Total Estimated Yardage</span>
+                            <span class="metric-value" id="resYardage">1,450 yds</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Required Skeins</span>
+                            <span class="metric-value highlight" id="resSkeins">7 skeins</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Total Weight</span>
+                            <span class="metric-value" id="resWeight">700 g</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Total Cast-on Stitches</span>
+                            <span class="metric-value" id="resStitches">200 sts</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Breakdown & Conversion -->
+                <section class="card details-card">
+                    <h2>Stitch & Row Breakdown</h2>
+                    <ul class="breakdown-list">
+                        <li>
+                            <span>Stitch Density</span>
+                            <strong id="statStitchDensity">5.0 stitches per inch</strong>
+                        </li>
+                        <li>
+                            <span>Row Density</span>
+                            <strong id="statRowDensity">7.0 rows per inch</strong>
+                        </li>
+                        <li>
+                            <span>Total Working Rows</span>
+                            <strong id="statTotalRows">168 rows</strong>
+                        </li>
+                        <li>
+                            <span>Buffer Yardage (included)</span>
+                            <strong id="statBufferYards">155 yds</strong>
+                        </li>
+                    </ul>
+
+                    <div class="divider"></div>
+
+                    <h3>Yarn Substitution Weight Estimator</h3>
+                    <p class="hint-text">Comparing required yardage if switching yarn weight categories:</p>
+                    <div class="sub-matrix" id="substitutionMatrix">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Local Saved Presets Drawer -->
+        <section class="card presets-section">
+            <div class="presets-header">
+                <h2>Saved Project Presets (<span id="presetCount">0</span>)</h2>
+                <button id="btnClearPresets" class="btn text-btn">Clear All</button>
+            </div>
+            <div id="presetsContainer" class="presets-grid">
+                <p class="empty-state">No saved project presets yet. Configure your project and click 'Save to Local Presets'.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraKnit Laboratory &bull; Local-First Fiber Arts Toolkit &bull; No Data Transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
