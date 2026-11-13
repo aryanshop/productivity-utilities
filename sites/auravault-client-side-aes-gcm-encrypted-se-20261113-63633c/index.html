@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Client-Side AES-GCM Encrypted Secret & Note Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h1>AuraVault</h1>
+            </div>
+            <p class="tagline">Local-First AES-GCM Encrypted Note & Secret Vault</p>
+            <div class="header-actions">
+                <button id="btn-export-vault" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export Vault
+                </button>
+                <label for="import-file" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Import Vault
+                </label>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="vault-controls">
+            <div class="search-filter-area">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Search vault notes & tags...">
+                </div>
+                <div class="tag-filter-container" id="tag-filter-container">
+                    <!-- Dynamically populated tags -->
+                </div>
+            </div>
+            <button id="btn-new-note" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Encrypted Note
+            </button>
+        </section>
+
+        <div class="vault-workspace">
+            <aside class="notes-sidebar">
+                <div class="sidebar-header">
+                    <h2>Saved Vault Items</h2>
+                    <span id="note-count" class="badge">0</span>
+                </div>
+                <div id="notes-list" class="notes-list">
+                    <!-- Notes list populated by JS -->
+                    <div class="empty-sidebar">
+                        <p>No notes in vault yet. Click 'New Encrypted Note' to start.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="editor-pane">
+                <div id="empty-editor-state" class="empty-editor">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                    </div>
+                    <h3>Select a Vault Item or Create New</h3>
+                    <p>All notes are encrypted client-side using AES-GCM 256-bit keys derived via PBKDF2. No plaintext ever leaves your browser.</p>
+                </div>
+
+                <div id="active-editor" class="active-editor hidden">
+                    <div class="editor-header">
+                        <div class="input-group title-group">
+                            <input type="text" id="note-title" placeholder="Note Title / Reference">
+                        </div>
+                        <div class="editor-toolbar-actions">
+                            <button id="btn-save-note" class="btn btn-primary btn-sm">
+                                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                Save Note
+                            </button>
+                            <button id="btn-delete-note" class="btn btn-danger btn-sm">
+                                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="meta-row">
+                        <div class="input-group tags-group">
+                            <input type="text" id="note-tags" placeholder="Tags (comma separated, e.g. passwords, server, finance)">
+                        </div>
+                        <div class="self-destruct-setting">
+                            <label for="note-destruct">
+                                <input type="checkbox" id="note-destruct">
+                                Self-Destruct on View
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="passphrase-section">
+                        <div class="passphrase-inputs">
+                            <div class="input-group">
+                                <label for="vault-passphrase">Master Passphrase for Note</label>
+                                <input type="password" id="vault-passphrase" placeholder="Enter encryption passphrase...">
+                            </div>
+                            <div class="input-group">
+                                <label for="vault-passphrase-confirm">Confirm Passphrase</label>
+                                <input type="password" id="vault-passphrase-confirm" placeholder="Confirm passphrase...">
+                            </div>
+                        </div>
+                        <div class="entropy-meter-wrapper">
+                            <div class="entropy-bar">
+                                <div id="entropy-fill" class="entropy-fill"></div>
+                            </div>
+                            <span id="entropy-text" class="entropy-text">Entropy: None</span>
+                        </div>
+                    </div>
+
+                    <div class="textarea-wrapper">
+                        <div class="textarea-header">
+                            <label for="note-content">Secret Content (Markdown / Text)</label>
+                            <div class="view-mode-toggle">
+                                <button type="button" id="btn-tab-write" class="tab-btn active">Editor</button>
+                                <button type="button" id="btn-tab-preview" class="tab-btn">Preview</button>
+                            </div>
+                        </div>
+                        <textarea id="note-content" placeholder="Type or paste sensitive credentials, API keys, private notes here..."></textarea>
+                        <div id="note-preview" class="note-preview hidden"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Decrypt Modal -->
+    <div id="decrypt-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Unlock Encrypted Note</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <p id="decrypt-note-title-display" class="modal-subtitle"></p>
+            <div class="input-group">
+                <label for="unlock-passphrase">Enter Note Passphrase</label>
+                <input type="password" id="unlock-passphrase" placeholder="Passphrase...">
+            </div>
+            <div id="decrypt-error" class="error-message hidden">Incorrect passphrase or corrupted payload.</div>
+            <div class="modal-actions">
+                <button id="btn-confirm-decrypt" class="btn btn-primary">Decrypt & View</button>
+                <button id="btn-cancel-decrypt" class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Self Destruct Modal View -->
+    <div id="destruct-modal" class="modal hidden">
+        <div class="modal-content destruct-content">
+            <div class="destruct-icon">
+                <svg viewBox="0 0 24 24" width="56" height="56" stroke="#e74c3c" stroke-width="1.5" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <h3>Self-Destructing Note Unlocked</h3>
+            <p class="destruct-warning">This note was configured to self-destruct upon viewing. It has now been permanently deleted from your vault.</p>
+            <div id="destruct-note-body" class="destruct-body"></div>
+            <button id="btn-close-destruct" class="btn btn-primary">Close & Erase Forever</button>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>AuraVault &bull; Client-Side Web Crypto AES-GCM Storage &bull; Zero External Telemetry</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
