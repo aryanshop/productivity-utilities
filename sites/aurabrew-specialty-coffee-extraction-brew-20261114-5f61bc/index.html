@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBrew: Specialty Coffee Extraction & Brew Ratio Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="logo-icon">☕</span>
+                <h1>Aura<span>Brew</span></h1>
+            </div>
+            <p class="tagline">Precision Coffee Extraction & Brew Ratio Laboratory</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Column: Configuration Controls -->
+            <section class="panel config-panel" aria-labelledby="config-heading">
+                <h2 id="config-heading">⚙️ Brew Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="brew-method">Brew Method</label>
+                    <select id="brew-method">
+                        <option value="v60" data-ratio="16" data-temp="93" data-tds="1.35">V60 Pour-Over (1:16)</option>
+                        <option value="chemex" data-ratio="16.5" data-temp="94" data-tds="1.20">Chemex (1:16.5)</option>
+                        <option value="frenchpress" data-ratio="15" data-temp="95" data-tds="1.45">French Press (1:15)</option>
+                        <option value="aeropress" data-ratio="13" data-temp="88" data-tds="1.60">AeroPress (1:13)</option>
+                        <option value="espresso" data-ratio="2" data-temp="92" data-tds="9.50">Espresso (1:2)</option>
+                        <option value="coldbrew" data-ratio="8" data-temp="4" data-tds="4.50">Cold Brew (1:8)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="calc-mode">Calculation Mode</label>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn active" data-mode="dose">From Dry Dose</button>
+                        <button type="button" class="seg-btn" data-mode="yield">From Target Cup</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="input-group-dose">
+                    <label for="coffee-dose">Dry Coffee Dose (<span id="dose-unit-label">g</span>)</label>
+                    <input type="number" id="coffee-dose" value="20" min="5" max="200" step="0.5">
+                </div>
+
+                <div class="form-group hidden" id="input-group-yield">
+                    <label for="target-yield">Target Brew Volume (<span id="yield-unit-label">ml</span>)</label>
+                    <input type="number" id="target-yield" value="300" min="50" max="2000" step="10">
+                </div>
+
+                <div class="form-group">
+                    <label for="custom-ratio">Brew Ratio (1 : <span id="ratio-val">16</span>)</label>
+                    <input type="range" id="custom-ratio" min="2" max="20" step="0.5" value="16">
+                </div>
+
+                <div class="form-group">
+                    <label for="roast-level">Bean Roast Profile</label>
+                    <select id="roast-level">
+                        <option value="light">Light Roast (Higher density, needs higher temp)</option>
+                        <option value="medium" selected>Medium Roast (Balanced sweetness & acidity)</option>
+                        <option value="dark">Dark Roast (Lower density, highly soluble)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="water-temp">Water Temperature (<span id="temp-unit-label">°C</span>)</label>
+                    <div class="inline-slider-group">
+                        <input type="range" id="water-temp" min="75" max="100" step="1" value="93">
+                        <span id="temp-display">93°C</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" id="btn-save-recipe" class="btn btn-primary">💾 Save Recipe</button>
+                    <button type="button" id="btn-reset" class="btn btn-secondary">↻ Reset Defaults</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Interactive Labs -->
+            <div class="results-column">
+                <!-- Output Metric Cards -->
+                <section class="metrics-grid" aria-label="Brew Output Metrics">
+                    <div class="metric-card">
+                        <span class="metric-label">Water Required</span>
+                        <span class="metric-value" id="out-water">320</span>
+                        <span class="metric-unit">grams (ml)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Ext. Efficiency</span>
+                        <span class="metric-value" id="out-extraction">20.2</span>
+                        <span class="metric-unit">% (Ideal: 18-22%)</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Est. TDS</span>
+                        <span class="metric-value" id="out-tds">1.35</span>
+                        <span class="metric-unit">% Brew Strength</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Grind Size</span>
+                        <span class="metric-value highlight-text" id="out-grind">Medium-Fine</span>
+                        <span class="metric-unit">Burr Calibration</span>
+                    </div>
+                </section>
+
+                <!-- Pour Schedule Breakdown -->
+                <section class="panel schedule-panel">
+                    <h2>⏱️ Pour-Over Extraction Timeline</h2>
+                    <div class="timeline-container" id="timeline-container">
+                        <!-- Dynamically populated timeline steps -->
+                    </div>
+                </section>
+
+                <!-- Interactive Cooling & Thermal Canvas -->
+                <section class="panel canvas-panel">
+                    <div class="panel-header">
+                        <h2>🌡️ Thermal Slurry Decay Simulation</h2>
+                        <span class="canvas-subtitle">Water cooling curve during extraction</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="coolingCanvas" width="600" height="220"></canvas>
+                    </div>
+                </section>
+
+                <!-- Saved Recipes Section -->
+                <section class="panel recipes-panel">
+                    <h2>📋 Saved Laboratory Recipes</h2>
+                    <div class="recipe-list" id="recipe-list">
+                        <p class="empty-state">No saved recipes yet. Configure your brew and click Save Recipe!</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraBrew Laboratory &bull; Client-side specialty coffee extraction calculator &bull; No data transmitted</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
