@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Client-Side AES-GCM Encrypted Secret & Note Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h1>Aura<span>Vault</span></h1>
+            </div>
+            <p class="subtitle">Client-side zero-knowledge AES-GCM encryption & secure note keeper</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-new-note" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Vault Note
+            </button>
+            <button id="btn-export" class="btn btn-outline" title="Backup Vault JSON">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Backup
+            </button>
+            <label class="btn btn-outline" title="Restore Vault JSON">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Restore
+                <input type="file" id="file-restore" accept=".json" style="display: none;">
+            </label>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Sidebar / Note List -->
+        <aside class="sidebar">
+            <div class="search-filter-box">
+                <div class="search-input-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-notes" placeholder="Search vault notes..." aria-label="Search notes">
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" data-filter="all">All</button>
+                    <button class="chip" data-filter="encrypted">Encrypted</button>
+                    <button class="chip" data-filter="decrypted">Decrypted</button>
+                </div>
+            </div>
+            
+            <div id="notes-list" class="notes-list">
+                <!-- Dynamically populated note items -->
+            </div>
+
+            <div class="vault-stats">
+                <span id="vault-count">0 notes in vault</span>
+                <span id="vault-status" class="secure-badge">
+                    <span class="dot"></span> Local Crypto Ready
+                </span>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <section class="workspace">
+            <div id="empty-state" class="empty-state">
+                <div class="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h2>Your Secure Client-Side Vault</h2>
+                <p>Select a note from the sidebar or create a new encrypted record. All encryption and decryption happen strictly inside your browser using Web Crypto AES-GCM 256-bit keys derived via PBKDF2.</p>
+                <button id="btn-empty-new" class="btn btn-primary">Create First Secret Note</button>
+            </div>
+
+            <div id="note-editor" class="note-editor hidden">
+                <div class="editor-header">
+                    <input type="text" id="note-title" class="note-title-input" placeholder="Note Title / Reference Name...">
+                    <div class="editor-meta-inputs">
+                        <input type="text" id="note-tags" class="note-tags-input" placeholder="Tags (comma separated, e.g. credentials, api)">
+                        <select id="note-category" class="note-category-select">
+                            <option value="General">General</option>
+                            <option value="Credentials">Credentials</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Secure Journal">Secure Journal</option>
+                            <option value="API Keys">API Keys</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Passphrase & Encryption Toolbar -->
+                <div class="crypto-toolbar">
+                    <div class="passphrase-group">
+                        <div class="password-input-wrap">
+                            <input type="password" id="note-passphrase" placeholder="Enter encryption passphrase..." autocomplete="new-password">
+                            <button type="button" id="toggle-pass-visibility" title="Show/Hide Passphrase">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <div class="entropy-meter">
+                            <div id="entropy-bar" class="entropy-bar"></div>
+                            <span id="entropy-text">Entropy: Weak</span>
+                        </div>
+                    </div>
+                    <div class="crypto-action-buttons">
+                        <button id="btn-encrypt" class="btn btn-success">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            Encrypt Note
+                        </button>
+                        <button id="btn-decrypt" class="btn btn-warning">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><line x1="12" y1="15" x2="12" y2="17"></line></svg>
+                            Decrypt Note
+                        </button>
+                        <button id="btn-generate-pass" class="btn btn-outline" title="Generate strong passphrase">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                            Random
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content Textarea -->
+                <div class="content-area-wrap">
+                    <div class="content-header-labels">
+                        <label for="note-content" id="content-label">Plaintext Secret Content</label>
+                        <div class="content-tools">
+                            <button id="btn-copy" class="btn-text" title="Copy content">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                Copy
+                            </button>
+                            <button id="btn-self-destruct" class="btn-text" title="Simulate self-destruct view">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                Self-Destruct Mode
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="note-content" placeholder="Type secret credentials, notes, recovery keys, or private thoughts here..."></textarea>
+                </div>
+
+                <!-- Editor Footer Actions -->
+                <div class="editor-footer">
+                    <div class="status-indicator" id="encryption-status-indicator">
+                        Status: <span class="status-plain">Unencrypted Plaintext</span>
+                    </div>
+                    <div class="editor-footer-buttons">
+                        <button id="btn-delete" class="btn btn-danger">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Delete Note
+                        </button>
+                        <button id="btn-save" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Save Note
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Self-Destruct Simulation Modal -->
+    <div id="destruct-modal" class="modal hidden">
+        <div class="modal-content destruct-box">
+            <div class="destruct-warning-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <h3>One-Time Self-Destruct Simulation</h3>
+            <p>This view simulates a secure one-time secret link. Once you click view, the timer starts. When closed or expired, the note content vanishes from this window view.</p>
+            <div id="destruct-countdown" class="destruct-timer">60</div>
+            <div id="destruct-body" class="destruct-secret-text">
+                <!-- Secret content revealed temporarily -->
+            </div>
+            <button id="btn-close-destruct" class="btn btn-primary">Close & Erase View</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
