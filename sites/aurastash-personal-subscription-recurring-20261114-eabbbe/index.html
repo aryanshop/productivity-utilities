@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStash: Personal Subscription & Recurring Expense Budget Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <span class="brand-icon">⚡</span>
+                <h1>AuraStash</h1>
+            </div>
+            <p class="tagline">Precision Subscription & Recurring Expense Budget Laboratory</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-export" class="btn btn-secondary" title="Export JSON Backup">Export JSON</button>
+            <label class="btn btn-secondary file-upload-label">
+                Import JSON <input type="file" id="file-import" accept=".json" hidden>
+            </label>
+            <button id="btn-reset" class="btn btn-danger" title="Reset Data">Reset</button>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- Analytics Dashboard -->
+        <section class="dashboard-grid">
+            <div class="card stat-card">
+                <span class="stat-label">Monthly Run-Rate</span>
+                <h2 id="stat-monthly">$0.00</h2>
+                <span id="stat-monthly-sub" class="stat-sub">0 active subscriptions</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Annualized Burn</span>
+                <h2 id="stat-annual">$0.00</h2>
+                <span id="stat-annual-sub" class="stat-sub">Projected 12-month spend</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Average Cost / Item</span>
+                <h2 id="stat-avg">$0.00</h2>
+                <span id="stat-avg-sub" class="stat-sub">Per monthly billing cycle</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Optimization Potential</span>
+                <h2 id="stat-savings">$0.00</h2>
+                <span id="stat-savings-sub" class="stat-sub">Marked for review</span>
+            </div>
+        </section>
+
+        <!-- Visual Analysis & Workspace -->
+        <div class="workspace-grid">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Category Spending Distribution</h3>
+                    <div class="chart-legend" id="chart-legend"></div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="spending-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="card form-card">
+                <div class="card-header">
+                    <h3 id="form-title">Add New Subscription</h3>
+                    <button id="btn-cancel-edit" class="btn-text" style="display:none;">Cancel Edit</button>
+                </div>
+                <form id="subscription-form">
+                    <input type="hidden" id="item-id">
+                    <div class="form-group">
+                        <label for="item-name">Service / Item Name</label>
+                        <input type="text" id="item-name" placeholder="e.g., Cloud Workspace, VPN, Gym" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="item-cost">Cost ($)</label>
+                            <input type="number" id="item-cost" step="0.01" min="0" placeholder="9.99" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-billing">Billing Cycle</label>
+                            <select id="item-billing">
+                                <option value="monthly">Monthly</option>
+                                <option value="annual">Annual</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="quarterly">Quarterly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="item-category">Category</label>
+                            <select id="item-category">
+                                <option value="software">Software / SaaS</option>
+                                <option value="utilities">Utilities & Hosting</option>
+                                <option value="entertainment">Entertainment & Media</option>
+                                <option value="cloud">Cloud Storage & Backup</option>
+                                <option value="membership">Memberships & Perks</option>
+                                <option value="other">Other Recurring</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-status">Status / Review</label>
+                            <select id="item-status">
+                                <option value="active">Active</option>
+                                <option value="review">Review / Consider Canceling</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-notes">Notes / Renewal Date</label>
+                        <input type="text" id="item-notes" placeholder="e.g., Renews Nov 1st, annual discount">
+                    </div>
+                    <button type="submit" id="btn-submit" class="btn btn-primary btn-block">Add Subscription</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Subscriptions Table Section -->
+        <div class="card table-card">
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search subscriptions...">
+                </div>
+                <div class="filter-group">
+                    <select id="filter-category">
+                        <option value="all">All Categories</option>
+                        <option value="software">Software / SaaS</option>
+                        <option value="utilities">Utilities & Hosting</option>
+                        <option value="entertainment">Entertainment & Media</option>
+                        <option value="cloud">Cloud Storage & Backup</option>
+                        <option value="membership">Memberships & Perks</option>
+                        <option value="other">Other Recurring</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active Only</option>
+                        <option value="review">Needs Review</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="subscriptions-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Category</th>
+                            <th>Cycle</th>
+                            <th>Monthly Equivalent</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscriptions-tbody">
+                        <!-- Dynamic rows injected here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <p>No subscriptions found matching your filters.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraStash &bull; Local-First Privacy Utility &bull; All data securely stored in your browser.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
