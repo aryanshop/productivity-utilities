@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Compound Interest & Inflation Wealth Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>AuraSlate</span>
+            </div>
+            <h1>Wealth & Inflation Growth Laboratory</h1>
+            <p class="subtitle">Simulate long-term compounding, purchasing power decay, and milestone trajectories with local scenario storage.</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="control-panel">
+            <div class="panel-header">
+                <h2>Simulation Parameters</h2>
+                <button id="reset-btn" class="btn-secondary" title="Reset to Defaults">Reset Defaults</button>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="initial-principal">Initial Principal ($)</label>
+                    <input type="number" id="initial-principal" value="10000" min="0" step="500">
+                </div>
+
+                <div class="input-group">
+                    <label for="monthly-contrib">Monthly Contribution ($)</label>
+                    <input type="number" id="monthly-contrib" value="500" min="0" step="50">
+                </div>
+
+                <div class="input-group">
+                    <label for="annual-return">Expected Annual Return (%)</label>
+                    <input type="number" id="annual-return" value="7.0" min="-50" max="50" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="inflation-rate">Estimated Inflation Rate (%)</label>
+                    <input type="number" id="inflation-rate" value="2.5" min="0" max="20" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="time-horizon">Time Horizon (Years)</label>
+                    <input type="number" id="time-horizon" value="30" min="1" max="70" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="tax-drag">Annual Tax Drag (%)</label>
+                    <input type="number" id="tax-drag" value="0.5" min="0" max="10" step="0.1">
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button id="save-preset-btn" class="btn-primary">Save Scenario Preset</button>
+                <div class="preset-dropdown-container">
+                    <select id="preset-select">
+                        <option value="">Load Saved Scenario...</option>
+                    </select>
+                    <button id="delete-preset-btn" class="btn-icon" title="Delete Selected Preset">✕</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-overview">
+            <div class="stat-card">
+                <span class="stat-label">Final Nominal Value</span>
+                <span id="stat-nominal" class="stat-value">$0</span>
+                <span id="stat-nominal-diff" class="stat-sub">Total Interest: $0</span>
+            </div>
+            <div class="stat-card highlight">
+                <span class="stat-label">Inflation-Adjusted (Real) Value</span>
+                <span id="stat-real" class="stat-value">$0</span>
+                <span id="stat-purchasing-power" class="stat-sub">Purchasing Power: 0%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Contributions</span>
+                <span id="stat-contributions" class="stat-value">$0</span>
+                <span id="stat-return-multiplier" class="stat-sub">Growth Multiple: 0x</span>
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <div class="chart-header">
+                <h3>Wealth Trajectory Projection</h3>
+                <div class="chart-legend">
+                    <span class="legend-item nominal"><i class="dot"></i> Nominal Portfolio</span>
+                    <span class="legend-item real"><i class="dot"></i> Inflation-Adjusted (Real)</span>
+                    <span class="legend-item contrib"><i class="dot"></i> Total Principal</span>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="wealth-canvas"></canvas>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <h3>Year-by-Year Breakdown</h3>
+            <div class="table-wrapper">
+                <table id="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Age / Milestone</th>
+                            <th>Total Contributed</th>
+                            <th>Nominal Value</th>
+                            <th>Real Value (Inflation Adj.)</th>
+                            <th>Interest Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdown-tbody">
+                        <!-- Dynamic rows populated via script.js -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraSlate Compound Interest Laboratory &bull; Local-first simulation with zero telemetry or external network dependencies.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
