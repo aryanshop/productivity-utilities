@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPulse — Ergonomic Micro-Break & Posture Rhythm Architect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation & Stats -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <h1>AuraPulse</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="timer">Rhythm Studio</button>
+                <button class="nav-btn" data-tab="stretches">Somatic Library</button>
+                <button class="nav-btn" data-tab="analytics">Session Log</button>
+            </nav>
+
+            <div class="streak-card">
+                <div class="streak-header">
+                    <span>Daily Streak</span>
+                    <span id="streak-count" class="badge">0 days</span>
+                </div>
+                <p class="streak-quote" id="daily-quote">"Small postural habits compound into lifelong vitality."</p>
+            </div>
+
+            <div class="audio-toggle-wrapper">
+                <label class="toggle-label">
+                    <span>Sound Chimes (Web Audio)</span>
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <!-- TAB 1: TIMER & RHYTHM STUDIO -->
+            <section id="tab-timer" class="tab-pane active">
+                <header class="pane-header">
+                    <h2>Ergonomic Rhythm Architect</h2>
+                    <p>Configure your deep work cadence and restorative micro-break triggers.</p>
+                </header>
+
+                <div class="rhythm-preset-bar">
+                    <button class="preset-btn active" data-work="25" data-break="5">Pomodoro (25/5)</button>
+                    <button class="preset-btn" data-work="50" data-break="10">Ultradian (50/10)</button>
+                    <button class="preset-btn" data-work="90" data-break="20">Deep Flow (90/20)</button>
+                    <button class="preset-btn" data-work="15" data-break="3">Micro Reset (15/3)</button>
+                </div>
+
+                <div class="timer-workspace">
+                    <div class="timer-card">
+                        <div class="timer-ring-container">
+                            <svg class="progress-ring" width="280" height="280">
+                                <circle class="ring-bg" cx="140" cy="140" r="120"></circle>
+                                <circle class="ring-progress" id="progress-ring" cx="140" cy="140" r="120"></circle>
+                            </svg>
+                            <div class="timer-display-content">
+                                <span id="timer-mode-label" class="timer-mode-badge focus">Deep Work</span>
+                                <div id="timer-clock" class="timer-time">25:00</div>
+                                <span id="timer-subtext" class="timer-sub">Focus session in progress</span>
+                            </div>
+                        </div>
+
+                        <div class="timer-controls">
+                            <button id="btn-start" class="btn btn-primary btn-lg">Start Rhythm</button>
+                            <button id="btn-pause" class="btn btn-secondary btn-lg" disabled>Pause</button>
+                            <button id="btn-reset" class="btn btn-ghost">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="active-break-prescription" id="active-break-box">
+                        <h3>Scheduled Break Prescription</h3>
+                        <div id="prescription-content" class="prescription-empty">
+                            <p>Start your work rhythm to unlock contextual somatic desk stretches and eye-strain relief prompts during break intervals.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SOMATIC STRETCH & EXERCISE LIBRARY -->
+            <section id="tab-stretches" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Somatic & Eye-Strain Relief Library</h2>
+                    <p>Curated desk movements designed to alleviate cervical tension, wrist fatigue, and digital eye strain.</p>
+                </header>
+
+                <div class="filter-chips">
+                    <button class="chip active" data-filter="all">All Exercises</button>
+                    <button class="chip" data-filter="neck">Neck & Shoulders</button>
+                    <button class="chip" data-filter="wrists">Wrists & Hands</button>
+                    <button class="chip" data-filter="eyes">Eye Strain (20-20-20)</button>
+                    <button class="chip" data-filter="posture">Spinal Alignment</button>
+                </div>
+
+                <div class="exercise-grid" id="exercise-grid">
+                    <!-- Populated via script.js -->
+                </div>
+            </section>
+
+            <!-- TAB 3: SESSION LOG & ANALYTICS -->
+            <section id="tab-analytics" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Wellness & Focus Session Log</h2>
+                    <p>Review your completed work cycles, movement micro-breaks, and local session history.</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Focus Time</span>
+                        <span id="stat-focus-time" class="stat-value">0 mins</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Completed Sessions</span>
+                        <span id="stat-sessions-count" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Micro-Breaks Taken</span>
+                        <span id="stat-breaks-count" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="log-actions">
+                    <button id="btn-export-log" class="btn btn-secondary">Export Session JSON</button>
+                    <button id="btn-clear-log" class="btn btn-danger-outline">Clear Local History</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-table-body">
+                            <tr class="empty-row">
+                                <td colspan="4">No session logs recorded yet. Start a rhythm to begin tracking!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Exercise Modal Overlay -->
+    <div class="modal-backdrop" id="exercise-modal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-title">Exercise Title</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-badge" id="modal-category">Category</div>
+                <p id="modal-desc">Detailed description goes here...</p>
+                <div class="modal-instruction-box">
+                    <h4>Execution Protocol:</h4>
+                    <ol id="modal-steps">
+                        <!-- Steps populated dynamically -->
+                    </ol>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-done-btn" class="btn btn-primary">Complete & Return</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
