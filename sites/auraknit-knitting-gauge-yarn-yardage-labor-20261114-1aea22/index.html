@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraKnit: Knitting Gauge & Yarn Yardage Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Aura<span class="accent">Knit</span></h1>
+            <p class="subtitle">Precision Knitting Gauge, Yarn Substitution & Yardage Laboratory</p>
+        </div>
+        <div class="header-actions">
+            <button id="saveProjectBtn" class="btn btn-primary">Save Project</button>
+            <button id="exportJsonBtn" class="btn btn-secondary">Export JSON</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Left Sidebar: Controls & Inputs -->
+        <aside class="controls-sidebar">
+            <section class="panel">
+                <h2>1. Project & Garment</h2>
+                <div class="form-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" id="projectName" value="Winter Honeycomb Sweater">
+                </div>
+                <div class="form-group">
+                    <label for="garmentType">Garment Style</label>
+                    <select id="garmentType">
+                        <option value="sweater">Pullover Sweater (Full Body & Sleeves)</option>
+                        <option value="cardigan">Cardigan (Open Front + Band)</option>
+                        <option value="scarf">Scarf / Wrap</option>
+                        <option value="hat">Beanie / Hat</option>
+                        <option value="socks">Socks (Pair)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="targetChest">Bust / Chest (in)</label>
+                        <input type="number" id="targetChest" value="40" min="12" max="80" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="easeInches">Positive Ease (in)</label>
+                        <input type="number" id="easeInches" value="4" min="-4" max="16" step="0.5">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bodyLength">Body Length (in)</label>
+                        <input type="number" id="bodyLength" value="24" min="4" max="40" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="sleeveLength">Sleeve Length (in)</label>
+                        <input type="number" id="sleeveLength" value="18" min="2" max="35" step="0.5">
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2>2. Swatch & Gauge (per 4" / 10cm)</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="swatchStitches">Stitches (4")</label>
+                        <input type="number" id="swatchStitches" value="20" min="8" max="50" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="swatchRows">Rows (4")</label>
+                        <input type="number" id="swatchRows" value="28" min="10" max="70" step="0.5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="unitSystem">Measurement System</label>
+                    <select id="unitSystem">
+                        <option value="imperial">Imperial (Inches / Yards)</option>
+                        <option value="metric">Metric (Centimeters / Meters)</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2>3. Yarn & Substitution (WPI)</h2>
+                <div class="form-group">
+                    <label for="yarnWeightCategory">Yarn Weight Class</label>
+                    <select id="yarnWeightCategory">
+                        <option value="lace">0 - Lace (14-20 WPI)</option>
+                        <option value="fingering">1 - Fingering / Sock (12-14 WPI)</option>
+                        <option value="sport">2 - Sport (11-12 WPI)</option>
+                        <option value="dk">3 - DK / Light Worsted (9-11 WPI)</option>
+                        <option value="worsted" selected>4 - Worsted / Aran (7-9 WPI)</option>
+                        <option value="bulky">5 - Bulky / Chunky (5-7 WPI)</option>
+                        <option value="superbulky">6 - Super Bulky (4-5 WPI)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="skeinYards">Yards per Skein</label>
+                        <input type="number" id="skeinYards" value="220" min="20" max="1000" step="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="skeinGrams">Grams per Skein</label>
+                        <input type="number" id="skeinGrams" value="100" min="10" max="500" step="5">
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Right Workspace: Calculations & Visualizer -->
+        <section class="workspace">
+            <!-- Summary KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-label">Total Estimated Yardage</span>
+                    <span class="kpi-value" id="resTotalYards">1,420 yds</span>
+                    <span class="kpi-note" id="resTotalMeters">1,298 meters</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Required Skeins</span>
+                    <span class="kpi-value" id="resTotalSkeins">7 skeins</span>
+                    <span class="kpi-note" id="resTotalWeight">700 grams total</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Stitch Density</span>
+                    <span class="kpi-value" id="resStitchDensity">5.0 st / inch</span>
+                    <span class="kpi-note" id="resRowDensity">7.0 rows / inch</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Yarn WPI Estimate</span>
+                    <span class="kpi-value" id="resWpiEstimate">8 WPI</span>
+                    <span class="kpi-note">Worsted Weight Match</span>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown Panel -->
+            <div class="panel breakdown-panel">
+                <h2>Pattern Dimension & Construction Math</h2>
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <span class="item-title">Total Finished Circumference</span>
+                        <span class="item-val" id="calcCircumference">44.0 inches</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="item-title">Cast-On Stitch Count (Body)</span>
+                        <span class="item-val" id="calcCastOnStitches">220 stitches</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="item-title">Total Row Count (Body)</span>
+                        <span class="item-val" id="calcRowTotal">168 rows</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="item-title">Estimated Yarn Buffer (15%)</span>
+                        <span class="item-val" id="calcBufferYards">+213 yds safety</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Swatch & Mesh Visualizer -->
+            <div class="panel visualizer-panel">
+                <div class="visualizer-header">
+                    <h2>Interactive Gauge Swatch & Mesh Grid</h2>
+                    <div class="viz-controls">
+                        <button id="zoomInBtn" class="btn btn-small">Zoom +</button>
+                        <button id="zoomOutBtn" class="btn btn-small">Zoom -</button>
+                        <button id="resetZoomBtn" class="btn btn-small">Reset</button>
+                    </div>
+                </div>
+                <p class="hint">Visualizing stitch aspect ratio and loop density based on your 4" swatch settings.</p>
+                <div class="canvas-wrapper">
+                    <canvas id="swatchCanvas" width="650" height="320"></canvas>
+                </div>
+            </div>
+
+            <!-- Project Log / History -->
+            <div class="panel log-panel">
+                <h2>Saved Project Log</h2>
+                <div class="table-container">
+                    <table id="projectTable">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Style</th>
+                                <th>Gauge (4")</th>
+                                <th>Yarn</th>
+                                <th>Est. Yards</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectTableBody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraKnit Laboratory &bull; Local-First Fiber Arts Calculation Engine &bull; No external network traffic.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
