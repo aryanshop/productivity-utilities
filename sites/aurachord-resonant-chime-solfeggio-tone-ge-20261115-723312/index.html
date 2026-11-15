@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraChord: Resonant Chime & Solfeggio Tone Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon"></div>
+                <h1>Aura<span>Chord</span></h1>
+            </div>
+            <p class="subtitle">Resonant Solfeggio Frequency & Binaural Entrainment Laboratory</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Panel: Generator Controls -->
+            <section class="card control-panel">
+                <h2>Sound Architecture</h2>
+                
+                <div class="control-group">
+                    <label for="presetSelect">Solfeggio & Harmonic Presets</label>
+                    <select id="presetSelect">
+                        <option value="432">432 Hz - Harmonic Earth Tone</option>
+                        <option value="528" selected>528 Hz - Transformation & DNA Repair</option>
+                        <option value="396">396 Hz - Liberation from Fear & Guilt</option>
+                        <option value="639">639 Hz - Interconnectedness & Relationships</option>
+                        <option value="741">741 Hz - Intuition & Awakening Expression</option>
+                        <option value="852">852 Hz - Spiritual Order & Inner Strength</option>
+                        <option value="custom">Custom Frequency</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <div class="label-row">
+                        <label for="baseFreq">Carrier Frequency (Hz)</label>
+                        <span id="baseFreqVal">528.0 Hz</span>
+                    </div>
+                    <input type="range" id="baseFreq" min="100" max="1000" step="0.5" value="528">
+                </div>
+
+                <div class="control-group">
+                    <div class="label-row">
+                        <label for="binauralOffset">Binaural Offset (Brainwave)</label>
+                        <span id="binauralOffsetVal">6.0 Hz (Theta - Deep Meditation)</span>
+                    </div>
+                    <input type="range" id="binauralOffset" min="0" max="30" step="0.5" value="6">
+                </div>
+
+                <div class="control-group">
+                    <div class="label-row">
+                        <label for="volumeControl">Master Gain (Volume)</label>
+                        <span id="volumeVal">35%</span>
+                    </div>
+                    <input type="range" id="volumeControl" min="0" max="100" step="1" value="35">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-group half">
+                        <label for="waveformSelect">Waveform Shape</label>
+                        <select id="waveformSelect">
+                            <option value="sine">Pure Sine</option>
+                            <option value="triangle">Warm Triangle</option>
+                            <option value="sawtooth">Rich Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="control-group half">
+                        <label for="harmonicOvertones">Overtone Chorus</label>
+                        <select id="harmonicOvertones">
+                            <option value="1">Fundamental Only</option>
+                            <option value="1.5">Fifth Harmony (1.5x)</option>
+                            <option value="2">Octave Resonance (2x)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button id="playToggleBtn" class="btn btn-primary">
+                        <span class="icon-play"></span> <span id="playBtnText">Start Sound Generation</span>
+                    </button>
+                    <button id="muteToggleBtn" class="btn btn-secondary" title="Mute Audio">Mute</button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Visualizer & Focus Timer -->
+            <div class="right-column">
+                <section class="card visualizer-card">
+                    <div class="card-header">
+                        <h2>Oscilloscope & Lissajous Field</h2>
+                        <span id="statusBadge" class="badge standby">Standby</span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="waveCanvas" width="600" height="220"></canvas>
+                    </div>
+                    <div class="freq-readouts">
+                        <div class="readout-box">
+                            <span class="readout-label">Left Ear Carrier</span>
+                            <span id="leftEarVal">525.0 Hz</span>
+                        </div>
+                        <div class="readout-box">
+                            <span class="readout-label">Right Ear Carrier</span>
+                            <span id="rightEarVal">531.0 Hz</span>
+                        </div>
+                        <div class="readout-box">
+                            <span class="readout-label">Entrainment State</span>
+                            <span id="stateVal">Theta (4-8Hz)</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card timer-card">
+                    <h2>Focus Session & Timer</h2>
+                    <div class="timer-display">
+                        <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn btn-sm timer-preset" data-mins="10">10m</button>
+                        <button class="btn btn-sm timer-preset active" data-mins="25">25m</button>
+                        <button class="btn btn-sm timer-preset" data-mins="45">45m</button>
+                        <button class="btn btn-sm timer-preset" data-mins="60">60m</button>
+                        <button id="timerToggleBtn" class="btn btn-sm btn-accent">Start Timer</button>
+                        <button id="timerResetBtn" class="btn btn-sm btn-subtle">Reset</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Bottom Section: Session Log & Preset Storage -->
+        <section class="card log-card">
+            <div class="card-header">
+                <h2>Saved Sonic Presets & Session History</h2>
+                <div class="log-actions">
+                    <button id="savePresetBtn" class="btn btn-sm">Save Current Setup</button>
+                    <button id="clearLogBtn" class="btn btn-sm btn-subtle">Clear History</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="presetTable">
+                    <thead>
+                        <tr>
+                            <th>Preset Name</th>
+                            <th>Base Freq</th>
+                            <th>Binaural Offset</th>
+                            <th>Waveform</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="presetTableBody">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>AuraChord Resonant Laboratory • Offline Web Audio API Synthesizer • No External Dependencies</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
