@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVault: Client-Side AES-GCM Encrypted Secret & Note Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">🔒</div>
+                <h1>AuraVault</h1>
+                <span class="badge">AES-256-GCM</span>
+            </div>
+
+            <div class="master-key-box">
+                <label for="masterPassphrase">Master Passphrase</label>
+                <div class="input-with-action">
+                    <input type="password" id="masterPassphrase" placeholder="Enter encryption key..." autocomplete="off">
+                    <button id="togglePassBtn" title="Show/Hide Passphrase">👁️</button>
+                </div>
+                <div class="entropy-meter">
+                    <div id="entropyBar" class="entropy-fill"></div>
+                </div>
+                <span id="entropyText" class="entropy-label">Passphrase required for decrypt</span>
+            </div>
+
+            <div class="nav-actions">
+                <button id="newSecretBtn" class="btn btn-primary">+ New Secure Note</button>
+                <button id="lockVaultBtn" class="btn btn-secondary">Lock Vault</button>
+            </div>
+
+            <div class="vault-filter-box">
+                <input type="text" id="searchSecrets" placeholder="Search secrets & tags...">
+            </div>
+
+            <div class="secret-list-container">
+                <div id="secretList" class="secret-list">
+                    <!-- Dynamically populated secret items -->
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button id="exportVaultBtn" class="btn btn-text">Export Backup (JSON)</button>
+                <label for="importVaultInput" class="btn btn-text upload-label">Import Backup</label>
+                <input type="file" id="importVaultInput" accept=".json" style="display: none;">
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <div id="welcomeState" class="workspace-state">
+                <div class="state-content">
+                    <h2>Client-Side Cryptographic Workspace</h2>
+                    <p>Your notes and credentials are secured locally in your browser using industry-standard <strong>AES-GCM 256-bit encryption</strong> via the native Web Crypto API. No data is ever transmitted or stored on any server.</p>
+                    <button id="welcomeNewBtn" class="btn btn-primary btn-large">Create Your First Secure Note</button>
+                </div>
+            </div>
+
+            <div id="editorState" class="workspace-editor" style="display: none;">
+                <div class="editor-header">
+                    <input type="text" id="secretTitle" placeholder="Secret Title (e.g., Server Root Password)">
+                    <div class="editor-meta-inputs">
+                        <input type="text" id="secretTags" placeholder="Tags (comma separated: dev, credentials)">
+                        <select id="secretCategory">
+                            <option value="credential">🔑 Credential</option>
+                            <option value="secure-note">📝 Secure Note</option>
+                            <option value="api-key">⚡ API Key</option>
+                            <option value="journal">📔 Private Journal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="editor-body">
+                    <div class="textarea-wrapper">
+                        <textarea id="secretContent" placeholder="Type or paste your confidential text, keys, or JSON payloads here..."></textarea>
+                        <div id="decryptedOverlay" class="decrypted-overlay" style="display: none;">
+                            <div class="locked-message">
+                                <span>🔒 Vault Locked / Ciphertext Only</span>
+                                <p>Enter your master passphrase in the sidebar to decrypt and view this secret.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-footer">
+                    <div class="footer-left">
+                        <span id="charCount">0 characters</span>
+                        <span id="lastUpdated">Unsaved</span>
+                    </div>
+                    <div class="footer-right">
+                        <button id="copyContentBtn" class="btn btn-secondary">Copy Content</button>
+                        <button id="deleteSecretBtn" class="btn btn-danger">Delete</button>
+                        <button id="saveSecretBtn" class="btn btn-primary">Encrypt & Save</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
