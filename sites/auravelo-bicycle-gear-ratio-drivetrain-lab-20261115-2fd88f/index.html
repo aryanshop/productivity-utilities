@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVelo: Bicycle Gear Ratio & Drivetrain Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">⚙️</span>
+        <h1>AuraVelo</h1>
+      </div>
+      <p class="subtitle">Bicycle Gear Ratio, Development & Speed Laboratory</p>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <section class="control-panel">
+      <div class="panel-card">
+        <h2>Drivetrain Setup</h2>
+        
+        <div class="input-group">
+          <label for="bikeType">Riding Discipline / Wheel Size</label>
+          <select id="bikeType">
+            <option value="700x25">Road (700 x 25c - 2096mm)</option>
+            <option value="700x32">Gravel / Commuter (700 x 32c - 2155mm)</option>
+            <option value="29er">MTB 29" (29 x 2.25 - 2288mm)</option>
+            <option value="275">MTB 27.5" (650b - 2235mm)</option>
+            <option value="bmx">BMX (20" x 1.75 - 1545mm)</option>
+            <option value="custom">Custom Wheel Circumference</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="customCircGroup" style="display: none;">
+          <label for="customCirc">Wheel Circumference (mm)</label>
+          <input type="number" id="customCirc" value="2096" min="1000" max="3000">
+        </div>
+
+        <div class="input-group">
+          <label for="chainrings">Chainring Teeth (comma separated)</label>
+          <input type="text" id="chainrings" value="50, 34">
+          <small class="hint">Front chainrings (e.g. 50,34 or single 42)</small>
+        </div>
+
+        <div class="input-group">
+          <label for="cassette">Cassette / Cog Teeth (comma separated)</label>
+          <input type="text" id="cassette" value="11, 12, 13, 15, 17, 19, 21, 24, 28, 32, 36">
+          <small class="hint">Rear sprockets from smallest to largest</small>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="targetCadence">Target Cadence (RPM)</label>
+            <input type="number" id="targetCadence" value="90" min="40" max="150">
+          </div>
+          <div class="input-group">
+            <label for="speedUnit">Speed Unit</label>
+            <select id="speedUnit">
+              <option value="kmh">km/h</option>
+              <option value="mph">mph</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btnCalculate" class="btn primary">Update Calculations</button>
+          <button id="btnReset" class="btn secondary">Reset Defaults</button>
+        </div>
+      </div>
+
+      <div class="panel-card summary-card">
+        <h3>Quick Stats</h3>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-label">Gear Range</span>
+            <span id="statGearRange" class="stat-val">--</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Min Speed (@90rpm)</span>
+            <span id="statMinSpeed" class="stat-val">--</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Max Speed (@90rpm)</span>
+            <span id="statMaxSpeed" class="stat-val">--</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Combinations</span>
+            <span id="statCombos" class="stat-val">--</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-section">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="matrix">Speed & Gear Matrix</button>
+        <button class="tab-btn" data-tab="progression">Gear Steps & Jump Analysis</button>
+        <button class="tab-btn" data-tab="presets">Drivetrain Presets</button>
+      </div>
+
+      <div class="tab-content active" id="tab-matrix">
+        <div class="card">
+          <div class="card-header">
+            <h3>Speed Matrix at <span id="displayCadence">90</span> RPM</h3>
+            <div class="chart-toggle">
+              <label><input type="checkbox" id="toggleInches" checked> Show Gear Inches</label>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="matrixTable">
+              <tbody id="matrixBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Speed vs Cadence Chart (Top & Low Gear)</h3>
+          <div class="canvas-container">
+            <canvas id="speedCanvas" width="800" height="350"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-progression">
+        <div class="card">
+          <h3>Percentage Jump Between Adjacent Gears</h3>
+          <p class="card-desc">Evaluates cadence smoothness when shifting gears. Ideal jumps are between 10% and 15%.</p>
+          <div class="canvas-container">
+            <canvas id="jumpCanvas" width="800" height="300"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Sequential Gear Progression Table</h3>
+          <div class="table-responsive">
+            <table id="progressionTable">
+              <thead>
+                <tr>
+                  <th>Chainring</th>
+                  <th>Cog</th>
+                  <th>Ratio</th>
+                  <th>Gear Inches</th>
+                  <th>Development (m)</th>
+                  <th>Speed (<span class="unit-lbl">km/h</span>)</th>
+                  <th>Jump to Next (%)</th>
+                </tr>
+              </thead>
+              <tbody id="progressionBody">
+                <!-- Populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-presets">
+        <div class="card">
+          <h3>Quick Load Drivetrain Presets</h3>
+          <div class="preset-grid">
+            <div class="preset-card" data-chain="50,34" data-cog="11,12,13,14,16,18,21,24,28,32,34" data-type="700x25">
+              <h4>Road Compact (2x11)</h4>
+              <p>50/34 chainset with 11-34T cassette. Great climbing range for road bikes.</p>
+              <button class="btn small">Load Setup</button>
+            </div>
+            <div class="preset-card" data-chain="42" data-cog="11,13,15,18,21,24,28,32,36,42,50" data-type="700x32">
+              <h4>Gravel 1x (1x11)</h4>
+              <p>42T chainring with 11-50T wide-range cassette for mixed terrain.</p>
+              <button class="btn small">Load Setup</button>
+            </div>
+            <div class="preset-card" data-chain="32" data-cog="10,12,14,16,18,21,24,28,32,36,42,50,52" data-type="29er">
+              <h4>MTB Eagle (1x12)</h4>
+              <p>32T chainring with 10-52T mountain cassette for steep technical trails.</p>
+              <button class="btn small">Load Setup</button>
+            </div>
+            <div class="preset-card" data-chain="48" data-cog="16" data-type="bmx">
+              <h4>Single Speed / Commuter</h4>
+              <p>48T front and 16T rear fixed/freewheel urban setup.</p>
+              <button class="btn small">Load Setup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraVelo Drivetrain Lab &mdash; Local calculation utility. No data stored externally.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
