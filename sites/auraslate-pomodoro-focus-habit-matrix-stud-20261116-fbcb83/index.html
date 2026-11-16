@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Pomodoro Focus & Habit Matrix Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-icon">⚡</span>
+                <h1>AuraSlate</h1>
+                <span class="badge">Studio</span>
+            </div>
+            <div class="header-actions">
+                <button id="btn-export" class="btn btn-outline" title="Export Workspace JSON">Export Data</button>
+                <button id="btn-import" class="btn btn-outline" title="Import Workspace JSON">Import Data</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="timer">Pomodoro Timer</button>
+            <button class="tab-btn" data-tab="matrix">Eisenhower Matrix</button>
+            <button class="tab-btn" data-tab="habits">Daily Habits</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- TIMER VIEW -->
+            <section id="view-timer" class="view-section active">
+                <div class="timer-card">
+                    <div class="timer-modes">
+                        <button class="mode-btn active" data-mode="work">Focus (25m)</button>
+                        <button class="mode-btn" data-mode="shortBreak">Short Break (5m)</button>
+                        <button class="mode-btn" data-mode="longBreak">Long Break (15m)</button>
+                    </div>
+                    
+                    <div class="timer-display-container">
+                        <svg class="progress-ring" width="260" height="260">
+                            <circle class="progress-ring__circle-bg" cx="130" cy="130" r="115"></circle>
+                            <circle class="progress-ring__circle" cx="130" cy="130" r="115" id="progress-ring"></circle>
+                        </svg>
+                        <div class="timer-time" id="timer-time">25:00</div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button id="btn-start" class="btn btn-primary btn-lg">Start Focus</button>
+                        <button id="btn-reset" class="btn btn-secondary" title="Reset Timer">Reset</button>
+                    </div>
+
+                    <div class="timer-task-link">
+                        <label for="active-task-select">Linked Task:</label>
+                        <select id="active-task-select">
+                            <option value="">-- None (General Focus) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="timer-stats-card">
+                    <h3>Today's Focus Sessions</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-val" id="stat-completed">0</span>
+                            <span class="stat-lbl">Completed</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="stat-minutes">0</span>
+                            <span class="stat-lbl">Minutes Focused</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MATRIX VIEW -->
+            <section id="view-matrix" class="view-section">
+                <div class="matrix-toolbar">
+                    <h2>Eisenhower Priority Matrix</h2>
+                    <button id="btn-add-task" class="btn btn-primary">+ Add Task</button>
+                </div>
+
+                <div class="matrix-grid">
+                    <!-- Q1: Urgent & Important -->
+                    <div class="matrix-quadrant" data-quadrant="q1">
+                        <div class="quadrant-header">
+                            <h3>Do First</h3>
+                            <span class="badge q1">Urgent & Important</span>
+                        </div>
+                        <div class="task-list" id="list-q1"></div>
+                    </div>
+
+                    <!-- Q2: Not Urgent & Important -->
+                    <div class="matrix-quadrant" data-quadrant="q2">
+                        <div class="quadrant-header">
+                            <h3>Schedule</h3>
+                            <span class="badge q2">Important, Not Urgent</span>
+                        </div>
+                        <div class="task-list" id="list-q2"></div>
+                    </div>
+
+                    <!-- Q3: Urgent & Not Important -->
+                    <div class="matrix-quadrant" data-quadrant="q3">
+                        <div class="quadrant-header">
+                            <h3>Delegate</h3>
+                            <span class="badge q3">Urgent, Not Important</span>
+                        </div>
+                        <div class="task-list" id="list-q3"></div>
+                    </div>
+
+                    <!-- Q4: Not Urgent & Not Important -->
+                    <div class="matrix-quadrant" data-quadrant="q4">
+                        <div class="quadrant-header">
+                            <h3>Eliminate</h3>
+                            <span class="badge q4">Neither</span>
+                        </div>
+                        <div class="task-list" id="list-q4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HABITS VIEW -->
+            <section id="view-habits" class="view-section">
+                <div class="habits-toolbar">
+                    <h2>Daily Habits & Streaks</h2>
+                    <button id="btn-add-habit" class="btn btn-primary">+ New Habit</button>
+                </div>
+                <div class="habits-container" id="habits-container">
+                    <!-- Habit items injected via JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- TASK MODAL -->
+        <div class="modal" id="task-modal">
+            <div class="modal-content">
+                <h3 id="modal-task-title">Add / Edit Task</h3>
+                <form id="task-form">
+                    <input type="hidden" id="task-id">
+                    <div class="form-group">
+                        <label for="task-title-input">Task Description</label>
+                        <input type="text" id="task-title-input" required placeholder="e.g., Draft Q3 Product Roadmap">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-quadrant-select">Quadrant</label>
+                        <select id="task-quadrant-select">
+                            <option value="q1">Do First (Urgent & Important)</option>
+                            <option value="q2" selected>Schedule (Important, Not Urgent)</option>
+                            <option value="q3">Delegate (Urgent, Not Important)</option>
+                            <option value="q4">Eliminate (Neither)</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="modal-task-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- HABIT MODAL -->
+        <div class="modal" id="habit-modal">
+            <div class="modal-content">
+                <h3>Add Daily Habit</h3>
+                <form id="habit-form">
+                    <div class="form-group">
+                        <label for="habit-title-input">Habit Name</label>
+                        <input type="text" id="habit-title-input" required placeholder="e.g., Morning Meditation 15m">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="modal-habit-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Habit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>AuraSlate Studio &bull; Local-First Privacy Workspace</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
