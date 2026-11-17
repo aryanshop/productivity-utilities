@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Pomodoro & Habit Matrix Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <h1>AuraSlate</h1>
+                <span class="badge">Studio v1.0</span>
+            </div>
+            <p class="tagline">Privacy-first Pomodoro focus, Eisenhower task prioritization & daily habit tracking.</p>
+            <div class="header-actions">
+                <button id="btn-export" class="btn secondary">Export JSON</button>
+                <label for="import-file" class="btn secondary upload-btn">
+                    Import JSON
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                </label>
+            </div>
+        </header>
+
+        <nav class="tab-nav" role="tablist">
+            <button class="tab-btn active" data-tab="timer" role="tab">Focus Timer</button>
+            <button class="tab-btn" data-tab="matrix" role="tab">Eisenhower Matrix</button>
+            <button class="tab-btn" data-tab="habits" role="tab">Daily Habits</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- TIMER TAB -->
+            <section id="tab-timer" class="tab-panel active" role="tabpanel">
+                <div class="timer-card">
+                    <div class="timer-modes">
+                        <button class="mode-btn active" data-mode="pomodoro">Pomodoro (25m)</button>
+                        <button class="mode-btn" data-mode="shortBreak">Short Break (5m)</button>
+                        <button class="mode-btn" data-mode="longBreak">Long Break (15m)</button>
+                    </div>
+
+                    <div class="timer-display-container">
+                        <svg class="progress-ring" width="280" height="280">
+                            <circle class="progress-ring__bg" cx="140" cy="140" r="125" />
+                            <circle class="progress-ring__circle" cx="140" cy="140" r="125" id="progress-bar" />
+                        </svg>
+                        <div class="timer-time">
+                            <span id="minutes">25</span>:<span id="seconds">00</span>
+                        </div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button id="btn-start" class="btn primary lg">Start Focus</button>
+                        <button id="btn-reset" class="btn secondary lg">Reset</button>
+                    </div>
+
+                    <div class="timer-session-info">
+                        <p>Completed Focus Sessions Today: <strong id="session-count">0</strong></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MATRIX TAB -->
+            <section id="tab-matrix" class="tab-panel" role="tabpanel">
+                <div class="matrix-header">
+                    <h2>Eisenhower Priority Matrix</h2>
+                    <form id="task-form" class="inline-form">
+                        <input type="text" id="task-input" placeholder="Add a new task..." required>
+                        <select id="task-quadrant">
+                            <option value="q1">Urgent & Important (Do)</option>
+                            <option value="q2">Not Urgent & Important (Schedule)</option>
+                            <option value="q3">Urgent & Not Important (Delegate)</option>
+                            <option value="q4">Not Urgent & Not Important (Eliminate)</option>
+                        </select>
+                        <button type="submit" class="btn primary">Add Task</button>
+                    </form>
+                </div>
+
+                <div class="matrix-grid">
+                    <div class="quadrant" data-quadrant="q1">
+                        <div class="quadrant-header">
+                            <h3>Do First</h3>
+                            <span>Urgent & Important</span>
+                        </div>
+                        <ul class="task-list" id="list-q1"></ul>
+                    </div>
+                    <div class="quadrant" data-quadrant="q2">
+                        <div class="quadrant-header">
+                            <h3>Schedule</h3>
+                            <span>Not Urgent & Important</span>
+                        </div>
+                        <ul class="task-list" id="list-q2"></ul>
+                    </div>
+                    <div class="quadrant" data-quadrant="q3">
+                        <div class="quadrant-header">
+                            <h3>Delegate</h3>
+                            <span>Urgent & Not Important</span>
+                        </div>
+                        <ul class="task-list" id="list-q3"></ul>
+                    </div>
+                    <div class="quadrant" data-quadrant="q4">
+                        <div class="quadrant-header">
+                            <h3>Eliminate</h3>
+                            <span>Not Urgent & Not Important</span>
+                        </div>
+                        <ul class="task-list" id="list-q4"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HABITS TAB -->
+            <section id="tab-habits" class="tab-panel" role="tabpanel">
+                <div class="habits-header">
+                    <h2>Daily Habit Streaks</h2>
+                    <form id="habit-form" class="inline-form">
+                        <input type="text" id="habit-input" placeholder="New habit (e.g., Read 20 mins)..." required>
+                        <button type="submit" class="btn primary">Add Habit</button>
+                    </form>
+                </div>
+
+                <div class="habits-container">
+                    <div class="habits-table-wrapper">
+                        <table class="habits-table" id="habits-table">
+                            <thead>
+                                <tr>
+                                    <th>Habit</th>
+                                    <th>Streak</th>
+                                    <th class="day-col">Mon</th>
+                                    <th class="day-col">Tue</th>
+                                    <th class="day-col">Wed</th>
+                                    <th class="day-col">Thu</th>
+                                    <th class="day-col">Fri</th>
+                                    <th class="day-col">Sat</th>
+                                    <th class="day-col">Sun</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="habits-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraSlate Studio &bull; Local-first storage with zero tracking or external requests.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
