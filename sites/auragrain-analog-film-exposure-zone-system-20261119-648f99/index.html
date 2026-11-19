@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGrain: Analog Film Exposure & Zone System Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-brand">
+                <h1>Aura<span>Grain</span></h1>
+                <p class="tagline">Analog Film Exposure & Zone System Laboratory</p>
+            </div>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn secondary" title="Reset to defaults">Reset Defaults</button>
+                <button id="btn-save-preset" class="btn primary" title="Save current setup to local storage">Save Preset</button>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Column: Inputs & Parameters -->
+            <section class="panel controls-panel">
+                <h2>Exposure Parameters</h2>
+                
+                <div class="control-group">
+                    <label for="film-iso">Film ISO / ASA</label>
+                    <select id="film-iso">
+                        <option value="25">ISO 25 (Slow Film)</option>
+                        <option value="50">ISO 50</option>
+                        <option value="100" selected>ISO 100 (Fine Grain)</option>
+                        <option value="200">ISO 200</option>
+                        <option value="400">ISO 400 (Standard)</option>
+                        <option value="800">ISO 800</option>
+                        <option value="1600">ISO 1600</option>
+                        <option value="3200">ISO 3200 (High Speed)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="base-ev">Base Meter Reading (EV at ISO 100)</label>
+                    <div class="slider-with-value">
+                        <input type="range" id="base-ev" min="-2" max="18" step="1" value="12">
+                        <span id="base-ev-val" class="badge">EV 12 (Overcast / Open Shade)</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="filter-factor">Camera Lens Filter</label>
+                    <select id="filter-factor">
+                        <option value="0" selected>None (0 stops)</option>
+                        <option value="1">Yellow #8 / K2 (+1 stop)</option>
+                        <option value="1.5">Orange #21 (+1.5 stops)</option>
+                        <option value="2">Red #25 (+2 stops)</option>
+                        <option value="1.5">Polarizer (+1.5 stops)</option>
+                        <option value="3">Neutral Density ND8 (+3 stops)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="zone-target">Primary Subject Zone Placement</label>
+                    <select id="zone-target">
+                        <option value="-3">Zone III: Textured Shadows (Dark wood, dark hair)</option>
+                        <option value="-2">Zone IV: Average dark foliage, shaded skin</option>
+                        <option value="-1">Zone V: 18% Neutral Gray / Caucasian skin in shade</option>
+                        <option value="0" selected>Zone VI: Average Caucasian skin, lit stone</option>
+                        <option value="1">Zone VII: High-value light skin, textured snow</option>
+                        <option value="2">Zone VIII: White objects with delicate texture</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="development-push">Development Push / Pull (N +/- Stops)</label>
+                    <div class="radio-pill-group" id="dev-push-group">
+                        <label><input type="radio" name="dev" value="-2">N-2</label>
+                        <label><input type="radio" name="dev" value="-1">N-1</label>
+                        <label><input type="radio" name="dev" value="0" checked>N (Normal)</label>
+                        <label><input type="radio" name="dev" value="1">N+1</label>
+                        <label><input type="radio" name="dev" value="2">N+2</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="raw-seconds">Actual Metered Shutter Speed (Seconds)</label>
+                    <select id="raw-seconds">
+                        <option value="0.001">1/1000s</option>
+                        <option value="0.002">1/500s</option>
+                        <option value="0.004">1/250s</option>
+                        <option value="0.008" selected>1/125s</option>
+                        <option value="0.016">1/60s</option>
+                        <option value="0.033">1/30s</option>
+                        <option value="0.067">1/15s</option>
+                        <option value="0.125">1/8s</option>
+                        <option value="0.25">1/4s</option>
+                        <option value="0.5">1/2s</option>
+                        <option value="1">1s</option>
+                        <option value="5">5s</option>
+                        <option value="15">15s</option>
+                        <option value="30">30s</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Right Column: Results, Zone Visualizer & Reciprocity -->
+            <div class="results-column">
+                <!-- Calculated Exposure Matrix -->
+                <section class="panel results-panel">
+                    <h2>Calculated Camera Settings</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Corrected Shutter Speed</span>
+                            <span id="res-shutter" class="metric-value">1/125s</span>
+                            <span id="res-reciprocity-note" class="metric-note">No reciprocity failure</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Aperture Recommendation</span>
+                            <span id="res-aperture" class="metric-value">f/8.0</span>
+                            <span class="metric-note">Based on EV & Zone shift</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Adjusted Dev Time</span>
+                            <span id="res-dev-time" class="metric-value">100% (Std)</span>
+                            <span class="metric-note">Gamma compensation</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ansel Adams Zone System Visualizer -->
+                <section class="panel canvas-panel">
+                    <div class="panel-header">
+                        <h2>Ansel Adams Zone System (0 - X)</h2>
+                        <span class="hint">Click or hover zones to inspect tonal reflectance</span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="zoneCanvas" width="640" height="220"></canvas>
+                    </div>
+                    <div id="zone-inspector" class="zone-inspector-box">
+                        <strong id="zone-name-display">Zone V: 18% Gray</strong>
+                        <p id="zone-desc-display">Mid-tone gray, clear north sky, weathered wood. The baseline reference for photographic metering.</p>
+                    </div>
+                </section>
+
+                <!-- Saved Session Log -->
+                <section class="panel log-panel">
+                    <div class="panel-header">
+                        <h2>Saved Field Notes</h2>
+                        <button id="btn-clear-log" class="btn text-btn">Clear Log</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="log-table">
+                            <thead>
+                                <tr>
+                                    <th>ISO</th>
+                                    <th>Filter</th>
+                                    <th>Subject Zone</th>
+                                    <th>Shutter</th>
+                                    <th>Aperture</th>
+                                    <th>Dev</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraGrain Lab &bull; Client-side Analog Photography Calculator &bull; No external data transmitted</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
