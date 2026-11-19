@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVane: Thermal Insulation & Vapor Barrier Dew Point Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2v20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+                <span>AuraVane Lab</span>
+            </div>
+            <h1>Thermal Insulation & Vapor Barrier Analyzer</h1>
+            <p class="subtitle">Compute boundary temperature gradients, dew point thresholds, and condensation risks across multi-layer wall assemblies.</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="control-panel">
+            <div class="card">
+                <h2>Environmental Conditions</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="indoorTemp">Indoor Temp (°F)</label>
+                        <input type="number" id="indoorTemp" value="70" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="indoorRH">Indoor Humidity (%)</label>
+                        <input type="number" id="indoorRH" value="40" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="outdoorTemp">Outdoor Temp (°F)</label>
+                        <input type="number" id="outdoorTemp" value="20" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="outdoorRH">Outdoor Humidity (%)</label>
+                        <input type="number" id="outdoorRH" value="70" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header-row">
+                    <h2>Wall Assembly Layers (Inside to Outside)</h2>
+                    <button id="addLayerBtn" class="btn btn-secondary">+ Add Layer</button>
+                </div>
+                <div id="layersContainer" class="layers-container">
+                    <!-- Dynamically populated layers -->
+                </div>
+            </div>
+
+            <div class="card actions-card">
+                <button id="presetStandardBtn" class="btn btn-outline">Load 2x4 Standard Wall</button>
+                <button id="presetExtInsBtn" class="btn btn-outline">Load Exterior Foam Wall</button>
+                <button id="exportJsonBtn" class="btn btn-outline">Export Report</button>
+            </div>
+        </section>
+
+        <section class="results-panel">
+            <div class="card summary-card" id="summaryCard">
+                <h2>Analysis Summary</h2>
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <span class="metric-label">Total R-Value</span>
+                        <span class="metric-value" id="totalRValue">--</span>
+                        <span class="metric-unit">hr·ft²·°F/BTU</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">Assembly U-Factor</span>
+                        <span class="metric-value" id="totalUFactor">--</span>
+                        <span class="metric-unit">BTU/hr·ft²·°F</span>
+                    </div>
+                    <div class="metric-box" id="condRiskBox">
+                        <span class="metric-label">Condensation Risk</span>
+                        <span class="metric-value" id="condRiskStatus">--</span>
+                        <span class="metric-unit" id="condRiskDesc">Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <h2>Temperature & Dew Point Gradient</h2>
+                <p class="chart-hint">Comparing actual temperature profile across layers against the local dew point curve.</p>
+                <div class="canvas-wrapper">
+                    <canvas id="gradientCanvas" width="700" height="350"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-color temp-line"></span> Temp (°F)</span>
+                    <span class="legend-item"><span class="legend-color dew-line"></span> Dew Point</span>
+                    <span class="legend-item"><span class="legend-color risk-zone"></span> Condensation Risk Zone</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Layer Interface Breakdown</h2>
+                <div class="table-responsive">
+                    <table id="layerTable">
+                        <thead>
+                            <tr>
+                                <th>Layer Name</th>
+                                <th>Thickness (in)</th>
+                                <th>R-Value</th>
+                                <th>Interface Temp (°F)</th>
+                                <th>Dew Point (°F)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated via script -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraVane Thermal Lab &bull; Client-side Building Science Calculator &bull; No Data Transmitted</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
