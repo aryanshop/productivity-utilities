@@ -1,0 +1,201 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraZen: Pomodoro Breathwork & Ambient Soundscape Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <span class="logo-icon">✧</span>
+        <h1>Aura<span>Zen</span></h1>
+      </div>
+      <p class="subtitle">Cognitive Focus, Breathwork Cadence & Ambient Sound Laboratory</p>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="workspace-grid">
+      
+      <!-- Left Column: Timer & Breathwork Engine -->
+      <section class="panel timer-panel">
+        <div class="panel-header">
+          <h2>Focus & Breath Engine</h2>
+          <div class="mode-tabs">
+            <button class="tab-btn active" data-mode="pomodoro">Pomodoro</button>
+            <button class="tab-btn" data-mode="breathwork">Breathwork</button>
+          </div>
+        </div>
+
+        <!-- Pomodoro View -->
+        <div class="mode-view active" id="pomodoro-view">
+          <div class="timer-display-wrap">
+            <svg class="progress-ring" width="240" height="240">
+              <circle class="ring-bg" cx="120" cy="120" r="105"></circle>
+              <circle class="ring-progress" id="pomo-ring" cx="120" cy="120" r="105"></circle>
+            </svg>
+            <div class="timer-text-content">
+              <span class="timer-state-label" id="pomo-state">Focus Time</span>
+              <div class="time-countdown" id="pomo-time">25:00</div>
+              <span class="timer-session-count" id="pomo-count">Session 1 of 4</span>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button id="pomo-start-btn" class="btn btn-primary">Start Focus</button>
+            <button id="pomo-reset-btn" class="btn btn-secondary">Reset</button>
+            <button id="pomo-skip-btn" class="btn btn-subtle">Skip</button>
+          </div>
+
+          <div class="settings-mini-grid">
+            <div class="setting-item">
+              <label for="work-dur">Work (min)</label>
+              <input type="number" id="work-dur" value="25" min="1" max="120">
+            </div>
+            <div class="setting-item">
+              <label for="short-break-dur">Short Break</label>
+              <input type="number" id="short-break-dur" value="5" min="1" max="30">
+            </div>
+            <div class="setting-item">
+              <label for="long-break-dur">Long Break</label>
+              <input type="number" id="long-break-dur" value="15" min="1" max="60">
+            </div>
+          </div>
+        </div>
+
+        <!-- Breathwork View -->
+        <div class="mode-view" id="breathwork-view">
+          <div class="breathwork-arena">
+            <div class="breath-orb" id="breath-orb">
+              <div class="breath-orb-inner">
+                <span id="breath-instruction">Inhale</span>
+                <span id="breath-countdown">4</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button id="breath-start-btn" class="btn btn-primary">Start Breathing</button>
+            <button id="breath-stop-btn" class="btn btn-secondary" disabled>Stop</button>
+          </div>
+
+          <div class="settings-mini-grid">
+            <div class="setting-item full-width">
+              <label for="breath-pattern-select">Technique Pattern</label>
+              <select id="breath-pattern-select">
+                <option value="box">Box Breathing (4-4-4-4)</option>
+                <option value="relaxing">Relaxing Breath (4-7-8)</option>
+                <option value="energizing">Energizing Breath (6-2-6-2)</option>
+                <option value="calming">Equal Calm (5-5-5-5)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Ambient Sound Generator & Daily Stats -->
+      <div class="right-column">
+        
+        <!-- Soundscape Panel -->
+        <section class="panel sound-panel">
+          <div class="panel-header">
+            <h2>Ambient Soundscape Lab</h2>
+            <button id="master-audio-btn" class="btn btn-subtle btn-sm">Mute All</button>
+          </div>
+          <p class="panel-desc">Pure Web Audio API synthesized noise & harmonic frequencies.</p>
+
+          <div class="sound-channels">
+            
+            <!-- White Noise -->
+            <div class="sound-channel">
+              <div class="channel-meta">
+                <span class="channel-title">White Noise</span>
+                <span class="channel-val" id="white-val">0%</span>
+              </div>
+              <input type="range" class="audio-slider" data-sound="white" min="0" max="100" value="0">
+            </div>
+
+            <!-- Pink Noise -->
+            <div class="sound-channel">
+              <div class="channel-meta">
+                <span class="channel-title">Pink Noise (Rain)</span>
+                <span class="channel-val" id="pink-val">0%</span>
+              </div>
+              <input type="range" class="audio-slider" data-sound="pink" min="0" max="100" value="0">
+            </div>
+
+            <!-- Brown Noise -->
+            <div class="sound-channel">
+              <div class="channel-meta">
+                <span class="channel-title">Brown Noise (Deep Ocean)</span>
+                <span class="channel-val" id="brown-val">0%</span>
+              </div>
+              <input type="range" class="audio-slider" data-sound="brown" min="0" max="100" value="0">
+            </div>
+
+            <!-- Solfeggio 432Hz -->
+            <div class="sound-channel">
+              <div class="channel-meta">
+                <span class="channel-title">432Hz Harmonic Drone</span>
+                <span class="channel-val" id="tone432-val">0%</span>
+              </div>
+              <input type="range" class="audio-slider" data-sound="tone432" min="0" max="100" value="0">
+            </div>
+
+            <!-- Solfeggio 528Hz -->
+            <div class="sound-channel">
+              <div class="channel-meta">
+                <span class="channel-title">528Hz Transformation Tone</span>
+                <span class="channel-val" id="tone528-val">0%</span>
+              </div>
+              <input type="range" class="audio-slider" data-sound="tone528" min="0" max="100" value="0">
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Session Stats & Log Panel -->
+        <section class="panel stats-panel">
+          <div class="panel-header">
+            <h2>Session Analytics & Streak</h2>
+            <button id="clear-stats-btn" class="btn btn-subtle btn-sm">Reset Log</button>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-num" id="stat-completed">0</span>
+              <span class="stat-label">Focus Blocks</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num" id="stat-minutes">0</span>
+              <span class="stat-label">Total Minutes</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num" id="stat-streak">0</span>
+              <span class="stat-label">Day Streak</span>
+            </div>
+          </div>
+
+          <div class="session-history-box">
+            <h3>Recent Activity</h3>
+            <ul id="session-history-list">
+              <li class="empty-log">No completed sessions yet today. Start focusing!</li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>AuraZen Studio • Local-First Privacy Workspace • Zero Data Transmission</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
