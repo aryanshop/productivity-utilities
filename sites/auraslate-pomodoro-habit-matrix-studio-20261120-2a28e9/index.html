@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSlate: Pomodoro & Habit Matrix Studio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">AS</div>
+                <h1>AuraSlate</h1>
+                <span class="badge">v2.4</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="timer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Focus Timer
+                </button>
+                <button class="nav-btn" data-tab="matrix">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Eisenhower Matrix
+                </button>
+                <button class="nav-btn" data-tab="habits">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Habit Tracker
+                </button>
+                <button class="nav-btn" data-tab="settings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Data & Backup
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="storage-status">
+                    <span class="dot"></span> Local Storage Active
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- TAB 1: TIMER -->
+            <section id="timer-tab" class="tab-pane active">
+                <header class="pane-header">
+                    <h2>Focus Timer</h2>
+                    <p>Manage your deep work intervals and short breathers.</p>
+                </header>
+
+                <div class="timer-container">
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="pomodoro">Pomodoro (25m)</button>
+                        <button class="mode-btn" data-mode="shortBreak">Short Break (5m)</button>
+                        <button class="mode-btn" data-mode="longBreak">Long Break (15m)</button>
+                    </div>
+
+                    <div class="timer-display-card">
+                        <div class="timer-ring-wrapper">
+                            <svg class="progress-ring" width="260" height="260">
+                                <circle class="progress-ring-bg" cx="130" cy="130" r="115" />
+                                <circle class="progress-ring-fill" cx="130" cy="130" r="115" />
+                            </svg>
+                            <div class="timer-time" id="timer-time">25:00</div>
+                        </div>
+                        <div class="timer-status-text" id="timer-status-label">Ready to focus</div>
+
+                        <div class="timer-controls">
+                            <button id="timer-start-btn" class="btn btn-primary btn-lg">Start Focus</button>
+                            <button id="timer-reset-btn" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="timer-task-binding">
+                        <label for="active-task-select">Currently working on:</label>
+                        <select id="active-task-select">
+                            <option value="">-- Select a task from Eisenhower Matrix --</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: MATRIX -->
+            <section id="matrix-tab" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Eisenhower Priority Matrix</h2>
+                    <p>Organize your tasks by urgency and importance to focus on what truly moves the needle.</p>
+                </header>
+
+                <div class="matrix-toolbar">
+                    <form id="task-form" class="inline-form">
+                        <input type="text" id="task-input" placeholder="What needs to be done?" required autocomplete="off">
+                        <select id="task-quadrant">
+                            <option value="q1">Q1: Urgent & Important (Do First)</option>
+                            <option value="q2" selected>Q2: Not Urgent & Important (Schedule)</option>
+                            <option value="q3">Q3: Urgent & Not Important (Delegate)</option>
+                            <option value="q4">Q4: Not Urgent & Not Important (Eliminate)</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                    </form>
+                </div>
+
+                <div class="matrix-grid">
+                    <!-- Q1 -->
+                    <div class="matrix-quadrant" data-quadrant="q1">
+                        <div class="quadrant-header q1-header">
+                            <h3>Do First</h3>
+                            <span>Urgent & Important</span>
+                        </div>
+                        <div class="task-list" id="list-q1"></div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="matrix-quadrant" data-quadrant="q2">
+                        <div class="quadrant-header q2-header">
+                            <h3>Schedule</h3>
+                            <span>Not Urgent & Important</span>
+                        </div>
+                        <div class="task-list" id="list-q2"></div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="matrix-quadrant" data-quadrant="q3">
+                        <div class="quadrant-header q3-header">
+                            <h3>Delegate</h3>
+                            <span>Urgent & Not Important</span>
+                        </div>
+                        <div class="task-list" id="list-q3"></div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="matrix-quadrant" data-quadrant="q4">
+                        <div class="quadrant-header q4-header">
+                            <h3>Eliminate</h3>
+                            <span>Not Urgent & Not Important</span>
+                        </div>
+                        <div class="task-list" id="list-q4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: HABITS -->
+            <section id="habits-tab" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Daily Habit Tracker</h2>
+                    <p>Build consistent micro-routines and maintain your daily streaks.</p>
+                </header>
+
+                <div class="habits-toolbar">
+                    <form id="habit-form" class="inline-form">
+                        <input type="text" id="habit-input" placeholder="New daily habit (e.g., Read 15 pages)" required autocomplete="off">
+                        <button type="submit" class="btn btn-primary">Add Habit</button>
+                    </form>
+                </div>
+
+                <div class="habits-container">
+                    <div class="habits-table-wrapper">
+                        <table class="habits-table" id="habits-table">
+                            <thead>
+                                <tr>
+                                    <th>Habit Name</th>
+                                    <th>Streak</th>
+                                    <!-- Dynamic 7 days rendered by JS -->
+                                    <th class="day-col">Mon</th>
+                                    <th class="day-col">Tue</th>
+                                    <th class="day-col">Wed</th>
+                                    <th class="day-col">Thu</th>
+                                    <th class="day-col">Fri</th>
+                                    <th class="day-col">Sat</th>
+                                    <th class="day-col">Sun</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="habits-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: SETTINGS & BACKUP -->
+            <section id="settings-tab" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Data & Workspace Management</h2>
+                    <p>Your data is 100% private, stored locally in your browser. Export or restore backups anytime.</p>
+                </header>
+
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>Export Workspace</h3>
+                        <p>Download all your tasks, habits, and focus logs as a secure JSON file.</p>
+                        <button id="export-btn" class="btn btn-primary">Download JSON Backup</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Import Workspace</h3>
+                        <p>Restore your productivity workspace from a previously saved JSON backup file.</p>
+                        <input type="file" id="import-file" accept=".json" style="display: none;">
+                        <button id="import-btn" class="btn btn-secondary">Upload JSON Backup</button>
+                    </div>
+
+                    <div class="card danger-card">
+                        <h3>Reset Workspace</h3>
+                        <p>Clear all local data, tasks, and habit logs. This action cannot be undone.</p>
+                        <button id="reset-btn" class="btn btn-danger">Clear All Data</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
