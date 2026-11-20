@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraKnit: Knitting Gauge & Yarn Yardage Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🧶</span>
+                <h1>AuraKnit</h1>
+            </div>
+            <p class="subtitle">Precision Knitting Gauge, Yardage & Substitution Laboratory</p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="workspace">
+            <!-- Left Column: Inputs & Configurations -->
+            <section class="control-panel">
+                <div class="card">
+                    <h2>Garment & Target Dimensions</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="targetChest">Bust / Chest Circumference (in)</label>
+                            <input type="number" id="targetChest" value="40" min="10" max="100" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="targetLength">Desired Length (in)</label>
+                            <input type="number" id="targetLength" value="24" min="5" max="60" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="ease">Positive Ease (in)</label>
+                            <input type="number" id="ease" value="4" min="-5" max="15" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="unitSystem">Unit System</label>
+                            <select id="unitSystem">
+                                <option value="imperial">Inches & Yards</option>
+                                <option value="metric">Centimeters & Meters</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Swatch Gauge (4" / 10cm)</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="swatchStitches">Stitches per 4" (10cm)</label>
+                            <input type="number" id="swatchStitches" value="20" min="5" max="60" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="swatchRows">Rows per 4" (10cm)</label>
+                            <input type="number" id="swatchRows" value="28" min="5" max="80" step="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="yarnWeight">Yarn Weight Category</label>
+                            <select id="yarnWeight">
+                                <option value="lace">Lace (0)</option>
+                                <option value="fingering">Fingering / Sock (1)</option>
+                                <option value="sport">Sport (2)</option>
+                                <option value="dk" selected>DK (3)</option>
+                                <option value="worsted">Worsted / Aran (4)</option>
+                                <option value="bulky">Bulky (5)</option>
+                                <option value="superbulky">Super Bulky (6)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="needleSize">Needle Size (US)</label>
+                            <input type="text" id="needleSize" value="US 6 (4.0mm)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Yarn Substitution & Skein Planner</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="skeinYardage">Skein Yardage (yds)</label>
+                            <input type="number" id="skeinYardage" value="218" min="10" max="2000">
+                        </div>
+                        <div class="input-group">
+                            <label for="skeinWeight">Skein Weight (g)</label>
+                            <input type="number" id="skeinWeight" value="100" min="10" max="500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Stitch Counter Laboratory</h2>
+                    <div class="counter-box">
+                        <div class="counter-display">
+                            <span id="stitchCountValue">0</span>
+                            <span class="counter-label">Current Row / Stitch Count</span>
+                        </div>
+                        <div class="counter-buttons">
+                            <button id="btnDec" class="btn secondary">- 1 Row</button>
+                            <button id="btnInc" class="btn primary">+ 1 Row</button>
+                            <button id="btnReset" class="btn danger">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Visualizations -->
+            <section class="results-panel">
+                <div class="card primary-card">
+                    <h2>Calculated Specifications</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-title">Total Stitches (Cast-On)</span>
+                            <span class="metric-value" id="resStitches">--</span>
+                            <span class="metric-desc">At widest body point</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-title">Total Rows Required</span>
+                            <span class="metric-value" id="resRows">--</span>
+                            <span class="metric-desc">From hem to shoulder</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-title">Estimated Yardage</span>
+                            <span class="metric-value" id="resYardage">--</span>
+                            <span class="metric-desc">Includes 10% safety buffer</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-title">Skeins Needed</span>
+                            <span class="metric-value" id="resSkeins">--</span>
+                            <span class="metric-desc">Full skein count</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Gauge Proportions & Swatch Visualizer</h2>
+                    <div class="canvas-container">
+                        <canvas id="gaugeCanvas" width="500" height="280"></canvas>
+                    </div>
+                    <p class="canvas-note">Visual representation of stitch-to-row aspect ratio based on your swatch measurements.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Yarn WPI & Substitution Guide</h2>
+                    <div class="substitution-info" id="subInfo">
+                        <!-- Dynamic substitution details inserted here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Session Actions</h2>
+                    <div class="action-buttons">
+                        <button id="btnSaveProject" class="btn primary">Save Project Summary</button>
+                        <button id="btnExportJSON" class="btn secondary">Export JSON Backup</button>
+                    </div>
+                    <div id="savedProjectsList" class="saved-list">
+                        <h3>Saved Projects</h3>
+                        <ul id="projectListUl"></ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>AuraKnit Laboratory &bull; Local-first fiber arts utility &bull; No cookies or external telemetry</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
