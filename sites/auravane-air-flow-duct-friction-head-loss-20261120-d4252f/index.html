@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraVane: Air Flow & Duct Friction Head Loss Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+      </div>
+      <div>
+        <h1>AuraVane</h1>
+        <p class="subtitle">Air Flow & Duct Friction Head Loss Laboratory</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-presets" class="btn btn-secondary" aria-label="Load System Presets">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Presets
+      </button>
+      <button id="btn-export" class="btn btn-primary" aria-label="Export Report">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Report
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Left Sidebar: Configuration Panels -->
+    <aside class="control-panel" aria-label="Duct Configuration">
+      <section class="panel-section">
+        <h2>Airflow & Duct Shape</h2>
+        <div class="input-group">
+          <label for="airflow-cfm">Airflow Rate (CFM)</label>
+          <input type="number" id="airflow-cfm" value="600" min="10" max="10000" step="10">
+        </div>
+        <div class="input-group">
+          <label for="duct-shape">Duct Geometry</label>
+          <select id="duct-shape">
+            <option value="round" selected>Round Duct</option>
+            <option value="rectangular">Rectangular Duct</option>
+          </select>
+        </div>
+
+        <!-- Round Specific -->
+        <div id="group-round" class="shape-group">
+          <div class="input-group">
+            <label for="duct-diameter">Diameter (inches)</label>
+            <input type="number" id="duct-diameter" value="8" min="2" max="48" step="0.5">
+          </div>
+        </div>
+
+        <!-- Rectangular Specific -->
+        <div id="group-rectangular" class="shape-group" style="display: none;">
+          <div class="input-row">
+            <div class="input-group">
+              <label for="duct-width">Width (in)</label>
+              <input type="number" id="duct-width" value="10" min="2" max="72" step="1">
+            </div>
+            <div class="input-group">
+              <label for="duct-height">Height (in)</label>
+              <input type="number" id="duct-height" value="8" min="2" max="72" step="1">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Material & Run Properties</h2>
+        <div class="input-group">
+          <label for="duct-material">Duct Material & Roughness</label>
+          <select id="duct-material">
+            <option value="0.0003" selected>Galvanized Steel (Smooth - 0.0003 ft)</option>
+            <option value="0.003">Aluminum Spiral (0.003 ft)</option>
+            <option value="0.013">Flexible Duct / Wire Helix (0.013 ft)</option>
+            <option value="0.00015">PVC / Plastic Smooth (0.00015 ft)</option>
+            <option value="0.001">Fiberglass Duct Board (0.001 ft)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="run-length">Straight Run Length (feet)</label>
+          <input type="number" id="run-length" value="50" min="1" max="1000" step="5">
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Fittings & Equivalent Lengths</h2>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="elbows-90">90° Elbows</label>
+            <input type="number" id="elbows-90" value="3" min="0" max="50" step="1">
+          </div>
+          <div class="input-group">
+            <label for="elbows-45">45° Elbows</label>
+            <input type="number" id="elbows-45" value="2" min="0" max="50" step="1">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="branch-tees">Branch Tees / Wyes</label>
+            <input type="number" id="branch-tees" value="1" min="0" max="30" step="1">
+          </div>
+          <div class="input-group">
+            <label for="grilles-registers">Grilles / Dampers</label>
+            <input type="number" id="grilles-registers" value="2" min="0" max="30" step="1">
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Main Workspace / Results -->
+    <section class="workspace" aria-label="Calculation Results and Visualizer">
+      <!-- Top Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Air Velocity</span>
+          <div class="metric-value" id="val-velocity">0</div>
+          <span class="metric-unit">FPM (Feet per Min)</span>
+          <div class="metric-status" id="status-velocity">Optimal</div>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Friction Rate</span>
+          <div class="metric-value" id="val-friction-rate">0.00</div>
+          <span class="metric-unit">in. w.g. / 100 ft</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Equivalent Length</span>
+          <div class="metric-value" id="val-equiv-length">0</div>
+          <span class="metric-unit">equivalent feet</span>
+        </div>
+        <div class="metric-card highlight-card">
+          <span class="metric-label">Total Static Pressure</span>
+          <div class="metric-value" id="val-total-pressure">0.000</div>
+          <span class="metric-unit">in. w.g. (Inches Water Gauge)</span>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Visualizer -->
+      <div class="canvas-container">
+        <div class="canvas-header">
+          <h3>System Pressure Profile & Duct Hydraulic Gradient</h3>
+          <div class="canvas-legend">
+            <span class="legend-item"><span class="dot static-dot"></span> Static Pressure Drop</span>
+            <span class="legend-item"><span class="dot velocity-dot"></span> Velocity Pressure</span>
+          </div>
+        </div>
+        <canvas id="pressure-canvas" width="800" height="300" aria-label="Pressure Profile Chart"></canvas>
+      </div>
+
+      <!-- Detailed Breakdown & Insights -->
+      <div class="details-grid">
+        <div class="card">
+          <h3>Hydraulic Specifications</h3>
+          <ul class="spec-list">
+            <li><span>Hydraulic Diameter (Dh):</span> <strong id="spec-dh">0.00 in</strong></li>
+            <li><span>Cross-Sectional Area:</span> <strong id="spec-area">0.00 sq. ft</strong></li>
+            <li><span>Reynolds Number (Re):</span> <strong id="spec-re">0</strong></li>
+            <li><span>Flow Regime:</span> <strong id="spec-regime">Turbulent</strong></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ASHRAE Recommendation Insights</h3>
+          <p id="insight-text" class="insight-body">Analyzing duct velocity and friction rates against ASHRAE residential and commercial HVAC guidelines...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Preset Modal -->
+  <div id="preset-modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Load HVAC Design Preset</h2>
+        <button id="modal-close" class="btn-close" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="preset-list">
+        <button class="preset-item" data-preset="residential-trunk">
+          <strong>Residential Main Trunk (Supply)</strong>
+          <span>800 CFM, 10" Round Galvanized Steel, 40 ft run</span>
+        </button>
+        <button class="preset-item" data-preset="bedroom-branch">
+          <strong>Bedroom Branch Line (Flexible)</strong>
+          <span>150 CFM, 6" Flexible Duct, 25 ft run, 2 elbows</span>
+        </button>
+        <button class="preset-item" data-preset="commercial-supply">
+          <strong>Commercial Office Supply (Rectangular)</strong>
+          <span>2400 CFM, 20" x 12" Rectangular Duct, 100 ft run</span>
+        </button>
+        <button class="preset-item" data-preset="exhaust-bath">
+          <strong>Bathroom Exhaust Fan (Compact)</strong>
+          <span>80 CFM, 4" Round Aluminum, 15 ft run</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
