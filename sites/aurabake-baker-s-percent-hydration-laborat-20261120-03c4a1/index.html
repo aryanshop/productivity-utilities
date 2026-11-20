@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBake: Baker's Percent & Hydration Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>AuraBake <span class="badge">Baking Lab</span></h1>
+            <p class="subtitle">Precision Baker's Percentages, Levain Hydration, & Dough Scaling</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-presets" class="btn secondary">Load Preset</button>
+            <button id="btn-save" class="btn primary">Save Recipe</button>
+            <button id="btn-export" class="btn secondary">Export JSON</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Left Column: Recipe Config & Ingredients -->
+        <section class="panel config-panel">
+            <h2>Recipe Parameters</h2>
+            <div class="control-group">
+                <label for="recipe-name">Recipe Title</label>
+                <input type="text" id="recipe-name" value="Classic Country Sourdough" />
+            </div>
+
+            <div class="grid-2">
+                <div class="control-group">
+                    <label for="scaling-mode">Base Scaling Mode</label>
+                    <select id="scaling-mode">
+                        <option value="flour">Total Flour = 100%</option>
+                        <option value="total">Target Total Dough Weight</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="base-weight-val" id="base-weight-label">Total Flour (g)</label>
+                    <input type="number" id="base-weight-val" value="500" min="50" max="10000" step="10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="unit-selector">Display Units</label>
+                <select id="unit-selector">
+                    <option value="g">Grams (g)</option>
+                    <option value="oz">Ounces (oz)</option>
+                </select>
+            </div>
+
+            <h3>Ingredients (Baker's %)</h3>
+            <p class="hint">Flours must total 100%. Other ingredients are calculated relative to total flour.</p>
+            
+            <div id="ingredients-list" class="ingredients-list">
+                <!-- Dynamically populated via JS -->
+            </div>
+
+            <button id="btn-add-ingredient" class="btn dashed">+ Add Custom Ingredient</button>
+
+            <div class="fermentation-section">
+                <h3>Dough & Fermentation Controls</h3>
+                <div class="grid-2">
+                    <div class="control-group">
+                        <label for="target-temp">Desired Dough Temp (°F)</label>
+                        <input type="number" id="target-temp" value="78" min="60" max="95" step="1" />
+                    </div>
+                    <div class="control-group">
+                        <label for="room-temp">Ambient Room Temp (°F)</label>
+                        <input type="number" id="room-temp" value="72" min="50" max="95" step="1" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="flour-temp">Flour Temp (°F)</label>
+                    <input type="number" id="flour-temp" value="70" min="50" max="95" step="1" />
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Outputs, Summary & Timeline -->
+        <section class="panel output-panel">
+            <div class="summary-cards">
+                <div class="card">
+                    <span class="card-label">Total Dough Weight</span>
+                    <span class="card-value" id="out-total-weight">0 g</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">True Hydration</span>
+                    <span class="card-value highlight" id="out-true-hydration">0%</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Total Inoculation</span>
+                    <span class="card-value" id="out-inoculation">0%</span>
+                </div>
+            </div>
+
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="scaling-tab">Scaled Weights</button>
+                <button class="tab-btn" data-tab="water-tab">Water Temperature</button>
+                <button class="tab-btn" data-tab="timeline-tab">Baking Schedule</button>
+                <button class="tab-btn" data-tab="saved-tab">Saved Recipes (<span id="saved-count">0</span>)</button>
+            </div>
+
+            <div class="tab-content active" id="scaling-tab">
+                <h3>Scaled Formula Breakdown</h3>
+                <div class="table-responsive">
+                    <table id="formula-table">
+                        <thead>
+                            <tr>
+                                <th>Ingredient</th>
+                                <th>Type</th>
+                                <th>Baker's %</th>
+                                <th>Weight</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="water-tab">
+                <h3>Water Temperature Calculator (RAFT)</h3>
+                <p class="desc">Calculates the exact water temperature needed to hit your target Desired Dough Temp (DDT) accounting for friction, flour, and room temperature.</p>
+                <div class="result-box" id="water-temp-result">
+                    <span class="big-num">-- °F</span>
+                    <p>Recommended Water Temperature</p>
+                </div>
+                <div class="formula-breakdown">
+                    <h4>Formula Factors:</h4>
+                    <ul>
+                        <li>Multiplier: <span id="factor-multiplier">3 x DDT</span></li>
+                        <li>Room Temp: <span id="val-room">72°F</span></li>
+                        <li>Flour Temp: <span id="val-flour">70°F</span></li>
+                        <li>Friction Factor: <span id="val-friction">5°F (Hand Knead / Mixer)</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tab-content" id="timeline-tab">
+                <h3>Estimated Sourdough Timeline</h3>
+                <p class="desc">Estimated schedule based on room temperature and levain percentage.</p>
+                <ul id="timeline-list" class="timeline">
+                    <!-- Filled by JS -->
+                </ul>
+            </div>
+
+            <div class="tab-content" id="saved-tab">
+                <h3>Saved Local Recipes</h3>
+                <div id="saved-recipes-container" class="saved-list">
+                    <p class="empty-msg">No saved recipes yet. Click 'Save Recipe' above to store your formula locally.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preset Modal -->
+    <div id="preset-modal" class="modal">
+        <div class="modal-content">
+            <h3>Load Preset Recipe</h3>
+            <div class="preset-grid">
+                <button class="preset-card" data-preset="country">
+                    <h4>Classic Country Sourdough</h4>
+                    <p>78% Hydration, 20% Levain, 2% Salt</p>
+                </button>
+                <button class="preset-card" data-preset="brioche">
+                    <h4>Rich Brioche</h4>
+                    <p>Enriched with butter, eggs, and sugar.</p>
+                </button>
+                <button class="preset-card" data-preset="pizza">
+                    <h4>Neapolitan Pizza Dough</h4>
+                    <p>62% Hydration, 3% Salt, 0.2% Instant Yeast</p>
+                </button>
+                <button class="preset-card" data-preset="sandwich">
+                    <h4>Soft Sandwich Bread</h4>
+                    <p>Milk, butter, honey, and instant yeast.</p>
+                </button>
+            </div>
+            <div class="modal-actions">
+                <button id="btn-close-modal" class="btn secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>AuraBake &bull; Local-first artisan baking workbench. No external requests or tracking.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
