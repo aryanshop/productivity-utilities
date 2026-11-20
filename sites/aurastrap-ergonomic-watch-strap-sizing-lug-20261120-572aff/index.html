@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraStrap: Ergonomic Watch Strap Sizing & Lug Geometry Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">⌚</span>
+        <h1>AuraStrap</h1>
+      </div>
+      <p class="subtitle">Ergonomic Watch Strap Sizing & Lug Geometry Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export" class="btn secondary">Export JSON</button>
+      <button id="btn-reset" class="btn outline">Reset Defaults</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="control-panel">
+      <div class="card">
+        <h2>1. Wrist & Case Dimensions</h2>
+        <div class="input-grid">
+          <div class="field-group">
+            <label for="wrist-circ">Wrist Circumference (mm)</label>
+            <input type="number" id="wrist-circ" value="175" min="120" max="250" step="1">
+            <span class="hint">Average adult wrist: 170-180mm</span>
+          </div>
+          <div class="field-group">
+            <label for="lug-width">Lug Width (mm)</label>
+            <select id="lug-width">
+              <option value="16">16 mm (Vintage / Women's)</option>
+              <option value="18">18 mm (Classic)</option>
+              <option value="20" selected>20 mm (Standard Sport)</option>
+              <option value="22">22 mm (Dive / Pilot)</option>
+              <option value="24">24 mm (Oversized / Chonk)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="buckle-width">Buckle / Clasp Width (mm)</label>
+            <select id="buckle-width">
+              <option value="14">14 mm (Tapered)</option>
+              <option value="16" selected>16 mm (Standard)</option>
+              <option value="18">18 mm (Mild Taper)</option>
+              <option value="20">20 mm (Straight / No Taper)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="lug-to-lug">Case Lug-to-Lug (mm)</label>
+            <input type="number" id="lug-to-lug" value="48" min="35" max="60" step="0.5">
+            <span class="hint">Total watch head span</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2. Material & Construction</h2>
+        <div class="input-grid">
+          <div class="field-group">
+            <label for="strap-mat">Strap Material</label>
+            <select id="strap-mat">
+              <option value="leather" selected>Full Grain Leather (3.2mm)</option>
+              <option value="rubber">FKM Rubber / Silicone (3.5mm)</option>
+              <option value="nato">Woven Nylon / NATO (1.4mm)</option>
+              <option value="metal">Stainless Steel Bracelet (3.8mm)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="mat-thick">Strap Thickness (mm)</label>
+            <input type="number" id="mat-thick" value="3.2" min="1.0" max="6.0" step="0.1">
+          </div>
+          <div class="field-group">
+            <label for="clasp-type">Closure Type</label>
+            <select id="clasp-type">
+              <option value="tang" selected>Standard Tang Buckle</option>
+              <option value="deployant">Deployant Clasp (Butterfly)</option>
+              <option value="fold">Fold-over Safety Clasp</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="hole-count">Adjustment Holes</label>
+            <input type="number" id="hole-count" value="7" min="3" max="11" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>3. Keeper & Tail Preferences</h2>
+        <div class="input-grid">
+          <div class="field-group">
+            <label for="keeper-style">Keeper Setup</label>
+            <select id="keeper-style">
+              <option value="double" selected>2 Keepers (1 Fixed, 1 Floating)</option>
+              <option value="single">1 Wide Floating Keeper</option>
+              <option value="none">None (Tucked / Deployant)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="tail-shape">Tail Tip Shape</label>
+            <select id="tail-shape">
+              <option value="pointed" selected>Classic Point / V-Shape</option>
+              <option value="rounded">Fully Rounded</option>
+              <option value="flat">Square / Flat Cut</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="output-section">
+      <div class="card blueprint-card">
+        <h2>Interactive Strap Blueprint & Layout</h2>
+        <div class="canvas-container">
+          <canvas id="blueprint-canvas" width="700" height="320"></canvas>
+        </div>
+        <div class="canvas-legend">
+          <span class="legend-item"><i class="dot short"></i> Short Piece (Buckle Side)</span>
+          <span class="legend-item"><i class="dot long"></i> Long Piece (Hole Side)</span>
+          <span class="legend-item"><i class="dot hole"></i> Sizing Holes (6mm spacing)</span>
+        </div>
+      </div>
+
+      <div class="card metrics-card">
+        <h2>Dimensional Breakdown</h2>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Short Piece Length</span>
+            <span class="metric-value" id="val-short-len">75 mm</span>
+            <span class="metric-sub">Excluding buckle</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Long Piece Length</span>
+            <span class="metric-value" id="val-long-len">120 mm</span>
+            <span class="metric-sub">Tail to spring bar</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Total Fit Range</span>
+            <span class="metric-value" id="val-fit-range">160 - 195 mm</span>
+            <span class="metric-sub">Wrist circumference fit</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Leather Blank Area</span>
+            <span class="metric-value" id="val-blank-area">3,920 mm²</span>
+            <span class="metric-sub">Minimum cutting stock</span>
+          </div>
+        </div>
+
+        <div class="detailed-summary">
+          <h3>Ergonomic & Craft Notes</h3>
+          <ul id="summary-list">
+            <li>Optimal geometry calculated for 175mm wrist.</li>
+            <li>Center sizing hole aligns precisely with inner wrist curvature.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraStrap Laboratory &bull; Local-First Horology Workbench &bull; No external data transmission</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
