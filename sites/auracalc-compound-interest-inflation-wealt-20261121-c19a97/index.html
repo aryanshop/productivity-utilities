@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCalc: Compound Interest & Inflation Wealth Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Aura<span class="accent">Calc</span></h1>
+            <p class="subtitle">Compound Interest & Inflation Wealth Simulator</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="control-panel" aria-labelledby="parameters-heading">
+            <h2 id="parameters-heading" class="section-title">Simulation Parameters</h2>
+            <form id="calc-form">
+                <div class="input-group">
+                    <label for="initial-principal">Initial Principal ($)</label>
+                    <input type="number" id="initial-principal" value="10000" min="0" step="500" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="monthly-contrib">Monthly Contribution ($)</label>
+                    <input type="number" id="monthly-contrib" value="500" min="0" step="50" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="annual-return">Expected Annual Return (%)</label>
+                    <input type="number" id="annual-return" value="8.0" min="-50" max="100" step="0.1" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="inflation-rate">Estimated Inflation Rate (%)</label>
+                    <input type="number" id="inflation-rate" value="3.0" min="0" max="50" step="0.1" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="time-horizon">Time Horizon (Years)</label>
+                    <input type="number" id="time-horizon" value="30" min="1" max="80" step="1" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="tax-drag">Annual Tax Drag (%)</label>
+                    <input type="number" id="tax-drag" value="0.5" min="0" max="10" step="0.1" required>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="btn-calculate" class="btn btn-primary">Run Simulation</button>
+                    <button type="button" id="btn-reset" class="btn btn-secondary">Reset Defaults</button>
+                    <button type="button" id="btn-export" class="btn btn-accent">Export CSV</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="results-panel" aria-labelledby="results-heading">
+            <h2 id="results-heading" class="section-title">Growth Projections</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Final Nominal Balance</span>
+                    <span id="metric-nominal" class="metric-value">$0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Real Purchasing Power (Inflation Adjusted)</span>
+                    <span id="metric-real" class="metric-value">$0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Contributions</span>
+                    <span id="metric-contrib" class="metric-value">$0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Interest Earned</span>
+                    <span id="metric-interest" class="metric-value">$0</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="growth-canvas" aria-label="Wealth accumulation growth chart" role="img"></canvas>
+                <div class="chart-tooltip" id="chart-tooltip"></div>
+            </div>
+
+            <div class="table-container">
+                <table id="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Total Principal</th>
+                            <th>Interest Earned</th>
+                            <th>Nominal Balance</th>
+                            <th>Real Balance (Inflation Adjusted)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; AuraCalc Wealth Simulator &bull; Local-first secure calculations</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
