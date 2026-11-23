@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVellum: Typographic Grid & Baseline Rhythm Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">⊟</span>
+                <h1>Aura<span>Vellum</span></h1>
+            </div>
+            <p class="tagline">Typographic Grid & Baseline Rhythm Laboratory</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Controls Panel -->
+        <section class="control-panel" aria-label="Typography Controls">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="scale">Scale & Type</button>
+                <button class="tab-btn" data-tab="grid">Baseline & Rhythm</button>
+                <button class="tab-btn" data-tab="export">CSS Code</button>
+                <button class="tab-btn" data-tab="presets">Presets</button>
+            </div>
+
+            <!-- Scale Tab -->
+            <div class="tab-content active" id="tab-scale">
+                <div class="control-group">
+                    <label for="baseFontSize">Base Font Size (px): <span id="val-baseFontSize">16</span>px</label>
+                    <input type="range" id="baseFontSize" min="12" max="22" step="1" value="16">
+                </div>
+
+                <div class="control-group">
+                    <label for="modularScale">Modular Scale Ratio</label>
+                    <select id="modularScale">
+                        <option value="1.067">Minor Second (1.067)</option>
+                        <option value="1.125">Major Second (1.125)</option>
+                        <option value="1.2">Minor Third (1.200)</option>
+                        <option value="1.25" selected>Major Third (1.250)</option>
+                        <option value="1.333">Perfect Fourth (1.333)</option>
+                        <option value="1.414">Augmented Fourth (1.414)</option>
+                        <option value="1.5">Perfect Fifth (1.500)</option>
+                        <option value="1.618">Golden Ratio (1.618)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="baseLineHeight">Base Line Height Multiplier: <span id="val-baseLineHeight">1.5</span></label>
+                    <input type="range" id="baseLineHeight" min="1.2" max="2.2" step="0.05" value="1.5">
+                </div>
+
+                <div class="control-group">
+                    <label for="fontFamily">Primary Font Family</label>
+                    <select id="fontFamily">
+                        <option value="sans-serif">System Sans-Serif</option>
+                        <option value="serif">System Serif</option>
+                        <option value="monospace">Monospace</option>
+                        <option value="georgia">Georgia Classic</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grid Tab -->
+            <div class="tab-content" id="tab-grid">
+                <div class="control-group">
+                    <label for="contentWidth">Max Content Width: <span id="val-contentWidth">720</span>px</label>
+                    <input type="range" id="contentWidth" min="480" max="1200" step="20" value="720">
+                </div>
+
+                <div class="control-group">
+                    <label for="baselineGridSize">Baseline Grid Size: <span id="val-baselineGridSize">24</span>px</label>
+                    <input type="range" id="baselineGridSize" min="16" max="40" step="4" value="24">
+                </div>
+
+                <div class="control-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="showBaselineOverlay" checked>
+                        Show Baseline Rhythm Overlay
+                    </label>
+                </div>
+
+                <div class="control-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="showColumnBounds" checked>
+                        Show Column Width Bounds
+                    </label>
+                </div>
+            </div>
+
+            <!-- Export Tab -->
+            <div class="tab-content" id="tab-export">
+                <div class="export-header">
+                    <h3>Generated CSS Custom Properties</h3>
+                    <button id="copyCssBtn" class="action-btn">Copy CSS</button>
+                </div>
+                <pre><code id="cssCodeOutput">:root {
+  --font-size-base: 1rem;
+  --line-height-base: 1.5;
+}</code></pre>
+            </div>
+
+            <!-- Presets Tab -->
+            <div class="tab-content" id="tab-presets">
+                <h3>Saved Layout Presets</h3>
+                <div class="preset-actions">
+                    <input type="text" id="presetNameInput" placeholder="Preset Name..." aria-label="Preset Name">
+                    <button id="savePresetBtn" class="action-btn primary">Save Current</button>
+                </div>
+                <div id="presetList" class="preset-list">
+                    <!-- Dynamically populated presets -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Preview Stage -->
+        <section class="preview-stage" aria-label="Typographic Preview">
+            <div class="preview-toolbar">
+                <div class="metrics-pills">
+                    <span class="pill" id="pill-scale">Scale: 1.25</span>
+                    <span class="pill" id="pill-body">Body: 16px / 24px</span>
+                    <span class="pill" id="pill-measure">Measure: ~68ch</span>
+                </div>
+                <div class="preview-actions">
+                    <button id="toggleModeBtn" class="icon-btn" title="Toggle Dark/Light Preview">🌙</button>
+                    <button id="resetDefaultsBtn" class="icon-btn" title="Reset Defaults">↺</button>
+                </div>
+            </div>
+
+            <div class="canvas-viewport">
+                <div id="baselineOverlayLayer" class="baseline-overlay active"></div>
+                <div id="columnBoundsLayer" class="column-bounds active"></div>
+
+                <article id="previewArticle" class="typography-preview sans-serif">
+                    <h1>The Architecture of Vertical Rhythm in Modern Web Design</h1>
+                    <p class="lead">
+                        Typography is the foundation of readable, elegant digital experiences. By aligning every header, paragraph, and spacing block to a strict baseline grid, we eliminate visual friction and achieve harmonic hierarchy.
+                    </p>
+
+                    <h2>Modular Proportions & Scale Ratios</h2>
+                    <p>
+                        When modular scales govern our font sizes, each step up or down relates harmoniously to the base. Whether adopting a classic Perfect Fourth (1.333) or a subtle Minor Third (1.200), the result is predictable rhythm across all viewports.
+                    </p>
+
+                    <h3>Subheadings and Structural Hierarchy</h3>
+                    <p>
+                        Maintaining ideal line length—often between 45 and 75 characters per line—ensures comfortable eye tracking. Once text lines exceed this measure, reader fatigue sets in rapidly.
+                    </p>
+
+                    <ul>
+                        <li>Precise vertical alignment prevents baseline drift.</li>
+                        <li>Consistent scaling guarantees visual balance.</li>
+                        <li>Custom properties streamline modern CSS workflows.</li>
+                    </ul>
+
+                    <blockquote>
+                        "Typography needs to be experienced. It is an art form rooted in proportion, spacing, and restraint." — Studio Atelier
+                    </blockquote>
+
+                    <p>
+                        As we continue refining responsive layouts, marrying fluid typography with rigid grid constraints remains the ultimate challenge for frontend artisans. Every pixel must serve the reader.
+                    </p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast" aria-live="polite">Copied to clipboard!</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
