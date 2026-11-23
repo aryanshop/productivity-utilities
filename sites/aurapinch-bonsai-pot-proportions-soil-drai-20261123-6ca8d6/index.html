@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraPinch: Bonsai Pot Proportions & Soil Drainage Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>Aura<span class="accent">Pinch</span></h1>
+      <p class="subtitle">Bonsai Pot Proportions & Soil Drainage Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn secondary">Reset Defaults</button>
+      <button id="btn-save" class="btn primary">Save Preset</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- Sidebar Controls -->
+    <aside class="control-panel">
+      <section class="panel-section">
+        <h2>1. Tree Dimensions</h2>
+        <div class="input-group">
+          <label for="tree-height">Tree Height (cm):</label>
+          <input type="number" id="tree-height" value="50" min="5" max="300" step="1">
+        </div>
+        <div class="input-group">
+          <label for="trunk-caliper">Trunk Caliper / Diameter (cm):</label>
+          <input type="number" id="trunk-caliper" value="5" min="0.5" max="50" step="0.5">
+        </div>
+        <div class="input-group">
+          <label for="canopy-spread">Canopy Spread (cm):</label>
+          <input type="number" id="canopy-spread" value="40" min="5" max="300" step="1">
+        </div>
+        <div class="input-group">
+          <label for="bonsai-style">Bonsai Style:</label>
+          <select id="bonsai-style">
+            <option value="chokkan">Chokkan (Formal Upright)</option>
+            <option value="moyogi" selected>Moyogi (Informal Upright)</option>
+            <option value="shakan">Shakan (Sloping)</option>
+            <option value="cascade">Kengai (Cascade)</option>
+            <option value="bunjin">Bunjin (Literati)</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>2. Soil Component Mixer (%)</h2>
+        <p class="hint">Total must equal 100%</p>
+        <div class="input-group">
+          <label for="soil-akadama">Akadama (Water/Nutrient Retention): <span id="val-akadama">50</span>%</label>
+          <input type="range" id="soil-akadama" value="50" min="0" max="100" step="5">
+        </div>
+        <div class="input-group">
+          <label for="soil-pumice">Pumice (Aeration/Drainage): <span id="val-pumice">30</span>%</label>
+          <input type="range" id="soil-pumice" value="30" min="0" max="100" step="5">
+        </div>
+        <div class="input-group">
+          <label for="soil-lava">Lava Rock (Heavy Drainage/Stability): <span id="val-lava">15</span>%</label>
+          <input type="range" id="soil-lava" value="15" min="0" max="100" step="5">
+        </div>
+        <div class="input-group">
+          <label for="soil-compost">Organic Compost / Bark: <span id="val-compost">5</span>%</label>
+          <input type="range" id="soil-compost" value="5" min="0" max="100" step="5">
+        </div>
+        <div id="soil-warning" class="warning-box hidden">Warning: Soil components do not total 100%. Current sum: <span id="soil-sum">100</span>%</div>
+      </section>
+
+      <section class="panel-section">
+        <h2>3. Saved Presets</h2>
+        <div class="preset-list" id="preset-container">
+          <p class="empty-text">No saved presets yet.</p>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Main Output / Visual Studio -->
+    <section class="visual-workspace">
+      <div class="card preview-card">
+        <h3>Aesthetic & Proportion Blueprint</h3>
+        <div class="canvas-container">
+          <canvas id="bonsai-canvas" width="600" height="350"></canvas>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="metric-label">Recommended Pot Length</span>
+            <span class="metric-value" id="out-pot-length">-- cm</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Recommended Pot Depth</span>
+            <span class="metric-value" id="out-pot-depth">-- cm</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Pot Shape Guidance</span>
+            <span class="metric-value" id="out-pot-shape">--</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Planting Offset Position</span>
+            <span class="metric-value" id="out-offset">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card analysis-card">
+        <h3>Soil Drainage & Hydraulic Laboratory Analysis</h3>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="bar-label">
+              <span>Drainage Rate (Aeration)</span>
+              <strong id="score-drainage">--</strong>
+            </div>
+            <div class="progress-bar"><div id="bar-drainage" class="fill"></div></div>
+          </div>
+          <div class="analysis-item">
+            <div class="bar-label">
+              <span>Water Retention Capacity</span>
+              <strong id="score-water">--</strong>
+            </div>
+            <div class="progress-bar"><div id="bar-water" class="fill"></div></div>
+          </div>
+          <div class="analysis-item">
+            <div class="bar-label">
+              <span>Nutrient Exchange (CEC)</span>
+              <strong id="score-cec">--</strong>
+            </div>
+            <div class="progress-bar"><div id="bar-cec" class="fill"></div></div>
+          </div>
+        </div>
+        <div class="recommendation-box" id="soil-recommendation">
+          <h4>Soil Suitability Assessment</h4>
+          <p id="soil-rec-text">Adjust your soil components above to view expert agronomic recommendations tailored for your tree species and style.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraPinch Bonsai Lab &bull; Client-side local storage utility &bull; Designed for precision botanical styling.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
