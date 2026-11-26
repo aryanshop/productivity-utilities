@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraChord: Chord Progression & Voice Leading Workbench</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="logo-icon">♫</span>
+        <h1>AuraChord</h1>
+      </div>
+      <p class="tagline">Precision Chord Progression & Voice Leading Laboratory</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-preset-modal" class="btn btn-secondary">Saved Progressions</button>
+      <button id="btn-export-json" class="btn btn-secondary">Export JSON</button>
+      <label class="btn btn-secondary file-import-label">
+        Import JSON <input type="file" id="file-import" accept=".json" hidden>
+      </label>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Control Panel -->
+    <section class="control-panel glass-card">
+      <h2>Key & Scale Settings</h2>
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="select-root">Root Note</label>
+          <select id="select-root">
+            <option value="0">C</option>
+            <option value="1">C♯ / D♭</option>
+            <option value="2">D</option>
+            <option value="3">D♯ / E♭</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F♯ / G♭</option>
+            <option value="7" selected>G</option>
+            <option value="8">G♯ / A♭</option>
+            <option value="9">A</option>
+            <option value="10">A♯ / B♭</option>
+            <option value="11">B</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="select-scale">Scale / Mode</label>
+          <select id="select-scale">
+            <option value="major" selected>Major (Ionian)</option>
+            <option value="natural_minor">Natural Minor (Aeolian)</option>
+            <option value="harmonic_minor">Harmonic Minor</option>
+            <option value="melodic_minor">Melodic Minor</option>
+            <option value="dorian">Dorian</option>
+            <option value="mixolydian">Mixolydian</option>
+            <option value="pentatonic_major">Major Pentatonic</option>
+            <option value="pentatonic_minor">Minor Pentatonic</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="select-synth-wave">Synthesizer Tone</label>
+          <select id="select-synth-wave">
+            <option value="sine">Pure Sine</option>
+            <option value="triangle" selected>Warm Triangle</option>
+            <option value="sawtooth">Bright Sawtooth</option>
+            <option value="square">Retro Square</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="range-tempo">Playback Tempo (BPM)</label>
+          <div class="range-with-value">
+            <input type="range" id="range-tempo" min="60" max="180" value="100">
+            <span id="val-tempo">100</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid -->
+    <div class="workspace-grid">
+      <!-- Palette: Available Chords in Key -->
+      <section class="palette-section glass-card">
+        <div class="section-header">
+          <h2>Diatonic Chords in <span id="lbl-current-key">G Major</span></h2>
+          <span class="hint">Click any chord to add to progression</span>
+        </div>
+        <div id="diatonic-chord-grid" class="chord-grid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="section-header" style="margin-top: 1.5rem;">
+          <h2>Borrowed & Secondary Chords</h2>
+          <span class="hint">Color & tension options</span>
+        </div>
+        <div id="borrowed-chord-grid" class="chord-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- Progression Builder & Voice Leading -->
+      <section class="progression-section glass-card">
+        <div class="section-header">
+          <h2>Progression Sequence (<span id="lbl-chord-count">0</span> Chords)</h2>
+          <div class="progression-actions">
+            <button id="btn-play-all" class="btn btn-primary">▶ Play All</button>
+            <button id="btn-stop-all" class="btn btn-danger" disabled>■ Stop</button>
+            <button id="btn-clear-progression" class="btn btn-secondary">Clear</button>
+          </div>
+        </div>
+
+        <div id="progression-slots" class="progression-slots">
+          <div class="empty-progression-state">
+            <p>Your progression is empty. Select chords from the left palette to build your sequence.</p>
+          </div>
+        </div>
+
+        <!-- Voice Leading & Harmonic Analytics Dashboard -->
+        <div class="analytics-dashboard">
+          <h3>Voice Leading & Harmonic Analysis</h3>
+          <div class="metrics-row">
+            <div class="metric-box">
+              <span class="metric-label">Voice Smoothness (SEM)</span>
+              <span id="metric-smoothness" class="metric-value">--</span>
+              <span class="metric-sub" id="metric-smoothness-sub">Total semitone movement</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Harmonic Function Flow</span>
+              <span id="metric-flow" class="metric-value">--</span>
+              <span class="metric-sub">Cadence & tension contour</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Tonal Stability Index</span>
+              <span id="metric-stability" class="metric-value">--</span>
+              <span class="metric-sub">Diatonic vs. chromatic ratio</span>
+            </div>
+          </div>
+
+          <!-- Canvas Visualizer for Keyboard Voicing -->
+          <div class="canvas-container">
+            <div class="canvas-header">
+              <span id="lbl-active-chord-name">Select a chord slot to inspect voicing</span>
+              <span class="canvas-hint">Keyboard Voicing Diagram</span>
+            </div>
+            <canvas id="voicing-canvas" width="700" height="160"></canvas>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Preset Save Modal -->
+  <div id="modal-presets" class="modal-backdrop hidden">
+    <div class="modal glass-card">
+      <div class="modal-header">
+        <h2>Saved Progression Presets</h2>
+        <button id="btn-close-modal" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="save-current-row">
+          <input type="text" id="input-preset-name" placeholder="Enter progression name (e.g., Jazz Turnaround 1)">
+          <button id="btn-save-preset" class="btn btn-primary">Save Current</button>
+        </div>
+        <div id="preset-list" class="preset-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>AuraChord Workbench &bull; Client-side Web Audio API Music Theory Laboratory &bull; No External Dependencies</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
