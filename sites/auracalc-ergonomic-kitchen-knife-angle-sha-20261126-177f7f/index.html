@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCalc: Knife Sharpening Geometry & Bevel Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🔪</span>
+                <div>
+                    <h1>AuraCalc</h1>
+                    <p class="subtitle">Kitchen Knife Sharpening & Bevel Geometry Laboratory</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-reset" class="btn secondary" title="Reset to default values">Reset Defaults</button>
+                <button id="btn-export" class="btn primary" title="Export session log to JSON">Export Session</button>
+            </div>
+        </header>
+
+        <main class="workbench-grid">
+            <!-- Control Panel -->
+            <section class="panel controls-panel">
+                <h2>Blade & Stone Configuration</h2>
+                
+                <div class="control-group">
+                    <label for="blade-type">Knife Profile / Style</label>
+                    <select id="blade-type">
+                        <option value="chef">Western Chef's Knife (20° per side)</option>
+                        <option value="santoku">Japanese Santoku (15° per side)</option>
+                        <option value="paring">Paring Knife (17° per side)</option>
+                        <option value="sujihiki">Sujihiki / Slicer (12° per side)</option>
+                        <option value="cleaver">Heavy Cleaver (25° per side)</option>
+                        <option value="custom">Custom Configuration</option>
+                    </select>
+                </div>
+
+                <div class="input-row">
+                    <div class="control-group">
+                        <label for="blade-thickness">Spine Thickness (mm)</label>
+                        <input type="number" id="blade-thickness" value="2.2" min="0.8" max="6.0" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label for="blade-height">Blade Height (mm)</label>
+                        <input type="number" id="blade-height" value="45" min="15" max="100" step="1">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="control-group">
+                        <label for="edge-angle">Bevel Angle (° each side)</label>
+                        <input type="number" id="edge-angle" value="15" min="8" max="35" step="0.5">
+                    </div>
+                    <div class="control-group">
+                        <label for="stone-height">Sharpening Guide Height (mm)</label>
+                        <input type="number" id="stone-height" value="20" min="5" max="50" step="1">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Abrasive Grit Progression (Select active stones)</label>
+                    <div class="grit-checkboxes" id="grit-container">
+                        <label class="checkbox-pill"><input type="checkbox" value="220" checked> 220 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="400" checked> 400 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="1000" checked> 1000 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="3000" checked> 3000 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="6000" checked> 6000 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="8000"> 8000 grit</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="12000"> 12000 grit</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="steel-hardness">Steel Alloy & Hardness (HRC)</label>
+                    <select id="steel-hardness">
+                        <option value="58">Standard Stainless (X50CrMoV15 ~58 HRC)</option>
+                        <option value="60">VG-10 High Carbon (~60 HRC)</option>
+                        <option value="62">SG2 / R2 Powder Steel (~62 HRC)</option>
+                        <option value="64">Shirogami / Aogami White/Blue (~64 HRC)</option>
+                        <option value="56">Soft Carbon / Utility (~56 HRC)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Visualization & Results Panel -->
+            <section class="panel display-panel">
+                <h2>Geometry & Bevel Visualization</h2>
+                <div class="canvas-container">
+                    <canvas id="edge-canvas" width="600" height="300"></canvas>
+                    <div class="canvas-legend">
+                        <span><i class="legend-dot spine"></i> Spine & Body</span>
+                        <span><i class="legend-dot bevel"></i> Primary Bevel</span>
+                        <span><i class="legend-dot apex"></i> Cutting Apex</span>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Calculated Bevel Width</span>
+                        <span class="metric-value" id="res-bevel-width">0.00 mm</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Total Included Angle</span>
+                        <span class="metric-value" id="res-included-angle">30.0°</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Estimated Apex Radius</span>
+                        <span class="metric-value" id="res-apex-radius">0.25 µm</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Est. Metal Removal Volume</span>
+                        <span class="metric-value" id="res-metal-removal">14.2 mm³</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grit Progression & Step-by-Step Log -->
+            <section class="panel log-panel full-width">
+                <div class="panel-header">
+                    <h2>Sharpening Progression Protocol & Notes</h2>
+                    <button id="btn-add-session" class="btn secondary">Log Current Setup</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="session-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Profile</th>
+                                <th>Angle</th>
+                                <th>Stones Used</th>
+                                <th>Bevel Width</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="session-tbody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraCalc Knife Sharpening Laboratory &bull; Local-first precision workshop utility</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
