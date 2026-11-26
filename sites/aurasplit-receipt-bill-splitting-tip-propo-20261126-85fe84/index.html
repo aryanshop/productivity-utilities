@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraSplit: Receipt Bill Splitting & Tip Proportion Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M8 3H3v5M21 3l-7 7M3 3l7 7M21 21l-7-7M3 21l7-7M16 21h5v-5M8 21H3v-5"/></svg>
+        <span>AuraSplit Lab</span>
+      </div>
+      <h1>Receipt Bill Splitting & Tip Proportion Laboratory</h1>
+      <p class="subtitle">Fair itemized cost allocation, proportional tax & tip calculation, and group expense breakdown.</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn btn-secondary" title="Reset current workspace">Reset Session</button>
+      <button id="btn-sample" class="btn btn-outline" title="Load sample group dinner data">Load Sample Data</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- Left Column: Setup & Inputs -->
+    <div class="column left-column">
+      <!-- Section 1: Participants -->
+      <section class="card">
+        <div class="card-header">
+          <h2>1. Participants</h2>
+          <span class="badge" id="participant-count">0 added</span>
+        </div>
+        <div class="card-body">
+          <form id="form-participant" class="inline-form">
+            <input type="text" id="input-participant-name" placeholder="Participant name (e.g., Alex)" required autocomplete="off">
+            <button type="submit" class="btn btn-primary">Add Person</button>
+          </form>
+          <div id="participants-list" class="tag-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Itemized Receipt -->
+      <section class="card">
+        <div class="card-header">
+          <h2>2. Itemized Receipt</h2>
+          <span class="badge" id="item-count">0 items</span>
+        </div>
+        <div class="card-body">
+          <form id="form-item" class="stacked-form">
+            <div class="form-row">
+              <div class="form-group flex-2">
+                <label for="input-item-name">Item Name</label>
+                <input type="text" id="input-item-name" placeholder="e.g., Margherita Pizza" required autocomplete="off">
+              </div>
+              <div class="form-group flex-1">
+                <label for="input-item-price">Price ($)</label>
+                <input type="number" id="input-item-price" step="0.01" min="0.01" placeholder="18.50" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Assigned Diners (leave unselected to split among all)</label>
+              <div id="item-assignees-checkboxes" class="checkbox-grid">
+                <!-- Dynamically populated checkboxes -->
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Add Receipt Item</button>
+          </form>
+
+          <div class="table-container">
+            <table id="receipt-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Price</th>
+                  <th>Split Between</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="receipt-tbody">
+                <tr class="empty-row">
+                  <td colspan="4">No items added yet. Add items above or load sample data.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Adjustments (Tax, Tip, Discount) -->
+      <section class="card">
+        <div class="card-header">
+          <h2>3. Tax, Tip & Adjustments</h2>
+        </div>
+        <div class="card-body">
+          <div class="adjustments-grid">
+            <div class="form-group">
+              <label for="input-tax">Tax ($)</label>
+              <input type="number" id="input-tax" step="0.01" min="0" value="0.00">
+            </div>
+            <div class="form-group">
+              <label for="input-tip-percent">Tip Percentage (%)</label>
+              <div class="tip-buttons">
+                <button type="button" class="btn-tip-preset" data-tip="15">15%</button>
+                <button type="button" class="btn-tip-preset active" data-tip="18">18%</button>
+                <button type="button" class="btn-tip-preset" data-tip="20">20%</button>
+                <button type="button" class="btn-tip-preset" data-tip="25">25%</button>
+              </div>
+              <input type="number" id="input-tip-percent" step="0.1" min="0" value="18.0">
+            </div>
+            <div class="form-group">
+              <label for="input-discount">Discount / Coupon ($)</label>
+              <input type="number" id="input-discount" step="0.01" min="0" value="0.00">
+            </div>
+            <div class="form-group">
+              <label for="select-tip-calc">Tip Calculated On</label>
+              <select id="select-tip-calc">
+                <option value="subtotal">Subtotal (Pre-Tax)</option>
+                <option value="total">Total (Post-Tax)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column: Results & Visualization -->
+    <div class="column right-column">
+      <!-- Summary Totals Card -->
+      <section class="card summary-card">
+        <div class="card-header">
+          <h2>Receipt Summary</h2>
+          <button id="btn-copy" class="btn btn-outline btn-sm" title="Copy summary to clipboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Summary
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="summary-metrics">
+            <div class="metric">
+              <span class="metric-label">Subtotal</span>
+              <span class="metric-value" id="val-subtotal">$0.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Tax</span>
+              <span class="metric-value" id="val-tax">$0.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Tip</span>
+              <span class="metric-value" id="val-tip">$0.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Discount</span>
+              <span class="metric-value text-green" id="val-discount">-$0.00</span>
+            </div>
+            <div class="metric total-metric">
+              <span class="metric-label">Grand Total</span>
+              <span class="metric-value" id="val-grand-total">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Canvas Visualization -->
+          <div class="canvas-container">
+            <canvas id="share-canvas" width="400" height="220"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Individual Breakdown Cards -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Individual Share Breakdown</h2>
+          <span class="badge" id="settlement-status">Balanced</span>
+        </div>
+        <div class="card-body">
+          <div id="individual-breakdown-list" class="breakdown-grid">
+            <div class="empty-state">
+              <p>Add participants and items to view individual shares.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuraSplit Laboratory &bull; Privacy-first local calculation with zero data collection.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
