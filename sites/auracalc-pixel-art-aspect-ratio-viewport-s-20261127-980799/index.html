@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCalc: Pixel Art & Viewport Scale Laboratory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-badge">AURA LABS</span>
+                <h1>Pixel Art & Viewport Scale Laboratory</h1>
+            </div>
+            <p class="tagline">Precision sprite dimensioning, integer scaling multipliers, and responsive pixel art viewport diagnostics for retro game and web creators.</p>
+        </header>
+
+        <main class="main-grid">
+            <!-- Left Control Panel -->
+            <section class="panel controls-panel" aria-labelledby="config-heading">
+                <h2 id="config-heading" class="panel-title">Configuration</h2>
+                
+                <div class="control-group">
+                    <label for="presetSelect">Preset Standard</label>
+                    <select id="presetSelect">
+                        <option value="custom">Custom Canvas</option>
+                        <option value="gb">Game Boy (160 x 144)</option>
+                        <option value="nes">NES / Famicom (256 x 240)</option>
+                        <option value="snes">SNES (256 x 224)</option>
+                        <option value="pico8">PICO-8 (128 x 128)</option>
+                        <option value="retro32">Retro 32x32 Tile</option>
+                    </select>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-group">
+                        <label for="spriteWidth">Canvas Width (px)</label>
+                        <input type="number" id="spriteWidth" min="8" max="2048" value="160">
+                    </div>
+                    <div class="control-group">
+                        <label for="spriteHeight">Canvas Height (px)</label>
+                        <input type="number" id="spriteHeight" min="8" max="2048" value="144">
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-group">
+                        <label for="targetResWidth">Target Screen Width</label>
+                        <input type="number" id="targetResWidth" min="320" max="7680" value="1920">
+                    </div>
+                    <div class="control-group">
+                        <label for="targetResHeight">Target Screen Height</label>
+                        <input type="number" id="targetResHeight" min="200" max="4320" value="1080">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="scaleMode">Scaling Strategy</label>
+                    <select id="scaleMode">
+                        <option value="integer">Strict Integer Scaling (Crisp pixels, letterboxed)</option>
+                        <option value="fit">Aspect Fit (Smooth scale, max screen fill)</option>
+                        <option value="stretch">Stretch to Fill (Distorts pixels)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="paletteSelect">Preview Palette</label>
+                    <select id="paletteSelect">
+                        <option value="gameboy">Game Boy DMG (4-color)</option>
+                        <option value="pico8">PICO-8 (16-color)</option>
+                        <option value="cyberpunk">Cyberpunk Neon</option>
+                        <option value="monochrome">Monochrome Matrix</option>
+                    </select>
+                </div>
+
+                <div class="action-row">
+                    <button id="resetBtn" class="btn secondary">Reset Defaults</button>
+                    <button id="randomizeBtn" class="btn primary">Generate Sample Art</button>
+                </div>
+            </section>
+
+            <!-- Center Display & Preview -->
+            <section class="panel preview-panel" aria-labelledby="preview-heading">
+                <div class="panel-header-inline">
+                    <h2 id="preview-heading" class="panel-title">Viewport & Scale Simulation</h2>
+                    <div class="view-mode-toggles">
+                        <button class="toggle-btn active" data-view="preview">Canvas</button>
+                        <button class="toggle-btn" data-view="grid">Pixel Inspector</button>
+                    </div>
+                </div>
+
+                <div class="canvas-viewport-container" id="viewportContainer">
+                    <div class="viewport-frame" id="viewportFrame">
+                        <canvas id="pixelCanvas"></canvas>
+                        <div class="letterbox-overlay top"></div>
+                        <div class="letterbox-overlay bottom"></div>
+                        <div class="letterbox-overlay left"></div>
+                        <div class="letterbox-overlay right"></div>
+                    </div>
+                </div>
+
+                <div class="grid-inspector-container hidden" id="inspectorContainer">
+                    <div class="inspector-instructions">Click and drag on pixels below to draw/edit your custom sprite test pattern.</div>
+                    <div class="mini-grid" id="miniGrid"></div>
+                </div>
+
+                <div class="metrics-bar">
+                    <div class="metric-item">
+                        <span class="metric-label">Integer Scale:</span>
+                        <span class="metric-value" id="statScale">6x</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Render Size:</span>
+                        <span class="metric-value" id="statRenderSize">960 x 864 px</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Sub-pixel Bleed:</span>
+                        <span class="metric-value success" id="statBleed">None (Clean)</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Total Pixels:</span>
+                        <span class="metric-value" id="statPixels">23,040 px</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Diagnostics & CSS Synthesizer -->
+            <section class="panel diagnostics-panel" aria-labelledby="diagnostics-heading">
+                <h2 id="diagnostics-heading" class="panel-title">Diagnostics & CSS</h2>
+                
+                <div class="diag-card">
+                    <h3>Scaling Diagnostics</h3>
+                    <ul class="diag-list" id="diagList">
+                        <li><span>Aspect Ratio:</span> <strong id="diagAspect">10:9 (1.11)</strong></li>
+                        <li><span>Target Fit:</span> <strong id="diagFit">Letterboxed (Pillarbox)</strong></li>
+                        <li><span>Memory (RGBA):</span> <strong id="diagMem">102.4 KB</strong></li>
+                        <li><span>Pixel Density:</span> <strong id="diagDensity">Standard (1x)</strong></li>
+                    </ul>
+                </div>
+
+                <div class="code-card">
+                    <div class="code-header">
+                        <h3>Generated CSS Style</h3>
+                        <button id="copyCssBtn" class="btn-sm">Copy CSS</button>
+                    </div>
+                    <pre><code id="cssCodeOutput">.pixel-sprite {
+  width: 960px;
+  height: 864px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}</code></pre>
+                </div>
+
+                <div class="code-card">
+                    <div class="code-header">
+                        <h3>Viewport Meta Advice</h3>
+                    </div>
+                    <p class="advice-text">To ensure crisp pixel art on mobile retina screens without fuzzy anti-aliasing interpolation, enforce strict integer scaling or use CSS <code>image-rendering: pixelated</code>.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraCalc Pixel Laboratory &bull; Client-side responsive pixel art workbench &bull; No external dependencies</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
