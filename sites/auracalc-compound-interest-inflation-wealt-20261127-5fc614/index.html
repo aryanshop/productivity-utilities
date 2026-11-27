@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCalc: Compound Interest & Inflation Wealth Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>AuraCalc</h1>
+            <p class="subtitle">Compound Interest & Inflation Wealth Simulator</p>
+        </div>
+        <div class="header-actions">
+            <button id="btn-save-preset" class="btn secondary">Save Preset</button>
+            <button id="btn-load-preset" class="btn secondary">Load Preset</button>
+            <button id="btn-export" class="btn primary">Export JSON</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <section class="control-panel">
+            <div class="card">
+                <h2>Portfolio Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="initial-principal">Initial Principal ($)</label>
+                    <input type="number" id="initial-principal" value="10000" min="0" step="500">
+                </div>
+
+                <div class="input-group">
+                    <label for="monthly-contrib">Monthly Contribution ($)</label>
+                    <input type="number" id="monthly-contrib" value="500" min="0" step="50">
+                </div>
+
+                <div class="input-group">
+                    <label for="annual-return">Expected Annual Return (%)</label>
+                    <input type="number" id="annual-return" value="7.0" min="-50" max="100" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="inflation-rate">Inflation Rate (%)</label>
+                    <input type="number" id="inflation-rate" value="2.5" min="0" max="20" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="time-horizon">Time Horizon (Years)</label>
+                    <input type="range" id="time-horizon-range" value="25" min="1" max="50" step="1">
+                    <span id="time-horizon-val">25 years</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="tax-drag">Estimated Tax Drag (%)</label>
+                    <input type="number" id="tax-drag" value="0.5" min="0" max="10" step="0.1">
+                </div>
+
+                <button id="btn-reset" class="btn outline full-width">Reset to Defaults</button>
+            </div>
+
+            <div class="card summary-card">
+                <h2>Projection Summary</h2>
+                <div class="metric">
+                    <span class="label">Final Nominal Balance</span>
+                    <span id="out-nominal" class="value">$0</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Final Real Value (Inflation-Adjusted)</span>
+                    <span id="out-real" class="value highlight">$0</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Total Contributions</span>
+                    <span id="out-contrib" class="value">$0</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Interest Earned</span>
+                    <span id="out-interest" class="value">$0</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="visualization-panel">
+            <div class="card canvas-card">
+                <div class="canvas-header">
+                    <h2>Wealth Growth Trajectory</h2>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot nominal"></span> Nominal Balance</span>
+                        <span class="legend-item"><span class="dot real"></span> Real Value (Adj.)</span>
+                        <span class="legend-item"><span class="dot contrib"></span> Total Principal</span>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="wealth-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="card table-card">
+                <h2>Yearly Breakdown Table</h2>
+                <div class="table-responsive">
+                    <table id="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Total Invested</th>
+                                <th>Interest Earned</th>
+                                <th>Nominal Balance</th>
+                                <th>Real Purchasing Power</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Presets -->
+    <div id="preset-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Saved Presets</h3>
+            <div id="preset-list">
+                <p class="empty-msg">No saved presets yet.</p>
+            </div>
+            <div class="modal-actions">
+                <input type="text" id="preset-name-input" placeholder="Preset Name...">
+                <button id="btn-confirm-save" class="btn primary">Save Current State</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
