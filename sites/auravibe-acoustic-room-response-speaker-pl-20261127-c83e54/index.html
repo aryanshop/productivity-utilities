@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraVibe: Acoustic Room Response & Speaker Placement Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <h1>AuraVibe</h1>
+                <span class="badge">Acoustics & Speaker Placement Lab</span>
+            </div>
+            <p class="subtitle">Calculate axial room modes, SBIR frequencies, and optimal stereo triangle coordinates for pristine acoustic imaging.</p>
+        </header>
+
+        <main class="workspace">
+            <section class="control-panel">
+                <!-- Room Dimensions -->
+                <div class="card">
+                    <h2>Room Dimensions</h2>
+                    <div class="input-group">
+                        <label for="roomLength">Length (m): <span id="lengthVal">5.0</span></label>
+                        <input type="range" id="roomLength" min="2.0" max="12.0" step="0.1" value="5.0">
+                    </div>
+                    <div class="input-group">
+                        <label for="roomWidth">Width (m): <span id="widthVal">4.0</span></label>
+                        <input type="range" id="roomWidth" min="2.0" max="10.0" step="0.1" value="4.0">
+                    </div>
+                    <div class="input-group">
+                        <label for="roomHeight">Ceiling Height (m): <span id="heightVal">2.6</span></label>
+                        <input type="range" id="roomHeight" min="2.0" max="5.0" step="0.1" value="2.6">
+                    </div>
+                    <div class="input-group">
+                        <label for="wallMaterial">Boundary Wall Construction</label>
+                        <select id="wallMaterial">
+                            <option value="concrete">Concrete / Masonry (High Reflection)</option>
+                            <option value="drywall" selected>Standard Drywall / Stud (Moderate Absorption)</option>
+                            <option value="treated">Acoustically Treated Studio (High Absorption)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Speaker & Listener Setup -->
+                <div class="card">
+                    <h2>Speaker & Listening Position</h2>
+                    <div class="input-group">
+                        <label for="speakerDistFront">Speaker Wall Distance (m): <span id="spkFrontVal">0.8</span></label>
+                        <input type="range" id="speakerDistFront" min="0.2" max="3.0" step="0.05" value="0.8">
+                    </div>
+                    <div class="input-group">
+                        <label for="speakerSpread">Stereo Spread Width (m): <span id="spkSpreadVal">2.2</span></label>
+                        <input type="range" id="speakerSpread" min="1.0" max="6.0" step="0.1" value="2.2">
+                    </div>
+                    <div class="input-group">
+                        <label for="listenerDepth">Listener Depth from Front Wall (m): <span id="listenerDepthVal">2.5</span></label>
+                        <input type="range" id="listenerDepth" min="1.0" max="10.0" step="0.05" value="2.5">
+                    </div>
+                    <button id="btnEquilateral" class="btn secondary">Snap to 38% Rule / Equilateral</button>
+                </div>
+
+                <!-- Presets & Storage -->
+                <div class="card">
+                    <h2>Workspace & Presets</h2>
+                    <div class="preset-actions">
+                        <button id="btnSavePreset" class="btn primary">Save Setup</button>
+                        <select id="presetSelect">
+                            <option value="">-- Load Preset --</option>
+                        </select>
+                        <button id="btnExport" class="btn">Export JSON</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="display-panel">
+                <!-- Visual Map -->
+                <div class="card canvas-card">
+                    <div class="card-header">
+                        <h2>Interactive Top-Down Room Map</h2>
+                        <span class="hint">Drag speakers or listener directly on canvas</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="roomCanvas" width="600" height="450"></canvas>
+                    </div>
+                    <div class="legend">
+                        <span class="legend-item"><i class="dot red"></i> Left/Right Monitors</span>
+                        <span class="legend-item"><i class="dot blue"></i> Listening Sweet Spot</span>
+                        <span class="legend-item"><i class="dot gray"></i> Early Reflection Points</span>
+                    </div>
+                </div>
+
+                <!-- Acoustic Metrics -->
+                <div class="card metrics-card">
+                    <h2>Acoustic Analysis & Diagnostics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">Equilateral Triangle Error</span>
+                            <span class="metric-val" id="metricTriangle">0.0 cm</span>
+                            <span class="metric-sub" id="metricTriangleSub">Target: 0 deviation</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Primary SBIR Null (Front)</span>
+                            <span class="metric-val" id="metricSBIR">0 Hz</span>
+                            <span class="metric-sub">Speaker Boundary Interference</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Schroeder Frequency</span>
+                            <span class="metric-val" id="metricSchroeder">0 Hz</span>
+                            <span class="metric-sub">Transition to Modal Region</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">SBIR Cancellation Depth</span>
+                            <span class="metric-val" id="metricAbsorption">-12 dB</span>
+                            <span class="metric-sub">Estimated boundary reflection</span>
+                        </div>
+                    </div>
+
+                    <div class="modes-section">
+                        <h3>Axial Room Modes (Length, Width, Height)</h3>
+                        <div id="modesList" class="modes-list">
+                            <!-- Dynamically populated room modes -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>AuraVibe Acoustic Lab &bull; Local-First Audio Engineering &bull; Pure HTML/CSS/JS</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
